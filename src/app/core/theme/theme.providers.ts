@@ -1,0 +1,48 @@
+import { EnvironmentProviders } from '@angular/core';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
+import { providePrimeNG } from 'primeng/config';
+
+const AppPreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50: '#e3f2fd',
+      100: '#bbdefb',
+      200: '#90caf9',
+      300: '#64b5f6',
+      400: '#42a5f5',
+      500: '#2196f3',
+      600: '#1e88e5',
+      700: '#1976d2',
+      800: '#1565c0',
+      900: '#0d47a1',
+      950: '#0a3880',
+    },
+    colorScheme: {
+      light: {
+        primary: {
+          color: '{primary.700}',
+          hoverColor: '{primary.800}',
+          activeColor: '{primary.900}',
+          contrastColor: '#ffffff',
+        },
+        text: {
+          color: '#212121',
+          mutedColor: '#757575',
+        },
+        content: {
+          borderColor: '#e0e0e0',
+        },
+      },
+    },
+  },
+});
+
+export function provideTheme(): EnvironmentProviders {
+  return providePrimeNG({
+    theme: {
+      preset: AppPreset,
+      options: { darkModeSelector: false },
+    },
+  });
+}
