@@ -16,20 +16,22 @@
   gap: var(--space-2);
   margin: 0;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-label);
   font-weight: 400;
+  line-height: 2.4rem;
 }
 
 .value {
-  margin: var(--space-3) 0 0;
+  margin: var(--space-4) 0 0;
   font-size: var(--font-size-stat);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 3.2rem;
 }
 
 .change {
-  margin: var(--space-1) 0 0;
+  margin: 3px 0 0;
   font-size: var(--font-size-xs);
+  line-height: 1.2rem;
 
   &.positive {
     color: var(--color-success);

@@ -11,5 +11,5 @@ import { TaskColumnComponent } from '../task-column/task-column.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskBoardComponent {
-  columns = input<TaskColumn[]>();
+  readonly columns = input.required<TaskColumn[]>();
 }

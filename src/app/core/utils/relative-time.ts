@@ -1,13 +1,13 @@
 const DAYS_IN_WEEK = 7;
-const WEEKS_THRESHOLD_DAYS = 30;
+const WEEKS_FROM_DAYS = 28;
 
 function toWeeks(days: number): number | null {
-  const abs = Math.abs(days);
+  const absDays = Math.abs(days);
 
-  if (abs > WEEKS_THRESHOLD_DAYS) {
-    return Math.sign(days) * Math.floor(abs / DAYS_IN_WEEK);
+  if (absDays >= WEEKS_FROM_DAYS) {
+    return Math.sign(days) * Math.round(absDays / DAYS_IN_WEEK);
   }
-  if (abs !== 0 && abs % DAYS_IN_WEEK === 0) {
+  if (absDays !== 0 && absDays % DAYS_IN_WEEK === 0) {
     return days / DAYS_IN_WEEK;
   }
   return null;

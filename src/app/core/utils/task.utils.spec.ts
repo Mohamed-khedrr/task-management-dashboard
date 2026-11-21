@@ -1,5 +1,11 @@
 import { Task } from '../models/task.model';
-import { computeTaskStats, isTaskOverdue } from './task.utils';
+import {
+  computeTaskStats,
+  getTaskTiming,
+  groupByStatus,
+  isTaskOverdue,
+  sortTasks,
+} from './task.utils';
 
 const today = new Date(2026, 10, 21);
 
@@ -62,5 +68,68 @@ describe('computeTaskStats', () => {
 
   it('returns zeros for an empty list', () => {
     expect(computeTaskStats([], today).total).toBe(0);
+  });
+});
+
+describe('getTaskTiming', () => {
+  it('counts days until due', () => {
+    expect(getTaskTiming(makeTask({ dueDate: '2026-11-23' }), today)).toEqual({
+      kind: 'due',
+      days: 2,
+    });
+  });
+
+  it('counts days past due for overdue tasks', () => {
+    expect(getTaskTiming(makeTask({ dueDate: '2026-11-19' }), today)).toEqual({
+      kind: 'overdue',
+      days: 2,
+    });
+  });
+
+  it('counts days since completion for done tasks', () => {
+    const task = makeTask({ status: 'done', completedAt: '2026-11-20T15:00:00' });
+    expect(getTaskTiming(task, today)).toEqual({ kind: 'completed', days: 1 });
+  });
+});
+
+describe('sortTasks', () => {
+  it('puts overdue first, then higher priority, then the earlier due date', () => {
+    const tasks = [
+      makeTask({ id: 'low', priority: 'low', dueDate: '2026-11-22' }),
+      makeTask({ id: 'high-later', priority: 'high', dueDate: '2026-11-30' }),
+      makeTask({ id: 'high-sooner', priority: 'high', dueDate: '2026-11-23' }),
+      makeTask({ id: 'overdue', priority: 'low', dueDate: '2026-11-10' }),
+    ];
+
+    expect(sortTasks(tasks, today).map((task) => task.id)).toEqual([
+      'overdue',
+      'high-sooner',
+      'high-later',
+      'low',
+    ]);
+  });
+
+  it('does not change the original array', () => {
+    const tasks = [makeTask({ id: 'b', priority: 'low' }), makeTask({ id: 'a', priority: 'high' })];
+
+    sortTasks(tasks, today);
+
+    expect(tasks.map((task) => task.id)).toEqual(['b', 'a']);
+  });
+});
+
+describe('groupByStatus', () => {
+  it('returns the three columns in board order, including empty ones', () => {
+    const columns = groupByStatus(
+      [makeTask({ id: 'a', status: 'done' }), makeTask({ id: 'b', status: 'todo' })],
+      today,
+    );
+
+    expect(columns.map((column) => column.status)).toEqual(['todo', 'in_progress', 'done']);
+    expect(columns.map((column) => column.tasks.map((task) => task.id))).toEqual([
+      ['b'],
+      [],
+      ['a'],
+    ]);
   });
 });

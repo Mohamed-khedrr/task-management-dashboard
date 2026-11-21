@@ -20,8 +20,12 @@ export function daysBetween(from: string, to: string) {
 }
 
 // The isOverdue field in the API data is unreliable, so it's derived instead
+function isOverdueOn(task: Task, todayIso: string) {
+  return task.status !== 'done' && task.dueDate < todayIso;
+}
+
 export function isTaskOverdue(task: Task, today: Date) {
-  return task.status !== 'done' && task.dueDate < toIsoDate(today);
+  return isOverdueOn(task, toIsoDate(today));
 }
 
 export function computeTaskStats(tasks: Task[], today: Date) {
@@ -57,7 +61,7 @@ export function computeTaskStats(tasks: Task[], today: Date) {
       }
     }
 
-    if (isTaskOverdue(task, today)) {
+    if (isOverdueOn(task, todayIso)) {
       stats.overdue++;
       if (daysBetween(task.dueDate, todayIso) === 1) {
         stats.overdueSinceToday++;
@@ -83,12 +87,18 @@ export function getTaskTiming(task: Task, today: Date): TaskTiming {
 }
 
 export function sortTasks(tasks: Task[], today: Date) {
+  const todayIso = toIsoDate(today);
+
   return [...tasks].sort((a, b) => {
-    const aOverdue = isTaskOverdue(a, today);
-    const bOverdue = isTaskOverdue(b, today);
-    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1;
-    if (a.priority !== b.priority)
+    const aOverdue = isOverdueOn(a, todayIso);
+    const bOverdue = isOverdueOn(b, todayIso);
+    if (aOverdue !== bOverdue) {
+      return aOverdue ? -1 : 1;
+    }
+
+    if (a.priority !== b.priority) {
       return TASK_PRIORITIES.indexOf(a.priority) - TASK_PRIORITIES.indexOf(b.priority);
+    }
 
     return a.dueDate.localeCompare(b.dueDate);
   });

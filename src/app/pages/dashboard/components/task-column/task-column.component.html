@@ -1,7 +1,8 @@
 <section class="column" [attr.aria-labelledby]="'column-' + status()">
   <header class="header">
     <h2 class="title" [id]="'column-' + status()">{{ 'task.status.' + status() | transloco }}</h2>
-    <span class="count">{{ tasks().length }}</span>
+    <span class="count" aria-hidden="true">{{ tasks().length }}</span>
+    <span class="visually-hidden">{{ 'task.count' | transloco: { count: tasks().length } }}</span>
   </header>
 
   @if (tasks().length > 0) {

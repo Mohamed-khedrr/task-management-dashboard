@@ -16,3 +16,10 @@
     }
   </ul>
 </nav>
+
+<p-button
+  class="new-task"
+  [label]="'nav.newTask' | transloco"
+  [fluid]="true"
+  (onClick)="newTask.emit(); linkSelected.emit()"
+/>

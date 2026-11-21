@@ -6,18 +6,20 @@
   <h3 class="title">{{ task().title }}</h3>
   <p class="description">{{ task().description }}</p>
 
-  <p class="timing">
-    <span aria-hidden="true">{{ timing().icon }}</span>
-    {{ timing().key | transloco: timing().params }}
-  </p>
+  <div class="meta">
+    <p class="timing">
+      <span aria-hidden="true">{{ timing().icon }}</span>
+      {{ timing().key | transloco: timing().params }}
+    </p>
 
-  @if (task().tags.length > 0) {
-    <ul class="tags">
-      @for (tag of task().tags; track tag) {
-        <li>{{ tag }}</li>
-      }
-    </ul>
-  }
+    @if (task().tags.length > 0) {
+      <ul class="tags">
+        @for (tag of task().tags; track tag) {
+          <li>{{ tag }}</li>
+        }
+      </ul>
+    }
+  </div>
 
   <footer class="footer">
     <span class="avatar" aria-hidden="true">{{ task().assignee.avatar }}</span>

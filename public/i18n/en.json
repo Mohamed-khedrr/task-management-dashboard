@@ -15,9 +15,13 @@
     "label": "Main navigation",
     "dashboard": "Dashboard",
     "tasks": "Tasks",
+    "calendar": "Calendar",
     "analytics": "Analytics",
-    "team": "Team"
+    "team": "Team",
+    "settings": "Settings",
+    "newTask": "+ New Task"
   },
+  "comingSoon": "This page is coming soon.",
   "dashboard": {
     "title": "Dashboard",
     "stats": {
@@ -50,6 +54,7 @@
       "due": "Due {{when}}",
       "completed": "Completed {{when}}"
     },
-    "noTasks": "No tasks"
+    "noTasks": "No tasks",
+    "count": "{{count}} tasks"
   }
 }

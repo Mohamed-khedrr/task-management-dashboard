@@ -74,7 +74,7 @@ describe('DashboardComponent', () => {
     isLoading.set(true);
     await fixture.whenStable();
 
-    expect(element.querySelectorAll('p-skeleton').length).toBe(4);
+    expect(element.querySelectorAll('.stats p-skeleton').length).toBe(4);
     expect(statValues()).toEqual([]);
   });
 
@@ -86,5 +86,13 @@ describe('DashboardComponent', () => {
     element.querySelector<HTMLButtonElement>('.error button')!.click();
 
     expect(reload).toHaveBeenCalledOnce();
+  });
+
+  it('places each task in the column of its status', () => {
+    const cardsPerColumn = Array.from(element.querySelectorAll('app-task-column')).map(
+      (column) => column.querySelectorAll('app-task-card').length,
+    );
+
+    expect(cardsPerColumn).toEqual([1, 0, 2]);
   });
 });

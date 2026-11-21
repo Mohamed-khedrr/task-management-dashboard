@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { getTranslocoModule } from '../../../../../testing/transloco-testing';
 
 import { TaskBoardComponent } from './task-board.component';
 
@@ -8,10 +9,11 @@ describe('TaskBoardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskBoardComponent],
+      imports: [TaskBoardComponent, getTranslocoModule()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TaskBoardComponent);
+    fixture.componentRef.setInput('columns', []);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

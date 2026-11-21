@@ -10,11 +10,13 @@
   </main>
 </div>
 
-<p-drawer
-  [(visible)]="menuOpen"
-  [position]="drawerPosition()"
-  [header]="appInfo.nameKey | transloco"
-  [ariaCloseLabel]="'layout.closeMenu' | transloco"
->
-  <app-sidebar-nav (linkSelected)="menuOpen.set(false)" />
-</p-drawer>
+@defer (when menuOpen()) {
+  <p-drawer
+    [(visible)]="menuOpen"
+    [position]="drawerPosition()"
+    [header]="appInfo.nameKey | transloco"
+    [ariaCloseLabel]="'layout.closeMenu' | transloco"
+  >
+    <app-sidebar-nav (linkSelected)="menuOpen.set(false)" />
+  </p-drawer>
+}

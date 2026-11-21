@@ -11,6 +11,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class]': 'task().status',
+    '[class.overdue]': 'overdue()',
+  },
 })
 export class TaskCardComponent {
   private readonly language = inject(LanguageService);

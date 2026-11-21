@@ -22,18 +22,20 @@
   --color-danger-bg: #ffebee;
   --color-warning: #f57c00;
   --color-warning-bg: #fff3e0;
+  --color-in-progress: #ff6f00; // Figma "Blaze Orange", task card hover
 
   // Typography
   --font-family: 'Inter', system-ui, sans-serif;
+  --font-size-2xs: 0.625rem; // 10px
   --font-size-xs: 0.6875rem; // 11px
   --font-size-sm: 0.75rem; // 12px
+  --font-size-label: 0.8125rem; // 13px, nav links and stat labels
   --font-size-input: 0.775rem; // 12.4px, Figma "Semantic/Input"
   --font-size-md: 0.875rem; // 14px
   --font-size-lg: 1.125rem; // 18px
+  --font-size-brand: 1.2rem; // 19px, app title in the header
   --font-size-xl: 1.5rem; // 24px
-  --font-size-2xl: 2rem; // 32px, stat numbers
-
-  --font-size-stat: 1.75rem; // 28px
+  --font-size-stat: 1.875rem; // 30px
 
   // Spacing
   --space-1: 0.25rem; // 4px
@@ -47,7 +49,8 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-full: 999px;
-  --shadow-card: 0 4px 8px rgb(0 0 0 / 0.12);
+  --shadow-card: 0 4px 4px rgb(0 0 0 / 0.12);
+  --shadow-bar: 0 2px 2px rgb(0 0 0 / 0.08); // header, sidebar, board columns
 
   // Motion
   --transition-fast: 200ms ease; // hover feedback, matches PrimeNG (focus rings stay instant)

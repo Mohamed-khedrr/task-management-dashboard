@@ -8,6 +8,7 @@ import { TaskService } from '../../core/services/task.service';
 import { computeTaskStats, groupByStatus } from '../../core/utils/task.utils';
 import { StatCard } from '../../core/models/stat-card.model';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -29,11 +30,12 @@ export class DashboardComponent {
   protected readonly isLoading = this.taskResource.isLoading;
   protected readonly error = this.taskResource.error;
 
-  protected readonly columns = computed(() => groupByStatus(this.tasks(), this.today));
-
+  // value() throws while the resource is in its error state
   private readonly tasks = computed(() =>
     this.taskResource.hasValue() ? this.taskResource.value() : [],
   );
+
+  protected readonly columns = computed(() => groupByStatus(this.tasks(), this.today));
 
   protected readonly statCards = computed<StatCard[]>(() => {
     const stats = computeTaskStats(this.tasks(), this.today);

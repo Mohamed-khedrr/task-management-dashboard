@@ -15,9 +15,13 @@
     "label": "التنقل الرئيسي",
     "dashboard": "لوحة التحكم",
     "tasks": "المهام",
+    "calendar": "التقويم",
     "analytics": "التحليلات",
-    "team": "الفريق"
+    "team": "الفريق",
+    "settings": "الإعدادات",
+    "newTask": "+ مهمة جديدة"
   },
+  "comingSoon": "هذه الصفحة قادمة قريبًا.",
   "dashboard": {
     "title": "لوحة التحكم",
     "stats": {
@@ -50,6 +54,7 @@
       "due": "مستحقة {{when}}",
       "completed": "اكتملت {{when}}"
     },
-    "noTasks": "لا توجد مهام"
+    "noTasks": "لا توجد مهام",
+    "count": "{{count}} مهام"
   }
 }

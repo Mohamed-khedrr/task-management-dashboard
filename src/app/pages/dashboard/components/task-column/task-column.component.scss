@@ -1,15 +1,20 @@
+:host {
+  display: block;
+}
+
 .column {
+  height: 100%;
   padding: var(--space-4);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-bar);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-block-end: var(--space-2);
+  padding-block-end: 10px;
   border-block-end: 2px solid var(--color-border);
 }
 
@@ -22,7 +27,7 @@
 }
 
 .count {
-  padding: 2px var(--space-2);
+  padding: 1px var(--space-2) 2px;
   border-radius: var(--radius-full);
   background: var(--color-border);
   font-size: var(--font-size-2xs);
@@ -33,6 +38,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-height: 400px;
   margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;

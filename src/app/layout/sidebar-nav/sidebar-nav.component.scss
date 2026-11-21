@@ -15,6 +15,7 @@
   padding-inline: var(--space-4);
   border-radius: var(--radius-sm);
   color: var(--color-text);
+  font-size: var(--font-size-label);
   text-decoration: none;
   transition: background-color var(--transition-fast);
 
@@ -31,4 +32,9 @@
 
 .nav-icon {
   font-size: var(--font-size-sm);
+}
+
+.new-task {
+  display: block;
+  margin-block-start: 52px;
 }
