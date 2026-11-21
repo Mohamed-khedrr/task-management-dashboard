@@ -16,6 +16,18 @@
   padding: var(--space-8);
 }
 
+.board,
+.board-skeleton {
+  display: block;
+  margin-block-start: var(--space-8);
+}
+
+.board-skeleton {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
 @media (width < 1024px) {
   .stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));

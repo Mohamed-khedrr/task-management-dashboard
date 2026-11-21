@@ -33,5 +33,23 @@
     },
     "error": "تعذّر تحميل المهام.",
     "retry": "إعادة المحاولة"
+  },
+  "task": {
+    "status": {
+      "todo": "للتنفيذ",
+      "in_progress": "قيد التنفيذ",
+      "done": "مكتملة"
+    },
+    "priority": {
+      "high": "عالية",
+      "medium": "متوسطة",
+      "low": "منخفضة"
+    },
+    "timing": {
+      "overdue": "متأخرة بمقدار {{duration}}",
+      "due": "مستحقة {{when}}",
+      "completed": "اكتملت {{when}}"
+    },
+    "noTasks": "لا توجد مهام"
   }
 }

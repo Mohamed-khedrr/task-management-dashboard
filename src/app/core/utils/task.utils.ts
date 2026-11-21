@@ -1,4 +1,12 @@
-import { Task, TaskStats } from '../models/task.model';
+import {
+  Task,
+  TASK_PRIORITIES,
+  TaskStats,
+  TaskTiming,
+  TaskColumn,
+  TASK_STATUSES,
+  TaskStatus,
+} from '../models/task.model';
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -58,4 +66,43 @@ export function computeTaskStats(tasks: Task[], today: Date) {
   }
 
   return stats;
+}
+
+export function getTaskTiming(task: Task, today: Date): TaskTiming {
+  const todayIso = toIsoDate(today);
+  if (task.status === 'done') {
+    const completedOn = task.completedAt ? toIsoDate(new Date(task.completedAt)) : todayIso;
+    return { kind: 'completed', days: daysBetween(completedOn, todayIso) };
+  }
+
+  const daysLeft = daysBetween(todayIso, task.dueDate);
+  if (daysLeft < 0) {
+    return { kind: 'overdue', days: -daysLeft };
+  }
+  return { kind: 'due', days: daysLeft };
+}
+
+export function sortTasks(tasks: Task[], today: Date) {
+  return [...tasks].sort((a, b) => {
+    const aOverdue = isTaskOverdue(a, today);
+    const bOverdue = isTaskOverdue(b, today);
+    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1;
+    if (a.priority !== b.priority)
+      return TASK_PRIORITIES.indexOf(a.priority) - TASK_PRIORITIES.indexOf(b.priority);
+
+    return a.dueDate.localeCompare(b.dueDate);
+  });
+}
+
+export function groupByStatus(tasks: Task[], today: Date): TaskColumn[] {
+  const tasksByStatus: Record<TaskStatus, Task[]> = { todo: [], in_progress: [], done: [] };
+
+  for (const task of tasks) {
+    tasksByStatus[task.status].push(task);
+  }
+
+  return TASK_STATUSES.map((status) => ({
+    status,
+    tasks: sortTasks(tasksByStatus[status], today),
+  }));
 }

@@ -1,0 +1,116 @@
+:host {
+  --hover-border: var(--color-primary);
+
+  display: block;
+}
+
+:host(.in_progress) {
+  --hover-border: var(--color-in-progress);
+}
+
+:host(.done) {
+  --hover-border: var(--color-success);
+}
+
+:host(.overdue) {
+  --hover-border: var(--color-danger);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:hover {
+    border-color: var(--hover-border);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+:host(.overdue) .card {
+  border-inline-start: 4px solid var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+.priority {
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &.high {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+  }
+
+  &.medium {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+  }
+
+  &.low {
+    background: var(--color-warning-bg);
+    color: var(--color-success);
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.description {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.timing {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  list-style: none;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-block-start: var(--space-2);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+}

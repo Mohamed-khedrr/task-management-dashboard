@@ -36,3 +36,15 @@ export interface TaskStats {
   overdue: number;
   overdueSinceToday: number;
 }
+
+export interface TaskColumn {
+  status: TaskStatus;
+  tasks: Task[];
+}
+
+export type TaskTimingKind = 'overdue' | 'due' | 'completed';
+
+export interface TaskTiming {
+  kind: TaskTimingKind;
+  days: number;
+}

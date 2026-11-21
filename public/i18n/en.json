@@ -33,5 +33,23 @@
     },
     "error": "Couldn't load tasks.",
     "retry": "Try again"
+  },
+  "task": {
+    "status": {
+      "todo": "To Do",
+      "in_progress": "In Progress",
+      "done": "Done"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "timing": {
+      "overdue": "Overdue by {{duration}}",
+      "due": "Due {{when}}",
+      "completed": "Completed {{when}}"
+    },
+    "noTasks": "No tasks"
   }
 }

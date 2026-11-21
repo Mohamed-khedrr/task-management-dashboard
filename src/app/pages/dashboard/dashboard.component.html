@@ -22,4 +22,14 @@
       }
     }
   </section>
+
+  @if (isLoading()) {
+    <div class="board-skeleton" aria-busy="true">
+      @for (column of [0, 1, 2, 3]; track column) {
+        <p-skeleton height="480px" borderRadius="8px" />
+      }
+    </div>
+  } @else {
+    <app-task-board class="board" [columns]="columns()" />
+  }
 }

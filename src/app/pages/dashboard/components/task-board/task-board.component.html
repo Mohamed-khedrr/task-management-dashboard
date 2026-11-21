@@ -1,0 +1,5 @@
+<section class="board" [attr.aria-label]="'dashboard.board' | transloco">
+  @for (column of columns(); track column.status) {
+    <app-task-column [status]="column.status" [tasks]="column.tasks" />
+  }
+</section>
