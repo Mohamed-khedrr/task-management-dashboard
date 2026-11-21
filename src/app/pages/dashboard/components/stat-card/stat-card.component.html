@@ -1,0 +1,10 @@
+<article class="card">
+  <h2 class="label">
+    <span aria-hidden="true">{{ card().icon }}</span>
+    {{ card().labelKey | transloco }}
+  </h2>
+  <p class="value">{{ card().value }}</p>
+  <p class="change" [class]="card().tone">
+    {{ card().changeKey | transloco: { count: card().changeCount } }}
+  </p>
+</article>

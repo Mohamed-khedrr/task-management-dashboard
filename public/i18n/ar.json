@@ -17,5 +17,21 @@
     "tasks": "المهام",
     "analytics": "التحليلات",
     "team": "الفريق"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "stats": {
+      "label": "إحصائيات المهام",
+      "total": "إجمالي المهام",
+      "completed": "مكتملة",
+      "inProgress": "قيد التنفيذ",
+      "overdue": "متأخرة",
+      "createdThisWeek": "+{{count}} هذا الأسبوع",
+      "completedToday": "+{{count}} اليوم",
+      "highPriority": "{{count}} عالية الأولوية",
+      "overdueSinceToday": "+{{count}} اليوم"
+    },
+    "error": "تعذّر تحميل المهام.",
+    "retry": "إعادة المحاولة"
   }
 }

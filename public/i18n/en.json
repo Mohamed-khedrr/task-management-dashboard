@@ -17,5 +17,21 @@
     "tasks": "Tasks",
     "analytics": "Analytics",
     "team": "Team"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": {
+      "label": "Task statistics",
+      "total": "Total Tasks",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "overdue": "Overdue",
+      "createdThisWeek": "+{{count}} this week",
+      "completedToday": "+{{count}} today",
+      "highPriority": "{{count}} high priority",
+      "overdueSinceToday": "+{{count}} today"
+    },
+    "error": "Couldn't load tasks.",
+    "retry": "Try again"
   }
 }

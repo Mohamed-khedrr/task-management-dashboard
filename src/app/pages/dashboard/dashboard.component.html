@@ -1,0 +1,25 @@
+<h1 class="visually-hidden">{{ 'dashboard.title' | transloco }}</h1>
+@if (error()) {
+  <div class="error" role="alert">
+    <p-message severity="error">
+      {{ 'dashboard.error' | transloco }}
+    </p-message>
+    <p-button [label]="'dashboard.retry' | transloco" (onClick)="retry()" />
+  </div>
+} @else {
+  <section
+    class="stats"
+    [attr.aria-label]="'dashboard.stats.label' | transloco"
+    [attr.aria-busy]="isLoading()"
+  >
+    @if (isLoading()) {
+      @for (skeleton of [0, 1, 2, 3]; track skeleton) {
+        <p-skeleton height="177px" borderRadius="8px" />
+      }
+    } @else {
+      @for (card of statCards(); track card.labelKey) {
+        <app-stat-card [card]="card" />
+      }
+    }
+  </section>
+}

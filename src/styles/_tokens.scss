@@ -33,6 +33,8 @@
   --font-size-xl: 1.5rem; // 24px
   --font-size-2xl: 2rem; // 32px, stat numbers
 
+  --font-size-stat: 1.75rem; // 28px
+
   // Spacing
   --space-1: 0.25rem; // 4px
   --space-2: 0.5rem; // 8px
@@ -45,7 +47,7 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-full: 999px;
-  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.12);
+  --shadow-card: 0 4px 8px rgb(0 0 0 / 0.12);
 
   // Motion
   --transition-fast: 200ms ease; // hover feedback, matches PrimeNG (focus rings stay instant)

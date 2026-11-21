@@ -1,0 +1,70 @@
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { MessageModule } from 'primeng/message';
+import { StatCardComponent } from './components/stat-card/stat-card.component';
+import { TaskService } from '../../core/services/task.service';
+import { computeTaskStats } from '../../core/utils/task.utils';
+import { StatCard } from '../../core/models/stat-card.model';
+
+@Component({
+  selector: 'app-dashboard',
+  imports: [TranslocoPipe, ButtonModule, MessageModule, SkeletonModule, StatCardComponent],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DashboardComponent {
+  private readonly taskResource = inject(TaskService).tasks;
+  private readonly today = new Date();
+
+  protected readonly isLoading = this.taskResource.isLoading;
+  protected readonly error = this.taskResource.error;
+
+  private readonly tasks = computed(() =>
+    this.taskResource.hasValue() ? this.taskResource.value() : [],
+  );
+
+  protected readonly statCards = computed<StatCard[]>(() => {
+    const stats = computeTaskStats(this.tasks(), this.today);
+    return [
+      {
+        icon: '📊',
+        labelKey: 'dashboard.stats.total',
+        value: stats.total,
+        changeKey: 'dashboard.stats.createdThisWeek',
+        changeCount: stats.createdThisWeek,
+        tone: 'positive',
+      },
+      {
+        icon: '✅',
+        labelKey: 'dashboard.stats.completed',
+        value: stats.completed,
+        changeKey: 'dashboard.stats.completedToday',
+        changeCount: stats.completedToday,
+        tone: 'positive',
+      },
+      {
+        icon: '🔄',
+        labelKey: 'dashboard.stats.inProgress',
+        value: stats.inProgress,
+        changeKey: 'dashboard.stats.highPriority',
+        changeCount: stats.inProgressHighPriority,
+        tone: 'neutral',
+      },
+      {
+        icon: '⚠️',
+        labelKey: 'dashboard.stats.overdue',
+        value: stats.overdue,
+        changeKey: 'dashboard.stats.overdueSinceToday',
+        changeCount: stats.overdueSinceToday,
+        tone: 'negative',
+      },
+    ];
+  });
+
+  protected retry() {
+    this.taskResource.reload();
+  }
+}
