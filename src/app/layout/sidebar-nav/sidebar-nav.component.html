@@ -1,0 +1,18 @@
+<nav [attr.aria-label]="'nav.label' | transloco">
+  <ul class="nav-list">
+    @for (link of navLinks; track link.path) {
+      <li>
+        <a
+          class="nav-link"
+          [routerLink]="link.path"
+          routerLinkActive="nav-link--active"
+          ariaCurrentWhenActive="page"
+          (click)="linkSelected.emit()"
+        >
+          <span class="nav-icon" aria-hidden="true">{{ link.icon }}</span>
+          {{ link.labelKey | transloco }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

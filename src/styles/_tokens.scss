@@ -10,6 +10,7 @@
   --color-bg: #f5f7fa;
   --color-surface: #ffffff;
   --color-border: #e0e0e0;
+  --color-surface-hover: #f2f2f2;
 
   // Text
   --color-text: #212121;
@@ -26,6 +27,7 @@
   --font-family: 'Inter', system-ui, sans-serif;
   --font-size-xs: 0.6875rem; // 11px
   --font-size-sm: 0.75rem; // 12px
+  --font-size-input: 0.775rem; // 12.4px, Figma "Semantic/Input"
   --font-size-md: 0.875rem; // 14px
   --font-size-lg: 1.125rem; // 18px
   --font-size-xl: 1.5rem; // 24px
@@ -44,4 +46,12 @@
   --radius-md: 8px;
   --radius-full: 999px;
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.12);
+
+  // Motion
+  --transition-fast: 200ms ease; // hover feedback, matches PrimeNG (focus rings stay instant)
+  --transition-base: 250ms ease; // panels, dialogs, content appearing
+
+  // Layout
+  --header-height: 64px;
+  --sidebar-width: 240px;
 }

@@ -18,6 +18,18 @@ const AppPreset = definePreset(Aura, {
       900: '#0d47a1',
       950: '#0a3880',
     },
+    formField: {
+      paddingX: '1rem',
+      paddingY: '0.5rem',
+      borderRadius: '4px',
+      focusRing: {
+        width: '2px',
+        style: 'solid',
+        color: '{primary.color}',
+        offset: '-1px',
+        shadow: 'none',
+      },
+    },
     colorScheme: {
       light: {
         primary: {
@@ -32,6 +44,13 @@ const AppPreset = definePreset(Aura, {
         },
         content: {
           borderColor: '#e0e0e0',
+        },
+        formField: {
+          color: '#212121',
+          borderColor: '#e0e0e0',
+          hoverBorderColor: '#757575',
+          placeholderColor: '#757575',
+          shadow: 'none',
         },
       },
     },

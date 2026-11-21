@@ -1,0 +1,28 @@
+<header class="header">
+  <button
+    type="button"
+    class="menu-button"
+    [attr.aria-label]="'layout.openMenu' | transloco"
+    (click)="menuToggle.emit()"
+  >
+    <span aria-hidden="true">☰</span>
+  </button>
+
+  <a routerLink="/dashboard" class="brand">
+    <span class="brand-logo" aria-hidden="true">{{ appInfo.logo }}</span>
+    <span class="brand-title">{{ appInfo.nameKey | transloco }}</span>
+  </a>
+  <div class="search">
+    <input
+      pInputText
+      type="search"
+      class="search-input"
+      [attr.aria-label]="'header.search' | transloco"
+      [placeholder]="'header.searchPlaceholder' | transloco"
+    />
+  </div>
+
+  <div class="actions">
+    <span class="avatar" role="img" [attr.aria-label]="'header.profile' | transloco">MK</span>
+  </div>
+</header>

@@ -14,7 +14,55 @@ body {
   background: var(--color-bg);
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+select,
+summary,
+label[for],
+[role='button'] {
+  cursor: pointer;
+}
+
+// Separate rule: browsers that don't know this pseudo-element would drop a whole selector list
+input[type='search']::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: -1px;
+}
+
+// Respect users who turn off animations
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

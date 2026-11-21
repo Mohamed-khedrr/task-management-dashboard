@@ -1,3 +1,21 @@
 {
-  "test": "Test"
+  "app": {
+    "title": "Task Manager"
+  },
+  "layout": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "header": {
+    "search": "Search tasks",
+    "searchPlaceholder": "🔍 Search tasks...",
+    "profile": "User profile"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "analytics": "Analytics",
+    "team": "Team"
+  }
 }
