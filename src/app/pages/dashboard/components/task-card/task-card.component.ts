@@ -4,10 +4,11 @@ import { getTaskTiming, isTaskOverdue } from '../../../../core/utils/task.utils'
 import { Task } from '../../../../core/models/task.model';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { TruncateDirective } from '../../../../shared/directives/truncate.directive';
 
 @Component({
   selector: 'app-task-card',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, TruncateDirective],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

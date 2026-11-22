@@ -3,8 +3,11 @@
     {{ 'task.priority.' + task().priority | transloco }}
   </span>
 
-  <h3 class="title">{{ task().title }}</h3>
-  <p class="description">{{ task().description }}</p>
+  <h3 class="title" appTruncate="2">{{ task().title }}</h3>
+
+  @if (task().description.trim()) {
+    <p class="description" appTruncate="2">{{ task().description }}</p>
+  }
 
   <div class="meta">
     <p class="timing">

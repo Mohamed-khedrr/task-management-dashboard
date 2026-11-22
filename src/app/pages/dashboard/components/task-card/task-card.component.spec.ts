@@ -56,4 +56,10 @@ describe('TaskCardComponent', () => {
 
     expect(card.classList).toContain('in_progress');
   });
+
+  it('hides the description when it is empty', async () => {
+    const card = await render({ ...baseTask, description: '   ' });
+
+    expect(card.querySelector('.description')).toBeNull();
+  });
 });
