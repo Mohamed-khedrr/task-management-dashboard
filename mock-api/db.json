@@ -73,7 +73,7 @@
       "id": "task-016",
       "title": "Review client feedback",
       "description": "Analyze customer feedback from user testing sessions",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "medium",
       "dueDate": "2026-11-17",
       "isOverdue": true,
@@ -85,7 +85,7 @@
       },
       "tags": ["Research"],
       "createdAt": "2026-11-05T21:37:10.197Z",
-      "updatedAt": "2026-11-19T21:37:10.197Z"
+      "updatedAt": "2026-11-22T03:48:17.129Z"
     },
     {
       "id": "task-004",

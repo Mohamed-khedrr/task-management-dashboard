@@ -1,4 +1,11 @@
-<section class="column" [attr.aria-labelledby]="'column-' + status()">
+<section
+  class="column"
+  [attr.aria-labelledby]="'column-' + status()"
+  cdkDropList
+  cdkDropListSortingDisabled
+  [cdkDropListData]="status()"
+  (cdkDropListDropped)="onDrop($event)"
+>
   <header class="header">
     <h2 class="title" [id]="'column-' + status()">{{ 'task.status.' + status() | transloco }}</h2>
     <span class="count" aria-hidden="true">{{ tasks().length }}</span>
@@ -8,7 +15,12 @@
   @if (tasks().length > 0) {
     <ul class="list">
       @for (task of tasks(); track task.id) {
-        <li animate.enter="card-enter">
+        <li
+          animate.enter="card-enter"
+          cdkDrag
+          [cdkDragData]="task"
+          [cdkDragStartDelay]="{ touch: 200, mouse: 0 }"
+        >
           <app-task-card [task]="task" />
         </li>
       }

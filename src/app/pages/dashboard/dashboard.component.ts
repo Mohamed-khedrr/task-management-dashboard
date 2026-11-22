@@ -7,6 +7,7 @@ import { StatCardComponent } from './components/stat-card/stat-card.component';
 import { TaskService } from '../../core/services/task.service';
 import { computeTaskStats, groupByStatus } from '../../core/utils/task.utils';
 import { StatCard } from '../../core/models/stat-card.model';
+import { TaskMove } from '../../core/models/task.model';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
 
 @Component({
@@ -24,13 +25,13 @@ import { TaskBoardComponent } from './components/task-board/task-board.component
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
-  private readonly taskResource = inject(TaskService).tasks;
+  private readonly taskService = inject(TaskService);
+  private readonly taskResource = this.taskService.tasks;
   private readonly today = new Date();
 
   protected readonly isLoading = this.taskResource.isLoading;
   protected readonly error = this.taskResource.error;
 
-  // value() throws while the resource is in its error state
   private readonly tasks = computed(() =>
     this.taskResource.hasValue() ? this.taskResource.value() : [],
   );
@@ -78,5 +79,9 @@ export class DashboardComponent {
 
   protected retry() {
     this.taskResource.reload();
+  }
+
+  protected moveTask(move: TaskMove) {
+    this.taskService.updateStatus(move.taskId, move.status);
   }
 }

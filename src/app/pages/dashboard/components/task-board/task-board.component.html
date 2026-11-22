@@ -1,5 +1,14 @@
-<section class="board" [attr.aria-label]="'dashboard.board' | transloco">
+<section
+  class="board"
+  cdkDropListGroup
+  cdkScrollable
+  [attr.aria-label]="'dashboard.board' | transloco"
+>
   @for (column of columns(); track column.status) {
-    <app-task-column [status]="column.status" [tasks]="column.tasks" />
+    <app-task-column
+      [status]="column.status"
+      [tasks]="column.tasks"
+      (taskMoved)="taskMoved.emit($event)"
+    />
   }
 </section>

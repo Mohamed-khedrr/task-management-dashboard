@@ -75,3 +75,8 @@ textarea:focus-visible {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+body:has(.cdk-drag-preview),
+body:has(.cdk-drag-preview) * {
+  cursor: grabbing !important;
+}

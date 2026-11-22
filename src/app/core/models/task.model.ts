@@ -48,3 +48,8 @@ export interface TaskTiming {
   kind: TaskTimingKind;
   days: number;
 }
+
+export interface TaskMove {
+  taskId: string;
+  status: TaskStatus;
+}
