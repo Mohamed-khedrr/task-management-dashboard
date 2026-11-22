@@ -6,6 +6,7 @@ import {
   TaskColumn,
   TASK_STATUSES,
   TaskStatus,
+  TaskFilters,
 } from '../models/task.model';
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -115,4 +116,23 @@ export function groupByStatus(tasks: Task[], today: Date): TaskColumn[] {
     status,
     tasks: sortTasks(tasksByStatus[status], today),
   }));
+}
+
+export function filterTasks(tasks: Task[], filters: TaskFilters) {
+  const search = filters.search.trim().toLowerCase();
+
+  return tasks.filter((task) => {
+    if (filters.priority && task.priority !== filters.priority) {
+      return false;
+    }
+    if (filters.assigneeId && task.assignee.id !== filters.assigneeId) {
+      return false;
+    }
+    if (!search) {
+      return true;
+    }
+    return (
+      task.title.toLowerCase().includes(search) || task.description.toLowerCase().includes(search)
+    );
+  });
 }

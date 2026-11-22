@@ -23,11 +23,28 @@
     }
   </section>
 
+  <app-task-toolbar
+    class="toolbar"
+    [(status)]="filters.status"
+    [(priority)]="filters.priority"
+    [(assigneeId)]="filters.assigneeId"
+    [users]="users.value()"
+  />
+
   @if (isLoading()) {
     <div class="board-skeleton" aria-busy="true">
       @for (column of [0, 1, 2]; track column) {
         <p-skeleton height="480px" borderRadius="8px" />
       }
+    </div>
+  } @else if (hasNoMatches()) {
+    <div class="no-matches">
+      <p>{{ 'dashboard.noMatches' | transloco }}</p>
+      <p-button
+        [label]="'dashboard.clearFilters' | transloco"
+        severity="secondary"
+        (onClick)="filters.reset()"
+      />
     </div>
   } @else {
     <app-task-board class="board" [columns]="columns()" (taskMoved)="moveTask($event)" />

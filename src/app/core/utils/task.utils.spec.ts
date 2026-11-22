@@ -1,6 +1,7 @@
 import { Task } from '../models/task.model';
 import {
   computeTaskStats,
+  filterTasks,
   getTaskTiming,
   groupByStatus,
   isTaskOverdue,
@@ -131,5 +132,36 @@ describe('groupByStatus', () => {
       [],
       ['a'],
     ]);
+  });
+});
+
+describe('filterTasks', () => {
+  const noFilters = { search: '', priority: null, assigneeId: null };
+  const tasks = [
+    makeTask({ id: 'a', title: 'Design homepage', priority: 'high' }),
+    makeTask({ id: 'b', description: 'Fix the LOGIN bug', priority: 'low' }),
+    makeTask({
+      id: 'c',
+      assignee: { id: 'user-2', name: 'John Doe', avatar: 'JD', email: 'john@example.com' },
+    }),
+  ];
+  const ids = (result: Task[]) => result.map((task) => task.id);
+
+  it('returns everything when no filter is set', () => {
+    expect(ids(filterTasks(tasks, noFilters))).toEqual(['a', 'b', 'c']);
+  });
+
+  it('searches title and description, ignoring case and surrounding spaces', () => {
+    expect(ids(filterTasks(tasks, { ...noFilters, search: ' design ' }))).toEqual(['a']);
+    expect(ids(filterTasks(tasks, { ...noFilters, search: 'login' }))).toEqual(['b']);
+  });
+
+  it('filters by priority and by assignee', () => {
+    expect(ids(filterTasks(tasks, { ...noFilters, priority: 'high' }))).toEqual(['a']);
+    expect(ids(filterTasks(tasks, { ...noFilters, assigneeId: 'user-2' }))).toEqual(['c']);
+  });
+
+  it('combines filters', () => {
+    expect(filterTasks(tasks, { ...noFilters, search: 'design', priority: 'low' })).toEqual([]);
   });
 });

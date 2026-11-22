@@ -53,3 +53,11 @@ export interface TaskMove {
   taskId: string;
   status: TaskStatus;
 }
+
+export type StatusFilter = TaskStatus | 'all';
+
+export interface TaskFilters {
+  search: string;
+  priority: TaskPriority | null;
+  assigneeId: string | null;
+}

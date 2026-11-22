@@ -1,0 +1,61 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-bar);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tab {
+  flex-shrink: 0;
+  height: 32px;
+  padding-inline: var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--font-size-label);
+  font-weight: 500;
+  transition: background-color var(--transition-fast);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+
+  &.active {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.assignee {
+  min-width: 10rem;
+}
+
+@media (width < 600px) {
+  .actions {
+    flex-wrap: wrap;
+    width: 100%;
+
+    p-select {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}

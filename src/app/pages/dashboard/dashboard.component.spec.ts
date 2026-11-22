@@ -5,6 +5,8 @@ import { DashboardComponent } from './dashboard.component';
 import { Task } from '../../core/models/task.model';
 import { ResourceStatus, signal } from '@angular/core';
 import { TaskService } from '../../core/services/task.service';
+import { TaskFiltersService } from '../../core/services/task-filters.service';
+import { UserService } from '../../core/services/user.service';
 import { By } from '@angular/platform-browser';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
 
@@ -51,6 +53,7 @@ describe('DashboardComponent', () => {
             updateStatus,
           },
         },
+        { provide: UserService, useValue: { users: { value: signal([]) } } },
       ],
     }).compileComponents();
 
@@ -120,5 +123,31 @@ describe('DashboardComponent', () => {
 
     expect(element.querySelectorAll('.stats p-skeleton').length).toBe(0);
     expect(statValues()).toEqual(['3', '2', '0', '0']);
+  });
+
+  it('shows only the selected status column', async () => {
+    TestBed.inject(TaskFiltersService).status.set('done');
+    await fixture.whenStable();
+
+    const columns = element.querySelectorAll('app-task-column');
+    expect(columns.length).toBe(1);
+    expect(columns[0].querySelectorAll('app-task-card').length).toBe(2);
+  });
+
+  it('keeps counting every task in the stats while filtering', async () => {
+    TestBed.inject(TaskFiltersService).status.set('done');
+    await fixture.whenStable();
+
+    expect(statValues()[0]).toBe('3');
+  });
+
+  it('offers to clear filters when nothing matches, and clearing shows the board again', async () => {
+    TestBed.inject(TaskFiltersService).assigneeId.set('nobody');
+    await fixture.whenStable();
+
+    element.querySelector<HTMLButtonElement>('.no-matches button')!.click();
+    await fixture.whenStable();
+
+    expect(element.querySelectorAll('app-task-card').length).toBe(3);
   });
 });

@@ -17,6 +17,8 @@
       pInputText
       type="search"
       class="search-input"
+      [value]="filters.search()"
+      (input)="onSearch($event)"
       [attr.aria-label]="'header.search' | transloco"
       [placeholder]="'header.searchPlaceholder' | transloco"
     />

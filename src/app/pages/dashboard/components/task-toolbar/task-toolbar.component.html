@@ -1,0 +1,51 @@
+<div class="toolbar" role="group" [attr.aria-label]="'dashboard.filters.label' | transloco">
+  <div class="tabs" role="group" [attr.aria-label]="'dashboard.filters.status' | transloco">
+    @for (tab of statusTabs; track tab) {
+      <button
+        type="button"
+        class="tab"
+        [class.active]="tab === status()"
+        [attr.aria-pressed]="tab === status()"
+        (click)="status.set(tab)"
+      >
+        {{ (tab === 'all' ? 'dashboard.filters.all' : 'task.status.' + tab) | transloco }}
+      </button>
+    }
+  </div>
+
+  <div class="actions">
+    <p-select
+      size="small"
+      [options]="priorities"
+      [(ngModel)]="priority"
+      [placeholder]="'dashboard.filters.priority' | transloco"
+      [ariaLabel]="'dashboard.filters.priority' | transloco"
+      showClear
+    >
+      <ng-template #selectedItem let-option>{{
+        'task.priority.' + option | transloco
+      }}</ng-template>
+      <ng-template #item let-option>{{ 'task.priority.' + option | transloco }}</ng-template>
+    </p-select>
+
+    <p-select
+      class="assignee"
+      size="small"
+      [options]="users()"
+      optionLabel="name"
+      optionValue="id"
+      [(ngModel)]="assigneeId"
+      [placeholder]="'dashboard.filters.assignee' | transloco"
+      [ariaLabel]="'dashboard.filters.assignee' | transloco"
+      showClear
+      filter
+      filterBy="name"
+      resetFilterOnHide
+      [filterPlaceholder]="'dashboard.filters.searchAssignee' | transloco"
+      [ariaFilterLabel]="'dashboard.filters.searchAssignee' | transloco"
+      [emptyFilterMessage]="'dashboard.filters.noAssignees' | transloco"
+    />
+
+    <p-button size="small" [label]="'nav.newTask' | transloco" (onClick)="newTask.emit()" />
+  </div>
+</div>

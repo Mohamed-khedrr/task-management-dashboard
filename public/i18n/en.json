@@ -37,7 +37,18 @@
     },
     "error": "Couldn't load tasks.",
     "retry": "Try again",
-    "board": "Task board"
+    "board": "Task board",
+    "filters": {
+      "label": "Filter tasks",
+      "status": "Status",
+      "all": "All",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "searchAssignee": "Search",
+      "noAssignees": "No assignees found"
+    },
+    "noMatches": "No tasks match your filters.",
+    "clearFilters": "Clear filters"
   },
   "task": {
     "status": {

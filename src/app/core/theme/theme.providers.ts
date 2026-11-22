@@ -22,6 +22,12 @@ const AppPreset = definePreset(Aura, {
       paddingX: '1rem',
       paddingY: '0.5rem',
       borderRadius: '4px',
+      // Figma's toolbar controls: 32px tall with 13px text
+      sm: {
+        fontSize: 'var(--font-size-label)',
+        paddingX: '1rem',
+        paddingY: '0.4375rem',
+      },
       focusRing: {
         width: '2px',
         style: 'solid',

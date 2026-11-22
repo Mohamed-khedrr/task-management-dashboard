@@ -5,7 +5,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { MessageModule } from 'primeng/message';
 import { StatCardComponent } from './components/stat-card/stat-card.component';
 import { TaskService } from '../../core/services/task.service';
-import { computeTaskStats, groupByStatus } from '../../core/utils/task.utils';
+import { computeTaskStats, filterTasks, groupByStatus } from '../../core/utils/task.utils';
+import { TaskFiltersService } from '../../core/services/task-filters.service';
+import { UserService } from '../../core/services/user.service';
+import { TaskToolbarComponent } from './components/task-toolbar/task-toolbar.component';
 import { StatCard } from '../../core/models/stat-card.model';
 import { TaskMove } from '../../core/models/task.model';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
@@ -19,6 +22,7 @@ import { TaskBoardComponent } from './components/task-board/task-board.component
     SkeletonModule,
     StatCardComponent,
     TaskBoardComponent,
+    TaskToolbarComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -29,6 +33,9 @@ export class DashboardComponent implements OnInit {
   private readonly taskResource = this.taskService.tasks;
   private readonly today = new Date();
 
+  protected readonly filters = inject(TaskFiltersService);
+  protected readonly users = inject(UserService).users;
+
   protected readonly isLoading = computed(() => this.taskResource.status() === 'loading');
   protected readonly error = this.taskResource.error;
 
@@ -36,7 +43,24 @@ export class DashboardComponent implements OnInit {
     this.taskResource.hasValue() ? this.taskResource.value() : [],
   );
 
-  protected readonly columns = computed(() => groupByStatus(this.tasks(), this.today));
+  private readonly visibleTasks = computed(() =>
+    filterTasks(this.tasks(), this.filters.criteria()),
+  );
+
+  // Kept separate from the status pick so switching tabs doesn't re-sort every column
+  private readonly allColumns = computed(() => groupByStatus(this.visibleTasks(), this.today));
+
+  protected readonly columns = computed(() => {
+    const status = this.filters.status();
+    if (status === 'all') {
+      return this.allColumns();
+    }
+    return this.allColumns().filter((column) => column.status === status);
+  });
+
+  protected readonly hasNoMatches = computed(
+    () => this.filters.hasActiveFilters() && !this.columns().some((column) => column.tasks.length),
+  );
 
   protected readonly statCards = computed<StatCard[]>(() => {
     const stats = computeTaskStats(this.tasks(), this.today);
