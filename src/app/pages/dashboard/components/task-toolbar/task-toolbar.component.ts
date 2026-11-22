@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
+import { Tooltip } from 'primeng/tooltip';
 import {
   Assignee,
   StatusFilter,
@@ -13,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-task-toolbar',
-  imports: [FormsModule, TranslocoPipe, ButtonModule, SelectModule],
+  imports: [FormsModule, TranslocoPipe, ButtonModule, SelectModule, Tooltip],
   templateUrl: './task-toolbar.component.html',
   styleUrl: './task-toolbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -48,6 +48,14 @@
   min-width: 10rem;
 }
 
+.user-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (width < 600px) {
   .actions {
     flex-wrap: wrap;

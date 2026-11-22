@@ -44,7 +44,15 @@
       [filterPlaceholder]="'dashboard.filters.searchAssignee' | transloco"
       [ariaFilterLabel]="'dashboard.filters.searchAssignee' | transloco"
       [emptyFilterMessage]="'dashboard.filters.noAssignees' | transloco"
-    />
+      [panelStyle]="{ maxWidth: '16rem' }"
+    >
+      <ng-template #selectedItem let-user>
+        <span class="user-name" [pTooltip]="user.name" showOnEllipsis>{{ user.name }}</span>
+      </ng-template>
+      <ng-template #item let-user>
+        <span class="user-name" [pTooltip]="user.name" showOnEllipsis>{{ user.name }}</span>
+      </ng-template>
+    </p-select>
 
     <p-button size="small" [label]="'nav.newTask' | transloco" (onClick)="newTask.emit()" />
   </div>
