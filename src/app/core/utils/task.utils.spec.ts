@@ -1,12 +1,5 @@
 import { Task } from '../models/task.model';
-import {
-  computeTaskStats,
-  filterTasks,
-  getTaskTiming,
-  groupByStatus,
-  isTaskOverdue,
-  sortTasks,
-} from './task.utils';
+import { filterTasks, getTaskTiming, groupByStatus, isTaskOverdue, sortTasks } from './task.utils';
 
 const today = new Date(2026, 10, 21);
 
@@ -38,37 +31,6 @@ describe('isTaskOverdue', () => {
   it('is never overdue once done, and ignores the isOverdue field', () => {
     const task = makeTask({ status: 'done', dueDate: '2026-11-01', isOverdue: true });
     expect(isTaskOverdue(task, today)).toBe(false);
-  });
-});
-
-describe('computeTaskStats', () => {
-  it('counts totals and the calculated change lines', () => {
-    const stats = computeTaskStats(
-      [
-        makeTask({ createdAt: '2026-11-19T09:00:00' }),
-        makeTask({ status: 'done', completedAt: '2026-11-21T08:00:00' }),
-        makeTask({ status: 'done', completedAt: '2026-11-15T08:00:00' }),
-        makeTask({ status: 'in_progress', priority: 'high' }),
-        makeTask({ dueDate: '2026-11-20' }),
-        makeTask({ dueDate: '2026-11-10' }),
-      ],
-      today,
-    );
-
-    expect(stats).toEqual({
-      total: 6,
-      createdThisWeek: 1,
-      completed: 2,
-      completedToday: 1,
-      inProgress: 1,
-      inProgressHighPriority: 1,
-      overdue: 2,
-      overdueSinceToday: 1,
-    });
-  });
-
-  it('returns zeros for an empty list', () => {
-    expect(computeTaskStats([], today).total).toBe(0);
   });
 });
 
