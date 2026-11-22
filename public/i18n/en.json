@@ -50,6 +50,13 @@
     "noMatches": "No tasks match your filters.",
     "clearFilters": "Clear filters"
   },
+  "analytics": {
+    "title": "Analytics",
+    "byStatus": "Tasks by status",
+    "byPriority": "Tasks by priority",
+    "byPerson": "Tasks per person",
+    "noTasks": "There are no tasks to analyze yet."
+  },
   "task": {
     "status": {
       "todo": "To Do",

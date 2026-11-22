@@ -17,7 +17,11 @@ export const routes: Routes = [
       },
       { path: 'tasks', loadComponent: loadComingSoon, data: { titleKey: 'nav.tasks' } },
       { path: 'calendar', loadComponent: loadComingSoon, data: { titleKey: 'nav.calendar' } },
-      { path: 'analytics', loadComponent: loadComingSoon, data: { titleKey: 'nav.analytics' } },
+      {
+        path: 'analytics',
+        loadComponent: () =>
+          import('./pages/analytics/analytics.component').then((m) => m.AnalyticsComponent),
+      },
       { path: 'team', loadComponent: loadComingSoon, data: { titleKey: 'nav.team' } },
       {
         path: 'settings',
