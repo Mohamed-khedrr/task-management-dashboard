@@ -1,0 +1,28 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+}
+
+// Fills the card, and grows wider than it (scrolling) when there are many columns
+.chart {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}

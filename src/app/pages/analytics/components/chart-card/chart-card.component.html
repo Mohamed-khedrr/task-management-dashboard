@@ -1,0 +1,15 @@
+<section class="card" [attr.aria-labelledby]="titleId()">
+  <h2 class="title" [id]="titleId()">{{ title() }}</h2>
+
+  <div class="chart">
+    <p-chart
+      [type]="kind()"
+      [data]="data()"
+      [options]="options()"
+      [ariaLabel]="summary()"
+      height="100%"
+    />
+  </div>
+
+  <app-chart-legend [items]="items()" />
+</section>

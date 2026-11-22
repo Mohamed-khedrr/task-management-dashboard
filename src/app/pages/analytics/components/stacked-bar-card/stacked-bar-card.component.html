@@ -1,0 +1,18 @@
+<section class="card" aria-labelledby="stacked-bar-title">
+  <h2 class="title" id="stacked-bar-title">{{ title() }}</h2>
+
+  <!-- Focusable so keyboard users can scroll it with the arrow keys -->
+  <div class="scroll" tabindex="0" aria-labelledby="stacked-bar-title">
+    <div class="chart" [style.min-width.px]="chartWidth()">
+      <p-chart
+        type="bar"
+        [data]="data()"
+        [options]="options()"
+        [ariaLabel]="summary()"
+        height="100%"
+      />
+    </div>
+  </div>
+
+  <app-chart-legend [items]="legend()" />
+</section>
