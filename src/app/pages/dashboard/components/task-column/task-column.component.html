@@ -15,13 +15,20 @@
   @if (tasks().length > 0) {
     <ul class="list">
       @for (task of tasks(); track task.id) {
+        @let deleting = deletingIds().includes(task.id);
         <li
           animate.enter="card-enter"
           cdkDrag
+          [cdkDragDisabled]="deleting"
           [cdkDragData]="task"
           [cdkDragStartDelay]="{ touch: 200, mouse: 0 }"
         >
-          <app-task-card [task]="task" (opened)="taskOpened.emit(task)" />
+          <app-task-card
+            [task]="task"
+            [deleting]="deleting"
+            (editRequested)="taskEdit.emit(task)"
+            (deleteRequested)="taskDelete.emit(task)"
+          />
         </li>
       }
     </ul>

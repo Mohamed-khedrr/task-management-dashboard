@@ -68,6 +68,12 @@ export class TaskService {
       .pipe(tap((saved) => this.replaceTask(saved)));
   }
 
+  deleteTask(taskId: string) {
+    return this.http
+      .delete<void>(`${this.url}/${taskId}`, { context: withRetry() })
+      .pipe(tap(() => this.tasks.update((list) => list.filter((t) => t.id !== taskId))));
+  }
+
   private applyChanges(task: Task, changes: Partial<TaskDraft>): Task {
     const now = new Date().toISOString();
     const status = changes.status ?? task.status;

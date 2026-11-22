@@ -8,8 +8,12 @@
     <app-task-column
       [status]="column.status"
       [tasks]="column.tasks"
+      [deletingIds]="deletingIds()"
       (taskMoved)="moveTask($event)"
-      (taskOpened)="taskDialog.openEdit($event)"
+      (taskEdit)="taskDialog.openEdit($event)"
+      (taskDelete)="confirmDelete($event)"
     />
   }
 </section>
+
+<p-confirmdialog />

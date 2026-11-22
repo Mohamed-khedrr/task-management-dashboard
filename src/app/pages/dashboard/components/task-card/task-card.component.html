@@ -1,11 +1,31 @@
 <article class="card">
-  <span class="priority" [class]="task().priority">
-    {{ 'task.priority.' + task().priority | transloco }}
-  </span>
+  <div class="top">
+    <span class="priority" [class]="task().priority">
+      {{ 'task.priority.' + task().priority | transloco }}
+    </span>
 
-  <h3 class="title" appTruncate="2">
-    <button type="button" class="open" (click)="opened.emit()">{{ task().title }}</button>
-  </h3>
+    @if (deleting()) {
+      <p-progress-spinner
+        class="spinner"
+        strokeWidth="6"
+        [ariaLabel]="'taskActions.deleting' | transloco"
+      />
+    } @else {
+      <button
+        type="button"
+        class="menu-button"
+        aria-haspopup="menu"
+        [attr.aria-label]="'taskActions.label' | transloco: { title: task().title }"
+        (click)="menu.toggle($event)"
+      >
+        <span aria-hidden="true">⋮</span>
+      </button>
+    }
+  </div>
+
+  <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
+
+  <h3 class="title" appTruncate="2">{{ task().title }}</h3>
 
   @if (task().description.trim()) {
     <p class="description" appTruncate="2">{{ task().description }}</p>

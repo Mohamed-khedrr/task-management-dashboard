@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Confirmation, ConfirmationService } from 'primeng/api';
+import { of } from 'rxjs';
 import { getTranslocoModule } from '../../../../../testing/transloco-testing';
 import { Task } from '../../../../core/models/task.model';
 import { TaskDialogService } from '../../../../core/services/task-dialog.service';
@@ -10,6 +12,7 @@ import { TaskBoardComponent } from './task-board.component';
 describe('TaskBoardComponent', () => {
   let fixture: ComponentFixture<TaskBoardComponent>;
   const updateStatus = vi.fn();
+  const deleteTask = vi.fn();
 
   const task: Task = {
     id: 'task-1',
@@ -28,10 +31,12 @@ describe('TaskBoardComponent', () => {
 
   beforeEach(async () => {
     updateStatus.mockClear();
+    deleteTask.mockReset();
+    deleteTask.mockReturnValue(of(undefined));
 
     await TestBed.configureTestingModule({
       imports: [TaskBoardComponent, getTranslocoModule()],
-      providers: [{ provide: TaskService, useValue: { updateStatus } }],
+      providers: [{ provide: TaskService, useValue: { updateStatus, deleteTask } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TaskBoardComponent);
@@ -45,12 +50,28 @@ describe('TaskBoardComponent', () => {
     expect(updateStatus).toHaveBeenCalledWith('task-1', 'done');
   });
 
-  it('opens the task form when a card is opened', () => {
+  it('opens the task form when Edit is chosen', () => {
     const taskDialog = TestBed.inject(TaskDialogService);
 
-    column().componentInstance.taskOpened.emit(task);
+    column().componentInstance.taskEdit.emit(task);
 
     expect(taskDialog.isOpen()).toBe(true);
     expect(taskDialog.task()).toBe(task);
+  });
+
+  it('deletes a task only when the confirmation is accepted', () => {
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    let options: Confirmation | undefined;
+    vi.spyOn(confirmation, 'confirm').mockImplementation((value) => {
+      options = value;
+      return confirmation;
+    });
+
+    column().componentInstance.taskDelete.emit(task);
+    options!.reject?.();
+    expect(deleteTask).not.toHaveBeenCalled();
+
+    options!.accept?.();
+    expect(deleteTask).toHaveBeenCalledWith('task-1');
   });
 });

@@ -90,6 +90,26 @@ describe('TaskService', () => {
     expect(service.tasks.value()[0].status).toBe('todo');
   });
 
+  it('removes a task only after the server deletes it', () => {
+    service.deleteTask('task-1').subscribe();
+
+    expect(service.tasks.value()).toEqual([task]);
+
+    const request = http.expectOne(`${url}/task-1`);
+    expect(request.request.method).toBe('DELETE');
+    request.flush({});
+
+    expect(service.tasks.value()).toEqual([]);
+  });
+
+  it('keeps the task when deleting fails', () => {
+    service.deleteTask('task-1').subscribe({ error: vi.fn() });
+
+    http.expectOne(`${url}/task-1`).flush('Not found', { status: 404, statusText: 'Not Found' });
+
+    expect(service.tasks.value()).toEqual([task]);
+  });
+
   describe('from the task form', () => {
     const draft: TaskDraft = {
       title: 'Plan the sprint',

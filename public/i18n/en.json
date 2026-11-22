@@ -93,6 +93,15 @@
       "tagTooLong": "Keep each tag to {{max}} characters or fewer."
     }
   },
+  "taskActions": {
+    "label": "Actions for {{title}}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleteTitle": "Delete task?",
+    "deleteMessage": "\"{{title}}\" will be deleted. This can't be undone.",
+    "deleting": "Deleting task"
+  },
   "errors": {
     "title": "Something went wrong",
     "network": "Can't reach the server. Check your connection and try again.",

@@ -13,9 +13,11 @@ import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 export class TaskColumnComponent {
   readonly status = input.required<TaskStatus>();
   readonly tasks = input.required<Task[]>();
+  readonly deletingIds = input<string[]>([]);
 
   readonly taskMoved = output<TaskMove>();
-  readonly taskOpened = output<Task>();
+  readonly taskEdit = output<Task>();
+  readonly taskDelete = output<Task>();
 
   onDrop(e: CdkDragDrop<TaskStatus, TaskStatus, Task>) {
     if (e.previousContainer === e.container) return;

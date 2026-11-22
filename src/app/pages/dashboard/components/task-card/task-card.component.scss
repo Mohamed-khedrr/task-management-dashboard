@@ -2,15 +2,12 @@
   --hover-color: var(--color-primary);
   --hover-shadow: color-mix(in srgb, var(--hover-color) 25%, transparent);
 
-  position: relative;
   display: block;
 }
 
-// Focus ring on the whole card, because the stretched button covers it
-:host:has(.open:focus-visible) {
-  border-radius: var(--radius-md);
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+:host(.deleting) {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 :host(.in_progress) {
@@ -48,8 +45,42 @@
   background: var(--color-danger-bg);
 }
 
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.menu-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-inline-end: calc(var(--space-2) * -1);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  transition: background-color var(--transition-fast);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+// PrimeNG centers the spinner with margin: 0 auto; these margins put it where the ⋮ button sits
+.spinner {
+  width: 16px;
+  height: 16px;
+  margin: 6px;
+  margin-inline-end: -2px;
+}
+
 .priority {
-  align-self: flex-start;
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
@@ -76,27 +107,6 @@
   margin: var(--space-2) 0 0;
   font-size: var(--font-size-md);
   font-weight: 700;
-}
-
-.open {
-  padding: 0;
-  border: none;
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-  cursor: pointer;
-
-  // Makes the whole card clickable while keeping one focusable button
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  &:focus-visible {
-    outline: none;
-  }
 }
 
 .description {

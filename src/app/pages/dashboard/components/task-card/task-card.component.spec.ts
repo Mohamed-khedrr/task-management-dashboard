@@ -63,13 +63,25 @@ describe('TaskCardComponent', () => {
     expect(card.querySelector('.description')).toBeNull();
   });
 
-  it('opens the task when its title is clicked', async () => {
+  it('offers Edit and Delete from the actions menu', async () => {
     const card = await render(baseTask);
-    const opened = vi.fn();
-    fixture.componentInstance.opened.subscribe(opened);
+    const edit = vi.fn();
+    const remove = vi.fn();
+    fixture.componentInstance.editRequested.subscribe(edit);
+    fixture.componentInstance.deleteRequested.subscribe(remove);
 
-    card.querySelector<HTMLButtonElement>('.open')!.click();
+    card.querySelector<HTMLButtonElement>('.menu-button')!.click();
+    await fixture.whenStable();
 
-    expect(opened).toHaveBeenCalled();
+    const items = Array.from(document.querySelectorAll<HTMLElement>('.p-menu-item-link'));
+    items.find((item) => item.textContent?.includes('Edit'))!.click();
+    expect(edit).toHaveBeenCalled();
+
+    card.querySelector<HTMLButtonElement>('.menu-button')!.click();
+    await fixture.whenStable();
+    Array.from(document.querySelectorAll<HTMLElement>('.p-menu-item-link'))
+      .find((item) => item.textContent?.includes('Delete'))!
+      .click();
+    expect(remove).toHaveBeenCalled();
   });
 });
