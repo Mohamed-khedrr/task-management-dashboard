@@ -2,25 +2,8 @@ import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslocoService, TranslocoTestingModule } from '@jsverse/transloco';
 
+import { createMemoryStorage } from '../../../testing/memory-storage';
 import { LanguageService } from './language.service';
-
-function createMemoryStorage(): Storage {
-  const data = new Map<string, string>();
-  return {
-    get length() {
-      return data.size;
-    },
-    clear: () => data.clear(),
-    getItem: (k: string) => data.get(k) ?? null,
-    key: (i: number) => [...data.keys()][i] ?? null,
-    removeItem: (k: string) => {
-      data.delete(k);
-    },
-    setItem: (k: string, v: string) => {
-      data.set(k, String(v));
-    },
-  };
-}
 
 describe('LanguageService', () => {
   let service: LanguageService;
@@ -28,7 +11,6 @@ describe('LanguageService', () => {
   let html: HTMLElement;
 
   beforeEach(() => {
-    // Node 26's built-in localStorage shadows jsdom's and is undefined without --localstorage-file
     vi.stubGlobal('localStorage', createMemoryStorage());
     TestBed.configureTestingModule({
       imports: [

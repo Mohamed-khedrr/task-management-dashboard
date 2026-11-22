@@ -1,0 +1,39 @@
+<h1 class="page-title">{{ 'settings.title' | transloco }}</h1>
+
+<form class="card" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <div class="field">
+    <label for="settings-name">{{ 'settings.name' | transloco }}</label>
+    <input
+      pInputText
+      pSize="small"
+      id="settings-name"
+      autocomplete="name"
+      formControlName="name"
+      [placeholder]="'settings.namePlaceholder' | transloco"
+      [invalid]="showNameError()"
+      [attr.aria-invalid]="showNameError()"
+      [attr.aria-describedby]="showNameError() ? 'settings-name-error' : null"
+    />
+    @if (showNameError()) {
+      <small id="settings-name-error" class="error">
+        {{ 'settings.errors.nameRequired' | transloco }}
+      </small>
+    }
+  </div>
+
+  <div class="field">
+    <span id="settings-language-label" class="label">{{ 'settings.language' | transloco }}</span>
+    <p-selectbutton
+      formControlName="language"
+      [options]="languageOptions"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      ariaLabelledBy="settings-language-label"
+    />
+  </div>
+
+  <div class="actions">
+    <p-button size="small" type="submit" [label]="'settings.save' | transloco" />
+  </div>
+</form>

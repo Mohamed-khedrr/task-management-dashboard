@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.page-title {
+  margin: 0 0 var(--space-6);
+  font-size: var(--font-size-xl);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 32rem;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+
+  input {
+    width: 100%;
+  }
+}
+
+label,
+.label {
+  font-size: var(--font-size-label);
+  font-weight: 500;
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}

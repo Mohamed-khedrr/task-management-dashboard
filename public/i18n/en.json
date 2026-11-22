@@ -102,6 +102,17 @@
     "deleteMessage": "\"{{title}}\" will be deleted. This can't be undone.",
     "deleting": "Deleting task"
   },
+  "settings": {
+    "title": "Settings",
+    "name": "Your name",
+    "namePlaceholder": "First and last name",
+    "language": "Language",
+    "save": "Save",
+    "saved": "Settings saved",
+    "errors": {
+      "nameRequired": "Enter your name."
+    }
+  },
   "errors": {
     "title": "Something went wrong",
     "network": "Can't reach the server. Check your connection and try again.",

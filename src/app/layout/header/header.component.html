@@ -25,6 +25,12 @@
   </div>
 
   <div class="actions">
-    <span class="avatar" role="img" [attr.aria-label]="'header.profile' | transloco">MK</span>
+    <span
+      class="avatar"
+      role="img"
+      [attr.aria-label]="profile.name() || ('header.profile' | transloco)"
+    >
+      {{ profile.initials() || '👤' }}
+    </span>
   </div>
 </header>

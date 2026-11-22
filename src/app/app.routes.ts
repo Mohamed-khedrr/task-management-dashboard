@@ -19,7 +19,11 @@ export const routes: Routes = [
       { path: 'calendar', loadComponent: loadComingSoon, data: { titleKey: 'nav.calendar' } },
       { path: 'analytics', loadComponent: loadComingSoon, data: { titleKey: 'nav.analytics' } },
       { path: 'team', loadComponent: loadComingSoon, data: { titleKey: 'nav.team' } },
-      { path: 'settings', loadComponent: loadComingSoon, data: { titleKey: 'nav.settings' } },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
