@@ -1,37 +1,55 @@
 <h1 class="page-title">{{ 'settings.title' | transloco }}</h1>
 
 <form class="card" [formGroup]="form" (ngSubmit)="save()" novalidate>
-  <div class="field">
-    <label for="settings-name">{{ 'settings.name' | transloco }}</label>
-    <input
-      pInputText
-      pSize="small"
-      id="settings-name"
-      autocomplete="name"
-      formControlName="name"
-      [placeholder]="'settings.namePlaceholder' | transloco"
-      [invalid]="showNameError()"
-      [attr.aria-invalid]="showNameError()"
-      [attr.aria-describedby]="showNameError() ? 'settings-name-error' : null"
-    />
-    @if (showNameError()) {
-      <small id="settings-name-error" class="error">
-        {{ 'settings.errors.nameRequired' | transloco }}
-      </small>
-    }
-  </div>
+  <section class="section" aria-labelledby="settings-profile-title">
+    <div class="section-info">
+      <h2 id="settings-profile-title" class="section-title">
+        {{ 'settings.profileTitle' | transloco }}
+      </h2>
+      <p class="hint">{{ 'settings.profileHint' | transloco }}</p>
+    </div>
 
-  <div class="field">
-    <span id="settings-language-label" class="label">{{ 'settings.language' | transloco }}</span>
-    <p-selectbutton
-      formControlName="language"
-      [options]="languageOptions"
-      optionLabel="label"
-      optionValue="value"
-      [allowEmpty]="false"
-      ariaLabelledBy="settings-language-label"
-    />
-  </div>
+    <div class="field">
+      <label for="settings-name">{{ 'settings.name' | transloco }}</label>
+      <input
+        pInputText
+        pSize="small"
+        id="settings-name"
+        autocomplete="name"
+        formControlName="name"
+        [placeholder]="'settings.namePlaceholder' | transloco"
+        [invalid]="showNameError()"
+        [attr.aria-invalid]="showNameError()"
+        [attr.aria-describedby]="showNameError() ? 'settings-name-error' : null"
+      />
+      @if (showNameError()) {
+        <small id="settings-name-error" class="error">
+          {{ 'settings.errors.nameRequired' | transloco }}
+        </small>
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="settings-language-title">
+    <div class="section-info">
+      <h2 id="settings-language-title" class="section-title">
+        {{ 'settings.language' | transloco }}
+      </h2>
+      <p class="hint">{{ 'settings.languageHint' | transloco }}</p>
+    </div>
+
+    <div class="field">
+      <p-selectbutton
+        size="small"
+        formControlName="language"
+        [options]="languageOptions"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        ariaLabelledBy="settings-language-title"
+      />
+    </div>
+  </section>
 
   <div class="actions">
     <p-button size="small" type="submit" [label]="'settings.save' | transloco" />

@@ -8,14 +8,35 @@
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  max-width: 32rem;
-  padding: var(--space-6);
+  max-width: 48rem;
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
+}
+
+// Description on one side, the control on the other, like most settings pages
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: var(--space-6);
+  padding: var(--space-6);
+
+  & + & {
+    border-block-start: 1px solid var(--color-border);
+  }
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.hint {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
 .field {
@@ -29,8 +50,7 @@
   }
 }
 
-label,
-.label {
+label {
   font-size: var(--font-size-label);
   font-weight: 500;
 }
@@ -43,4 +63,13 @@ label,
 .actions {
   display: flex;
   justify-content: flex-end;
+  padding: var(--space-4) var(--space-6);
+  border-block-start: 1px solid var(--color-border);
+}
+
+@media (width < 600px) {
+  .section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
 }

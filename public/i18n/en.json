@@ -104,9 +104,12 @@
   },
   "settings": {
     "title": "Settings",
+    "profileTitle": "Profile",
+    "profileHint": "Your initials from this name appear in the header.",
     "name": "Your name",
     "namePlaceholder": "First and last name",
     "language": "Language",
+    "languageHint": "Choose the app language. Arabic also switches the layout to right to left.",
     "save": "Save",
     "saved": "Settings saved",
     "errors": {

@@ -2,7 +2,6 @@ import { computed, Injectable, isDevMode, signal } from '@angular/core';
 
 const STORAGE_KEY = 'profileName';
 
-// "Mohamed Ali Khedr" → "MK": the first letter of the first and the last name
 function getInitials(name: string) {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) {
