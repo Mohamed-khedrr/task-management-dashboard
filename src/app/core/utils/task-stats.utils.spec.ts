@@ -1,5 +1,5 @@
 import { Task } from '../models/task.model';
-import { computeTaskStats } from './task-stats.utils';
+import { computeTaskStats, countByAssigneeAndStatus, countByField } from './task-stats.utils';
 
 const today = new Date(2026, 10, 21);
 
@@ -47,5 +47,48 @@ describe('computeTaskStats', () => {
 
   it('returns zeros for an empty list', () => {
     expect(computeTaskStats([], today).total).toBe(0);
+  });
+});
+
+describe('countByField', () => {
+  const tasks = [
+    makeTask({ status: 'todo', priority: 'high' }),
+    makeTask({ status: 'done', priority: 'high' }),
+    makeTask({ status: 'done', priority: 'low' }),
+  ];
+
+  it('counts tasks per status', () => {
+    const counts = countByField(tasks, 'status');
+
+    expect(counts.get('todo')).toBe(1);
+    expect(counts.get('done')).toBe(2);
+    expect(counts.get('in_progress')).toBeUndefined();
+  });
+
+  it('counts tasks per priority', () => {
+    const counts = countByField(tasks, 'priority');
+
+    expect(counts.get('high')).toBe(2);
+    expect(counts.get('low')).toBe(1);
+  });
+});
+
+describe('countByAssigneeAndStatus', () => {
+  const john = { id: 'user-2', name: 'John Doe', avatar: 'JD', email: 'john@example.com' };
+
+  it("counts each person's tasks per status", () => {
+    const counts = countByAssigneeAndStatus([
+      makeTask({ status: 'todo' }),
+      makeTask({ status: 'done' }),
+      makeTask({ status: 'done' }),
+      makeTask({ status: 'in_progress', assignee: john }),
+    ]);
+
+    expect(counts.get('user-1')).toEqual({ todo: 1, in_progress: 0, done: 2 });
+    expect(counts.get('user-2')).toEqual({ todo: 0, in_progress: 1, done: 0 });
+  });
+
+  it('leaves out people with no tasks', () => {
+    expect(countByAssigneeAndStatus([makeTask()]).has('user-3')).toBe(false);
   });
 });

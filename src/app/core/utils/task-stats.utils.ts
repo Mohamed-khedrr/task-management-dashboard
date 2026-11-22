@@ -1,4 +1,4 @@
-import { Task, TaskStats } from '../models/task.model';
+import { Task, TaskStats, TaskStatus } from '../models/task.model';
 import { daysBetween, toIsoDate } from './date.utils';
 import { isOverdueOn } from './task.utils';
 
@@ -44,4 +44,26 @@ export function computeTaskStats(tasks: Task[], today: Date) {
   }
 
   return stats;
+}
+
+export function countByField<K extends 'status' | 'priority'>(tasks: Task[], field: K) {
+  const counts = new Map<Task[K], number>();
+  for (const task of tasks) {
+    counts.set(task[field], (counts.get(task[field]) ?? 0) + 1);
+  }
+  return counts;
+}
+
+// assignee id → how many of their tasks are in each status
+export function countByAssigneeAndStatus(tasks: Task[]) {
+  const counts = new Map<string, Record<TaskStatus, number>>();
+  for (const task of tasks) {
+    let row = counts.get(task.assignee.id);
+    if (!row) {
+      row = { todo: 0, in_progress: 0, done: 0 };
+      counts.set(task.assignee.id, row);
+    }
+    row[task.status]++;
+  }
+  return counts;
 }
