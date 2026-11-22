@@ -1,3 +1,5 @@
+export type ChartKind = 'doughnut' | 'bar' | 'horizontalBar';
+
 export interface ChartItem {
   label: string;
   count: number;

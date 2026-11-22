@@ -67,3 +67,15 @@ export function countByAssigneeAndStatus(tasks: Task[]) {
   }
   return counts;
 }
+
+// assignee id → how many of their open tasks are overdue
+export function countOverdueByAssignee(tasks: Task[], today: Date) {
+  const todayIso = toIsoDate(today);
+  const counts = new Map<string, number>();
+  for (const task of tasks) {
+    if (isOverdueOn(task, todayIso)) {
+      counts.set(task.assignee.id, (counts.get(task.assignee.id) ?? 0) + 1);
+    }
+  }
+  return counts;
+}

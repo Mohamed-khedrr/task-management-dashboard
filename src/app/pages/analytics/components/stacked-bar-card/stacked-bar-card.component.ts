@@ -5,6 +5,7 @@ import { ChartItem, ChartSeries } from '../../../../core/models/chart.model';
 import { ChartLegendComponent } from '../chart-legend/chart-legend.component';
 
 const COLUMN_WIDTH = 96;
+let nextId = 0;
 
 @Component({
   selector: 'app-stacked-bar-card',
@@ -19,6 +20,8 @@ export class StackedBarCardComponent {
   readonly series = input.required<ChartSeries[]>();
   readonly rtl = input(false);
 
+  protected readonly titleId = `stacked-bar-card-${nextId++}`;
+
   protected readonly data = computed<ChartData>(() => ({
     labels: this.labels(),
     datasets: this.series().map((series) => ({
@@ -26,6 +29,8 @@ export class StackedBarCardComponent {
       data: series.values,
       backgroundColor: series.color,
       borderWidth: 0,
+      borderRadius: 4,
+      maxBarThickness: 48,
     })),
   }));
 

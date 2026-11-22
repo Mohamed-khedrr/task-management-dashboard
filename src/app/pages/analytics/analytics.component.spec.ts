@@ -73,13 +73,32 @@ describe('AnalyticsComponent', () => {
 
   it('counts the tasks per status and per priority', () => {
     expect(legendCounts(0)).toEqual(['1', '0', '2']);
-    expect(legendCounts(1)).toEqual(['2', '0', '1']);
+    expect(legendCounts(2)).toEqual(['2', '0', '1']);
   });
 
   it('includes people with no tasks in the per-person chart', () => {
-    const canvas = element.querySelectorAll('canvas')[2];
+    const canvas = element.querySelectorAll('canvas')[4];
 
     expect(canvas.getAttribute('aria-label')).toContain('John Doe: 0 To Do, 0 In Progress, 0 Done');
+  });
+
+  it('splits the open tasks into on track and overdue', async () => {
+    tasks.set([
+      makeTask({ dueDate: '2099-01-01' }),
+      makeTask({ dueDate: '2020-01-01' }),
+      makeTask({ dueDate: '2020-01-01', status: 'done' }),
+    ]);
+    await fixture.whenStable();
+
+    expect(legendCounts(1)).toEqual(['1', '1']);
+  });
+
+  it('lists the people with the most overdue tasks first', async () => {
+    tasks.set([makeTask({ dueDate: '2020-01-01', assignee: john })]);
+    await fixture.whenStable();
+
+    const canvas = element.querySelectorAll('canvas')[3];
+    expect(canvas.getAttribute('aria-label')).toBe('John Doe: 1 Overdue; Sarah Smith: 0 Overdue');
   });
 
   it('shows skeletons during the first load', async () => {

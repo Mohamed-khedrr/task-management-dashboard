@@ -54,7 +54,11 @@
     "title": "Analytics",
     "byStatus": "Tasks by status",
     "byPriority": "Tasks by priority",
+    "timeliness": "Overdue vs on track",
+    "overdueByPerson": "Overdue tasks per person",
     "byPerson": "Tasks per person",
+    "overdue": "Overdue",
+    "onTrack": "On track",
     "noTasks": "There are no tasks to analyze yet."
   },
   "task": {

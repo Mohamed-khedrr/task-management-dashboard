@@ -24,6 +24,13 @@
   --color-warning-bg: #fff3e0;
   --color-in-progress: #ff6f00; // Figma "Blaze Orange", task card hover
 
+  // Charts: softer shades of the status colors, so large areas aren't harsh
+  --chart-blue: #64b5f6;
+  --chart-orange: #ffb74d;
+  --chart-green: #81c784;
+  --chart-red: #e57373;
+  --chart-gray: #b0bec5;
+
   // Typography
   --font-family: 'Inter', system-ui, sans-serif;
   --font-size-2xs: 0.625rem; // 10px

@@ -1,9 +1,9 @@
-<section class="card" [attr.aria-labelledby]="titleId()">
-  <h2 class="title" [id]="titleId()">{{ title() }}</h2>
+<section class="card" [attr.aria-labelledby]="titleId">
+  <h2 class="title" [id]="titleId">{{ title() }}</h2>
 
-  <div class="chart">
+  <div class="chart" [class.short]="isHorizontal()">
     <p-chart
-      [type]="kind()"
+      [type]="chartType()"
       [data]="data()"
       [options]="options()"
       [ariaLabel]="summary()"

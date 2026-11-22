@@ -9,6 +9,7 @@
   <div class="charts" aria-busy="true">
     <p-skeleton height="400px" borderRadius="8px" />
     <p-skeleton height="400px" borderRadius="8px" />
+    <p-skeleton class="wide" height="320px" borderRadius="8px" />
     <p-skeleton class="wide" height="480px" borderRadius="8px" />
   </div>
 } @else if (hasNoTasks()) {
@@ -23,8 +24,22 @@
     />
     <app-chart-card
       kind="bar"
+      [title]="'analytics.timeliness' | transloco"
+      [items]="timelinessItems()"
+      [rtl]="isRtl()"
+    />
+    <app-chart-card
+      class="wide"
+      kind="horizontalBar"
       [title]="'analytics.byPriority' | transloco"
       [items]="priorityItems()"
+      [rtl]="isRtl()"
+    />
+    <app-stacked-bar-card
+      class="wide"
+      [title]="'analytics.overdueByPerson' | transloco"
+      [labels]="overdueLabels()"
+      [series]="overdueSeries()"
       [rtl]="isRtl()"
     />
     <app-stacked-bar-card

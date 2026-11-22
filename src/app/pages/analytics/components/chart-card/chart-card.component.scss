@@ -18,4 +18,9 @@
 .chart {
   position: relative;
   height: 280px;
+
+  // A few horizontal bars don't need the full height
+  &.short {
+    height: 200px;
+  }
 }

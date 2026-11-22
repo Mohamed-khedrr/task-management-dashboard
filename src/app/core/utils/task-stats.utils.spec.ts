@@ -1,5 +1,10 @@
 import { Task } from '../models/task.model';
-import { computeTaskStats, countByAssigneeAndStatus, countByField } from './task-stats.utils';
+import {
+  computeTaskStats,
+  countByAssigneeAndStatus,
+  countByField,
+  countOverdueByAssignee,
+} from './task-stats.utils';
 
 const today = new Date(2026, 10, 21);
 
@@ -90,5 +95,24 @@ describe('countByAssigneeAndStatus', () => {
 
   it('leaves out people with no tasks', () => {
     expect(countByAssigneeAndStatus([makeTask()]).has('user-3')).toBe(false);
+  });
+});
+
+describe('countOverdueByAssignee', () => {
+  const john = { id: 'user-2', name: 'John Doe', avatar: 'JD', email: 'john@example.com' };
+
+  it('counts only overdue open tasks per person', () => {
+    const counts = countOverdueByAssignee(
+      [
+        makeTask({ dueDate: '2026-11-20' }),
+        makeTask({ dueDate: '2026-11-10' }),
+        makeTask({ dueDate: '2026-11-10', status: 'done' }),
+        makeTask({ dueDate: '2026-11-30', assignee: john }),
+      ],
+      today,
+    );
+
+    expect(counts.get('user-1')).toBe(2);
+    expect(counts.has('user-2')).toBe(false);
   });
 });
