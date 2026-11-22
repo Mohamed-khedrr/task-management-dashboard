@@ -6,10 +6,11 @@ import { APP_INFO } from '../../core/config/app-info';
 import { LanguageService } from '../../core/i18n/language.service';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarNavComponent } from '../sidebar-nav/sidebar-nav.component';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [HeaderComponent, SidebarNavComponent, Drawer, RouterOutlet, TranslocoPipe],
+  imports: [HeaderComponent, SidebarNavComponent, Drawer, RouterOutlet, TranslocoPipe, Toast],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,5 +23,9 @@ export class MainLayoutComponent {
 
   protected readonly drawerPosition = computed(() =>
     this.language.activeLang() === 'ar' ? 'right' : 'left',
+  );
+
+  protected readonly toastPosition = computed(() =>
+    this.language.activeLang() === 'ar' ? 'top-left' : 'top-right',
   );
 }

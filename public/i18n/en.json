@@ -36,7 +36,8 @@
       "overdueSinceToday": "+{{count}} today"
     },
     "error": "Couldn't load tasks.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "board": "Task board"
   },
   "task": {
     "status": {
@@ -56,5 +57,14 @@
     },
     "noTasks": "No tasks",
     "count": "{{count}} tasks"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "network": "Can't reach the server. Check your connection and try again.",
+    "forbidden": "You don't have permission to do this.",
+    "notFound": "This item no longer exists.",
+    "tryAgain": "The server is busy. Please try again in a moment.",
+    "server": "The server had a problem. Please try again in a moment.",
+    "unknown": "The request failed. Please try again."
   }
 }

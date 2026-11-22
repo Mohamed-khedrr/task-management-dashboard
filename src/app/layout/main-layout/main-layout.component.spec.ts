@@ -1,3 +1,4 @@
+import { MessageService } from 'primeng/api';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -26,6 +27,7 @@ describe('MainLayoutComponent', () => {
       providers: [
         provideRouter([{ path: '**', children: [] }]),
         { provide: LanguageService, useValue: { activeLang } },
+        MessageService,
       ],
     }).compileComponents();
 

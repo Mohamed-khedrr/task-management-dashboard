@@ -2,6 +2,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Task, TaskStatus } from '../models/task.model';
+import { withRetry } from '../interceptors/retry-interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -9,18 +10,32 @@ import { Task, TaskStatus } from '../models/task.model';
 export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/tasks`;
-  readonly tasks = httpResource<Task[]>(() => `${environment.apiUrl}/tasks`, { defaultValue: [] });
+
+  readonly tasks = httpResource<Task[]>(
+    () => ({
+      url: this.url,
+      context: withRetry(),
+    }),
+    { defaultValue: [] },
+  );
 
   updateTask(updatedTask: Task) {
-    const prevTasks = this.tasks.value();
-    this.tasks.update((tasks) => tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
+    const prevTask = this.tasks.value()?.find((t) => t.id === updatedTask.id);
 
-    this.http.put<Task>(`${this.url}/${updatedTask.id}`, updatedTask).subscribe({
-      error: () => {
-        this.tasks.set(prevTasks);
-        // Handle Toast to show err message
-      },
-    });
+    if (!prevTask) return;
+    this.replaceTask(updatedTask);
+
+    this.http
+      .put<Task>(`${this.url}/${updatedTask.id}`, updatedTask, {
+        context: withRetry(),
+      })
+      .subscribe({
+        error: () => this.replaceTask(prevTask),
+      });
+  }
+
+  private replaceTask(task: Task): void {
+    this.tasks.update((list) => (list ?? []).map((t) => (t.id === task.id ? task : t)));
   }
 
   updateStatus(taskId: string, status: TaskStatus) {

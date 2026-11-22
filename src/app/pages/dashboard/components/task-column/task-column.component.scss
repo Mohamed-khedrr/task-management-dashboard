@@ -8,6 +8,9 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-bar);
+  outline: 2px dashed transparent;
+  outline-offset: -2px;
+  transition: outline-color var(--transition-fast);
 }
 
 .header {
@@ -44,13 +47,6 @@
   list-style: none;
 }
 
-.empty {
-  margin: var(--space-4) 0 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  text-align: center;
-}
-
 .card-enter {
   animation: card-enter var(--transition-base);
 }
@@ -74,6 +70,5 @@
 }
 
 .column.cdk-drop-list-dragging {
-  background: var(--color-surface-hover);
-  transition: background-color var(--transition-fast);
+  outline-color: var(--color-primary);
 }

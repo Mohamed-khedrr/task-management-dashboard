@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -24,12 +24,12 @@ import { TaskBoardComponent } from './components/task-board/task-board.component
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly taskService = inject(TaskService);
   private readonly taskResource = this.taskService.tasks;
   private readonly today = new Date();
 
-  protected readonly isLoading = this.taskResource.isLoading;
+  protected readonly isLoading = computed(() => this.taskResource.status() === 'loading');
   protected readonly error = this.taskResource.error;
 
   private readonly tasks = computed(() =>
@@ -76,6 +76,10 @@ export class DashboardComponent {
       },
     ];
   });
+
+  ngOnInit(): void {
+    this.taskResource.reload();
+  }
 
   protected retry() {
     this.taskResource.reload();

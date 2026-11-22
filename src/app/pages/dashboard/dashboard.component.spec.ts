@@ -3,8 +3,10 @@ import { getTranslocoModule } from '../../../testing/transloco-testing';
 
 import { DashboardComponent } from './dashboard.component';
 import { Task } from '../../core/models/task.model';
-import { signal } from '@angular/core';
+import { ResourceStatus, signal } from '@angular/core';
 import { TaskService } from '../../core/services/task.service';
+import { By } from '@angular/platform-browser';
+import { TaskBoardComponent } from './components/task-board/task-board.component';
 
 let nextId = 1;
 
@@ -26,16 +28,18 @@ describe('DashboardComponent', () => {
   let element: HTMLElement;
 
   const tasks = signal<Task[]>([]);
-  const isLoading = signal(false);
+  const status = signal<ResourceStatus>('resolved');
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
+  const updateStatus = vi.fn();
 
   beforeEach(async () => {
     tasks.set([makeTask('todo'), makeTask('done'), makeTask('done')]);
 
-    isLoading.set(false);
+    status.set('resolved');
     error.set(undefined);
     reload.mockClear();
+    updateStatus.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, getTranslocoModule()],
@@ -43,7 +47,8 @@ describe('DashboardComponent', () => {
         {
           provide: TaskService,
           useValue: {
-            tasks: { value: tasks, isLoading, error, hasValue: () => !error(), reload },
+            tasks: { value: tasks, status, error, hasValue: () => !error(), reload },
+            updateStatus,
           },
         },
       ],
@@ -71,7 +76,7 @@ describe('DashboardComponent', () => {
   });
 
   it('shows skeletons instead of the cards while loading', async () => {
-    isLoading.set(true);
+    status.set('loading');
     await fixture.whenStable();
 
     expect(element.querySelectorAll('.stats p-skeleton').length).toBe(4);
@@ -83,6 +88,7 @@ describe('DashboardComponent', () => {
     await fixture.whenStable();
 
     expect(statValues()).toEqual([]);
+    reload.mockClear();
     element.querySelector<HTMLButtonElement>('.error button')!.click();
 
     expect(reload).toHaveBeenCalledOnce();
@@ -94,5 +100,25 @@ describe('DashboardComponent', () => {
     );
 
     expect(cardsPerColumn).toEqual([1, 0, 2]);
+  });
+
+  it('saves the new status when a card is moved to another column', () => {
+    const board = fixture.debugElement.query(By.directive(TaskBoardComponent));
+
+    board.componentInstance.taskMoved.emit({ taskId: 'task-1', status: 'done' });
+
+    expect(updateStatus).toHaveBeenCalledWith('task-1', 'done');
+  });
+
+  it('refreshes the tasks when the page opens', () => {
+    expect(reload).toHaveBeenCalledOnce();
+  });
+
+  it('keeps showing the cards while refreshing', async () => {
+    status.set('reloading');
+    await fixture.whenStable();
+
+    expect(element.querySelectorAll('.stats p-skeleton').length).toBe(0);
+    expect(statValues()).toEqual(['3', '2', '0', '0']);
   });
 });
