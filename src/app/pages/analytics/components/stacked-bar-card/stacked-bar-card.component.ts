@@ -7,6 +7,10 @@ import { ChartLegendComponent } from '../chart-legend/chart-legend.component';
 const COLUMN_WIDTH = 96;
 let nextId = 0;
 
+/**
+ * Stacked columns, one per label (a person), with one layer per series (a status).
+ * Scrolls sideways when there are too many columns to fit.
+ */
 @Component({
   selector: 'app-stacked-bar-card',
   imports: [ChartModule, ChartLegendComponent],

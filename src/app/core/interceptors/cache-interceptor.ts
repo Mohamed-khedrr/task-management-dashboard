@@ -3,6 +3,11 @@ import { inject } from '@angular/core';
 import { RequestCacheService } from '../services/request-cache.service';
 import { of, tap } from 'rxjs';
 
+/**
+ * Serves repeated GET requests from {@link RequestCacheService} for a few minutes.
+ * Any other method changes data on the server, so it clears the whole cache first:
+ * the next GET always gets fresh data.
+ */
 export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
   const cache = inject(RequestCacheService);
   if (req.method !== 'GET') {

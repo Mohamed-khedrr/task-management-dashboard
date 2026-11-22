@@ -2,6 +2,7 @@ import { computed, Injectable, isDevMode, signal } from '@angular/core';
 
 const STORAGE_KEY = 'profileName';
 
+/** "Sarah Jane Smith" gives "SS": the first letters of the first and last words. */
 function getInitials(name: string) {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) {

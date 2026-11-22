@@ -4,6 +4,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 
+/** Set on a request that shows its own error, so the interceptor doesn't show a toast too. */
 export const SILENT_ERRORS = new HttpContextToken<boolean>(() => false);
 
 function errorKey(error: HttpErrorResponse): string {
@@ -15,6 +16,10 @@ function errorKey(error: HttpErrorResponse): string {
   return 'errors.unknown';
 }
 
+/**
+ * Shows a translated error toast for any failed request, then rethrows the error
+ * so the caller can still react (stop a loader, roll back a change).
+ */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const messages = inject(MessageService);
   const transloco = inject(TranslocoService);

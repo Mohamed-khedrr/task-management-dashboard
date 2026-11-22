@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-// Validators.required lets "   " through
+/** Like `Validators.required`, but also rejects text that is only spaces. */
 export function requiredText(control: AbstractControl<string>): ValidationErrors | null {
   if (control.value?.trim()) {
     return null;
@@ -8,7 +8,11 @@ export function requiredText(control: AbstractControl<string>): ValidationErrors
   return { required: true };
 }
 
-// Validators.maxLength checks the list length, not the length of each item
+/**
+ * Limits the length of each item in a list control, such as tags.
+ * `Validators.maxLength` would check the number of items instead.
+ * @returns `{ itemTooLong: { max } }` when any item is longer than `max`
+ */
 export function maxItemLength(max: number): ValidatorFn {
   return (control: AbstractControl<string[]>) => {
     const tooLong = control.value.some((item) => item.trim().length > max);

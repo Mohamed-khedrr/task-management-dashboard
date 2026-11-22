@@ -2,6 +2,11 @@ import { Task, TaskStats, TaskStatus } from '../models/task.model';
 import { daysBetween, toIsoDate } from './date.utils';
 import { isOverdueOn } from './task.utils';
 
+/**
+ * Counts the four stat cards and the change line under each one in a single pass.
+ * The API statistics are fixed numbers, so everything is calculated from the tasks
+ * to stay correct after the user creates, moves or deletes one.
+ */
 export function computeTaskStats(tasks: Task[], today: Date) {
   const todayIso = toIsoDate(today);
   const stats: TaskStats = {
@@ -46,6 +51,7 @@ export function computeTaskStats(tasks: Task[], today: Date) {
   return stats;
 }
 
+/** Counts tasks per status or priority. Values with no tasks are missing from the map. */
 export function countByField<K extends 'status' | 'priority'>(tasks: Task[], field: K) {
   const counts = new Map<Task[K], number>();
   for (const task of tasks) {
@@ -54,7 +60,7 @@ export function countByField<K extends 'status' | 'priority'>(tasks: Task[], fie
   return counts;
 }
 
-// assignee id → how many of their tasks are in each status
+/** Maps each assignee id to how many of their tasks are in each status. */
 export function countByAssigneeAndStatus(tasks: Task[]) {
   const counts = new Map<string, Record<TaskStatus, number>>();
   for (const task of tasks) {
@@ -68,7 +74,7 @@ export function countByAssigneeAndStatus(tasks: Task[]) {
   return counts;
 }
 
-// assignee id → how many of their open tasks are overdue
+/** Maps each assignee id to how many of their open tasks are overdue. */
 export function countOverdueByAssignee(tasks: Task[], today: Date) {
   const todayIso = toIsoDate(today);
   const counts = new Map<string, number>();

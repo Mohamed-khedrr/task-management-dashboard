@@ -14,6 +14,10 @@ const RETRYABLE_METHODS = new Set(['GET', 'PUT', 'DELETE']);
 
 export const RETRY_CONTEXT = new HttpContextToken(() => false);
 
+/**
+ * Opts a request in to automatic retries.
+ * @example http.get(url, { context: withRetry() })
+ */
 export function withRetry() {
   return new HttpContext().set(RETRY_CONTEXT, true);
 }
@@ -25,6 +29,11 @@ function isRetryable(error: unknown) {
   );
 }
 
+/**
+ * Retries opted-in requests on network errors, timeouts, rate limits and 5xx,
+ * waiting 500 ms then 1 s between attempts. POST is never retried, because a
+ * request that reached the server before failing would create the task twice.
+ */
 export const retryInterceptor: HttpInterceptorFn = (req, next) => {
   if (!req.context.get(RETRY_CONTEXT) || !RETRYABLE_METHODS.has(req.method)) return next(req);
 

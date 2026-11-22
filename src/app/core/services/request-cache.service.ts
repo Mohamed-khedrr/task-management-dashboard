@@ -8,6 +8,7 @@ interface CacheEntry {
   expiresAt: number;
 }
 
+/** In-memory store for GET responses, keyed by URL with params, kept for 5 minutes. */
 @Injectable({
   providedIn: 'root',
 })

@@ -14,12 +14,14 @@ export class LanguageService {
   private readonly activeLangState = signal<AppLanguage>('en');
   readonly activeLang = this.activeLangState.asReadonly();
 
+  /** Runs before the app starts, so the first screen is already in the saved language. */
   init(): Promise<unknown> {
     const lang = this.readStoredLang() ?? 'en';
     this.setLanguage(lang);
     return firstValueFrom(this.transloco.load(lang));
   }
 
+  /** Switches the translations, sets `lang` and `dir` on `<html>` for RTL and saves the choice. */
   setLanguage(lang: AppLanguage): void {
     this.transloco.setActiveLang(lang);
     this.activeLangState.set(lang);

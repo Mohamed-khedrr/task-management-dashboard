@@ -6,6 +6,10 @@ import { ChartLegendComponent } from '../chart-legend/chart-legend.component';
 
 let nextId = 0;
 
+/**
+ * A titled card with one Chart.js chart and an HTML legend with counts.
+ * The canvas gets a text summary as its label, so screen readers get the numbers.
+ */
 @Component({
   selector: 'app-chart-card',
   imports: [ChartModule, ChartLegendComponent],

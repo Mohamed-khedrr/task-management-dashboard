@@ -1,6 +1,11 @@
 import { Directive, ElementRef, inject, input, numberAttribute } from '@angular/core';
 import { Tooltip } from 'primeng/tooltip';
 
+/**
+ * Cuts text to a number of lines with an ellipsis and shows the full text in a
+ * tooltip, only when the text is actually cut.
+ * @example <h3 appTruncate="2">{{ task.title }}</h3>
+ */
 @Directive({
   selector: '[appTruncate]',
   hostDirectives: [Tooltip],

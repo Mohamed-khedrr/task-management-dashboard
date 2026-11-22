@@ -20,6 +20,11 @@ export class TaskService {
     { defaultValue: [] },
   );
 
+  /**
+   * Optimistic update: the board changes right away and goes back to the previous
+   * task if the server rejects the change. Used for drag and drop, where waiting
+   * for the server would make the card jump back.
+   */
   updateTask(updatedTask: Task) {
     const prevTask = this.tasks.value()?.find((t) => t.id === updatedTask.id);
 
@@ -46,6 +51,7 @@ export class TaskService {
     this.updateTask(this.applyChanges(task, { status }));
   }
 
+  /** Adds the task to the list only after the server returns it with its id. */
   createTask(draft: TaskDraft) {
     const now = new Date().toISOString();
     const newTask: Omit<Task, 'id'> = {
@@ -74,6 +80,11 @@ export class TaskService {
       .pipe(tap(() => this.tasks.update((list) => list.filter((t) => t.id !== taskId))));
   }
 
+  /**
+   * Merges form changes into a task and keeps the dates consistent:
+   * `updatedAt` is always now, and `completedAt` is set when the task becomes done,
+   * kept while it stays done and cleared when it's reopened.
+   */
   private applyChanges(task: Task, changes: Partial<TaskDraft>): Task {
     const now = new Date().toISOString();
     const status = changes.status ?? task.status;
