@@ -8,9 +8,9 @@ import { TaskService } from '../../core/services/task.service';
 import { computeTaskStats, filterTasks, groupByStatus } from '../../core/utils/task.utils';
 import { TaskFiltersService } from '../../core/services/task-filters.service';
 import { UserService } from '../../core/services/user.service';
+import { TaskDialogService } from '../../core/services/task-dialog.service';
 import { TaskToolbarComponent } from './components/task-toolbar/task-toolbar.component';
 import { StatCard } from '../../core/models/stat-card.model';
-import { TaskMove } from '../../core/models/task.model';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
 
 @Component({
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
   private readonly today = new Date();
 
   protected readonly filters = inject(TaskFiltersService);
+  protected readonly taskDialog = inject(TaskDialogService);
   protected readonly users = inject(UserService).users;
 
   protected readonly isLoading = computed(() => this.taskResource.status() === 'loading');
@@ -107,9 +108,5 @@ export class DashboardComponent implements OnInit {
 
   protected retry() {
     this.taskResource.reload();
-  }
-
-  protected moveTask(move: TaskMove) {
-    this.taskService.updateStatus(move.taskId, move.status);
   }
 }

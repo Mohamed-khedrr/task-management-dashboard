@@ -7,8 +7,6 @@ import { ResourceStatus, signal } from '@angular/core';
 import { TaskService } from '../../core/services/task.service';
 import { TaskFiltersService } from '../../core/services/task-filters.service';
 import { UserService } from '../../core/services/user.service';
-import { By } from '@angular/platform-browser';
-import { TaskBoardComponent } from './components/task-board/task-board.component';
 
 let nextId = 1;
 
@@ -33,7 +31,6 @@ describe('DashboardComponent', () => {
   const status = signal<ResourceStatus>('resolved');
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
-  const updateStatus = vi.fn();
 
   beforeEach(async () => {
     tasks.set([makeTask('todo'), makeTask('done'), makeTask('done')]);
@@ -41,7 +38,6 @@ describe('DashboardComponent', () => {
     status.set('resolved');
     error.set(undefined);
     reload.mockClear();
-    updateStatus.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, getTranslocoModule()],
@@ -50,7 +46,6 @@ describe('DashboardComponent', () => {
           provide: TaskService,
           useValue: {
             tasks: { value: tasks, status, error, hasValue: () => !error(), reload },
-            updateStatus,
           },
         },
         { provide: UserService, useValue: { users: { value: signal([]) } } },
@@ -103,14 +98,6 @@ describe('DashboardComponent', () => {
     );
 
     expect(cardsPerColumn).toEqual([1, 0, 2]);
-  });
-
-  it('saves the new status when a card is moved to another column', () => {
-    const board = fixture.debugElement.query(By.directive(TaskBoardComponent));
-
-    board.componentInstance.taskMoved.emit({ taskId: 'task-1', status: 'done' });
-
-    expect(updateStatus).toHaveBeenCalledWith('task-1', 'done');
   });
 
   it('refreshes the tasks when the page opens', () => {

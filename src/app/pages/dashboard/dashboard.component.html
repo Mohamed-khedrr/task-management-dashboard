@@ -29,6 +29,7 @@
     [(priority)]="filters.priority"
     [(assigneeId)]="filters.assigneeId"
     [users]="users.value()"
+    (newTask)="taskDialog.openCreate()"
   />
 
   @if (isLoading()) {
@@ -47,6 +48,6 @@
       />
     </div>
   } @else {
-    <app-task-board class="board" [columns]="columns()" (taskMoved)="moveTask($event)" />
+    <app-task-board class="board" [columns]="columns()" />
   }
 }

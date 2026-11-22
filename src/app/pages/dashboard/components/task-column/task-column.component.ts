@@ -15,6 +15,7 @@ export class TaskColumnComponent {
   readonly tasks = input.required<Task[]>();
 
   readonly taskMoved = output<TaskMove>();
+  readonly taskOpened = output<Task>();
 
   onDrop(e: CdkDragDrop<TaskStatus, TaskStatus, Task>) {
     if (e.previousContainer === e.container) return;

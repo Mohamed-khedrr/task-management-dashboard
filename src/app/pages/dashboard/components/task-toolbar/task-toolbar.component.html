@@ -22,10 +22,18 @@
       [ariaLabel]="'dashboard.filters.priority' | transloco"
       showClear
     >
-      <ng-template #selectedItem let-option>{{
-        'task.priority.' + option | transloco
-      }}</ng-template>
-      <ng-template #item let-option>{{ 'task.priority.' + option | transloco }}</ng-template>
+      <ng-template #selectedItem let-option>
+        <span class="priority-option">
+          <span aria-hidden="true">{{ priorityIcon(option) }}</span>
+          {{ 'task.priority.' + option | transloco }}
+        </span>
+      </ng-template>
+      <ng-template #item let-option>
+        <span class="priority-option">
+          <span aria-hidden="true">{{ priorityIcon(option) }}</span>
+          {{ 'task.priority.' + option | transloco }}
+        </span>
+      </ng-template>
     </p-select>
 
     <p-select

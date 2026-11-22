@@ -3,7 +3,9 @@
     {{ 'task.priority.' + task().priority | transloco }}
   </span>
 
-  <h3 class="title" appTruncate="2">{{ task().title }}</h3>
+  <h3 class="title" appTruncate="2">
+    <button type="button" class="open" (click)="opened.emit()">{{ task().title }}</button>
+  </h3>
 
   @if (task().description.trim()) {
     <p class="description" appTruncate="2">{{ task().description }}</p>

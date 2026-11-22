@@ -69,6 +69,30 @@
     "noTasks": "No tasks",
     "count": "{{count}} tasks"
   },
+  "taskForm": {
+    "createTitle": "New task",
+    "editTitle": "Edit task",
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due date",
+    "assignee": "Assignee",
+    "chooseAssignee": "Choose a person",
+    "tags": "Tags",
+    "tagsPlaceholder": "Type a tag and press Enter",
+    "create": "Create task",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "errors": {
+      "titleRequired": "Enter a title.",
+      "statusRequired": "Choose a status.",
+      "priorityRequired": "Choose a priority.",
+      "dueDateRequired": "Choose a due date.",
+      "assigneeRequired": "Choose an assignee.",
+      "tagTooLong": "Keep each tag to {{max}} characters or fewer."
+    }
+  },
   "errors": {
     "title": "Something went wrong",
     "network": "Can't reach the server. Check your connection and try again.",

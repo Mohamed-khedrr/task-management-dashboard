@@ -1,0 +1,161 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="field">
+    <label for="task-title">{{ 'taskForm.title' | transloco }}</label>
+    <input
+      pInputText
+      pSize="small"
+      id="task-title"
+      formControlName="title"
+      [invalid]="showError(form.controls.title)"
+      [attr.aria-invalid]="showError(form.controls.title)"
+      [attr.aria-describedby]="showError(form.controls.title) ? 'task-title-error' : null"
+    />
+    @if (showError(form.controls.title)) {
+      <small id="task-title-error" class="error">
+        {{ 'taskForm.errors.titleRequired' | transloco }}
+      </small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="task-description">{{ 'taskForm.description' | transloco }}</label>
+    <textarea
+      pTextarea
+      pSize="small"
+      id="task-description"
+      rows="3"
+      formControlName="description"
+    ></textarea>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="task-status">{{ 'taskForm.status' | transloco }}</label>
+      <p-select
+        size="small"
+        appendTo="body"
+        inputId="task-status"
+        formControlName="status"
+        [options]="statuses"
+        [invalid]="showError(form.controls.status)"
+      >
+        <ng-template #selectedItem let-option>
+          {{ 'task.status.' + option | transloco }}
+        </ng-template>
+        <ng-template #item let-option>{{ 'task.status.' + option | transloco }}</ng-template>
+      </p-select>
+      @if (showError(form.controls.status)) {
+        <small class="error">{{ 'taskForm.errors.statusRequired' | transloco }}</small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="task-priority">{{ 'taskForm.priority' | transloco }}</label>
+      <p-select
+        size="small"
+        appendTo="body"
+        inputId="task-priority"
+        formControlName="priority"
+        [options]="priorities"
+        [invalid]="showError(form.controls.priority)"
+      >
+        <ng-template #selectedItem let-option>
+          <span class="priority-option">
+            <span aria-hidden="true">{{ priorityIcon(option) }}</span>
+            {{ 'task.priority.' + option | transloco }}
+          </span>
+        </ng-template>
+        <ng-template #item let-option>
+          <span class="priority-option">
+            <span aria-hidden="true">{{ priorityIcon(option) }}</span>
+            {{ 'task.priority.' + option | transloco }}
+          </span>
+        </ng-template>
+      </p-select>
+      @if (showError(form.controls.priority)) {
+        <small class="error">{{ 'taskForm.errors.priorityRequired' | transloco }}</small>
+      }
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="task-due-date">{{ 'taskForm.dueDate' | transloco }}</label>
+      <input
+        pInputText
+        pSize="small"
+        id="task-due-date"
+        type="date"
+        formControlName="dueDate"
+        [invalid]="showError(form.controls.dueDate)"
+        [attr.aria-invalid]="showError(form.controls.dueDate)"
+        [attr.aria-describedby]="showError(form.controls.dueDate) ? 'task-due-date-error' : null"
+      />
+      @if (showError(form.controls.dueDate)) {
+        <small id="task-due-date-error" class="error">
+          {{ 'taskForm.errors.dueDateRequired' | transloco }}
+        </small>
+      }
+    </div>
+
+    <div class="field">
+      <label for="task-assignee">{{ 'taskForm.assignee' | transloco }}</label>
+      <p-select
+        size="small"
+        appendTo="body"
+        inputId="task-assignee"
+        formControlName="assigneeId"
+        [options]="users()"
+        optionLabel="name"
+        optionValue="id"
+        filter
+        filterBy="name"
+        [placeholder]="'taskForm.chooseAssignee' | transloco"
+        [invalid]="showError(form.controls.assigneeId)"
+      />
+      @if (showError(form.controls.assigneeId)) {
+        <small class="error">{{ 'taskForm.errors.assigneeRequired' | transloco }}</small>
+      }
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="task-tags">{{ 'taskForm.tags' | transloco }}</label>
+    <!-- Multiple mode without typeahead is PrimeNG's tags input: Enter or a comma adds a tag -->
+    <p-autocomplete
+      size="small"
+      inputId="task-tags"
+      formControlName="tags"
+      [multiple]="true"
+      [typeahead]="false"
+      [addOnBlur]="true"
+      separator=","
+      fluid
+      [placeholder]="'taskForm.tagsPlaceholder' | transloco"
+      [invalid]="showError(form.controls.tags)"
+    />
+    @if (showError(form.controls.tags)) {
+      <small class="error">
+        {{ 'taskForm.errors.tagTooLong' | transloco: { max: tagMaxLength } }}
+      </small>
+    }
+  </div>
+
+  <div class="actions">
+    <p-button
+      size="small"
+      severity="secondary"
+      text
+      [label]="'taskForm.cancel' | transloco"
+      [disabled]="saving()"
+      (onClick)="cancelled.emit()"
+    />
+    <p-button
+      size="small"
+      type="submit"
+      [label]="(task() ? 'taskForm.save' : 'taskForm.create') | transloco"
+      [loading]="saving()"
+      [disabled]="saving()"
+    />
+  </div>
+</form>

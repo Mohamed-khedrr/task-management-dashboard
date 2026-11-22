@@ -1,7 +1,8 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Task, TaskStatus } from '../models/task.model';
+import { tap } from 'rxjs';
+import { Task, TaskDraft, TaskStatus } from '../models/task.model';
 import { withRetry } from '../interceptors/retry-interceptor';
 
 @Injectable({
@@ -42,13 +43,40 @@ export class TaskService {
     const task = this.tasks.value().find((t) => t.id === taskId);
     if (!task) return;
 
+    this.updateTask(this.applyChanges(task, { status }));
+  }
+
+  createTask(draft: TaskDraft) {
     const now = new Date().toISOString();
-    const updatedTask: Task = {
-      ...task,
-      status,
+    const newTask: Omit<Task, 'id'> = {
+      ...draft,
+      createdAt: now,
       updatedAt: now,
-      completedAt: status === 'done' ? now : undefined,
+      completedAt: draft.status === 'done' ? now : undefined,
     };
-    this.updateTask(updatedTask);
+
+    return this.http
+      .post<Task>(this.url, newTask)
+      .pipe(tap((created) => this.tasks.update((list) => [created, ...list])));
+  }
+
+  saveTask(task: Task, changes: TaskDraft) {
+    return this.http
+      .put<Task>(`${this.url}/${task.id}`, this.applyChanges(task, changes), {
+        context: withRetry(),
+      })
+      .pipe(tap((saved) => this.replaceTask(saved)));
+  }
+
+  private applyChanges(task: Task, changes: Partial<TaskDraft>): Task {
+    const now = new Date().toISOString();
+    const status = changes.status ?? task.status;
+
+    let completedAt: string | undefined;
+    if (status === 'done') {
+      completedAt = task.status === 'done' ? task.completedAt : now;
+    }
+
+    return { ...task, ...changes, updatedAt: now, completedAt };
   }
 }

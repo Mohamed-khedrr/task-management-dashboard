@@ -8,7 +8,8 @@
     <app-task-column
       [status]="column.status"
       [tasks]="column.tasks"
-      (taskMoved)="taskMoved.emit($event)"
+      (taskMoved)="moveTask($event)"
+      (taskOpened)="taskDialog.openEdit($event)"
     />
   }
 </section>

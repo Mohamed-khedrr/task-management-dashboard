@@ -297,6 +297,23 @@
       "tags": ["Maintenance"],
       "createdAt": "2026-11-06T21:37:10.197Z",
       "updatedAt": "2026-11-15T21:37:10.197Z"
+    },
+    {
+      "title": "Hello",
+      "description": "Test",
+      "status": "in_progress",
+      "priority": "high",
+      "dueDate": "2026-11-23",
+      "tags": ["test"],
+      "assignee": {
+        "id": "user-001",
+        "name": "John Doe",
+        "avatar": "JD",
+        "email": "john.doe@company.com"
+      },
+      "createdAt": "2026-11-22T20:48:38.249Z",
+      "updatedAt": "2026-11-22T20:48:38.249Z",
+      "id": "w29SKWz"
     }
   ],
   "users": [
@@ -323,6 +340,12 @@
       "name": "Emily Davis",
       "avatar": "ED",
       "email": "emily.davis@company.com"
+    },
+    {
+      "id": "user-005",
+      "name": "Mohamed Khedr",
+      "avatar": "MK",
+      "email": "khedr.test@company.com"
     }
   ],
   "statistics": [

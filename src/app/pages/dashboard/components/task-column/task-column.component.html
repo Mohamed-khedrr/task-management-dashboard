@@ -21,7 +21,7 @@
           [cdkDragData]="task"
           [cdkDragStartDelay]="{ touch: 200, mouse: 0 }"
         >
-          <app-task-card [task]="task" />
+          <app-task-card [task]="task" (opened)="taskOpened.emit(task)" />
         </li>
       }
     </ul>

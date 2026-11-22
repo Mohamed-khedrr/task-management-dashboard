@@ -7,6 +7,7 @@ import { Tooltip } from 'primeng/tooltip';
 import {
   Assignee,
   StatusFilter,
+  PRIORITY_ICONS,
   TASK_PRIORITIES,
   TASK_STATUSES,
   TaskPriority,
@@ -29,4 +30,8 @@ export class TaskToolbarComponent {
 
   protected readonly statusTabs: StatusFilter[] = ['all', ...TASK_STATUSES];
   protected readonly priorities = [...TASK_PRIORITIES];
+
+  protected priorityIcon(priority: TaskPriority) {
+    return PRIORITY_ICONS[priority];
+  }
 }

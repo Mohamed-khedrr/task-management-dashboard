@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import { Task } from '../models/task.model';
+import { Task, TaskDraft } from '../models/task.model';
 import { TaskService } from './task.service';
 
 describe('TaskService', () => {
@@ -88,5 +88,58 @@ describe('TaskService', () => {
       .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 
     expect(service.tasks.value()[0].status).toBe('todo');
+  });
+
+  describe('from the task form', () => {
+    const draft: TaskDraft = {
+      title: 'Plan the sprint',
+      description: '',
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2099-02-01',
+      assignee: task.assignee,
+      tags: ['Planning'],
+    };
+
+    it('adds a created task only after the server replies', () => {
+      service.createTask(draft).subscribe();
+
+      expect(service.tasks.value()).toHaveLength(1);
+
+      const request = http.expectOne(url);
+      expect(request.request.method).toBe('POST');
+      request.flush({ ...request.request.body, id: 'task-2' });
+
+      expect(service.tasks.value().map((t) => t.id)).toEqual(['task-2', 'task-1']);
+    });
+
+    it('leaves the list unchanged when creating fails', () => {
+      service.createTask(draft).subscribe({ error: vi.fn() });
+
+      http.expectOne(url).flush('Server error', { status: 500, statusText: 'Server Error' });
+
+      expect(service.tasks.value()).toEqual([task]);
+    });
+
+    it('replaces the task with the saved one', () => {
+      service.saveTask(task, draft).subscribe();
+
+      const request = http.expectOne(`${url}/task-1`);
+      expect(request.request.method).toBe('PUT');
+      expect(request.request.body.title).toBe('Plan the sprint');
+      expect(service.tasks.value()[0].title).toBe(task.title);
+
+      request.flush(request.request.body);
+
+      expect(service.tasks.value()[0].title).toBe('Plan the sprint');
+    });
+
+    it('sets the completion date when the form moves a task to done', () => {
+      service.saveTask(task, { ...draft, status: 'done' }).subscribe();
+
+      const request = http.expectOne(`${url}/task-1`);
+      expect(request.request.body.completedAt).toBeDefined();
+      request.flush(request.request.body);
+    });
   });
 });

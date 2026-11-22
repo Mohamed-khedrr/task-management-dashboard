@@ -105,3 +105,18 @@ body:has(.cdk-drag-preview) * {
   -webkit-line-clamp: var(--lines, 1);
   line-clamp: var(--lines, 1);
 }
+
+.p-autocomplete-input-multiple {
+  padding-block: 0.1875rem;
+}
+
+.p-autocomplete-input-chip input.p-autocomplete-input,
+.p-chip {
+  font-size: var(--font-size-label);
+}
+
+.priority-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}

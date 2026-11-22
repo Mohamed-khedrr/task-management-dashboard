@@ -19,13 +19,12 @@ const AppPreset = definePreset(Aura, {
       950: '#0a3880',
     },
     formField: {
-      paddingX: '1rem',
+      paddingX: '.5rem',
       paddingY: '0.5rem',
       borderRadius: '4px',
-      // Figma's toolbar controls: 32px tall with 13px text
       sm: {
         fontSize: 'var(--font-size-label)',
-        paddingX: '1rem',
+        paddingX: '.5rem',
         paddingY: '0.4375rem',
       },
       focusRing: {
@@ -34,6 +33,13 @@ const AppPreset = definePreset(Aura, {
         color: '{primary.color}',
         offset: '-1px',
         shadow: 'none',
+      },
+    },
+    // Dialogs use the same radius and spacing as the cards
+    overlay: {
+      modal: {
+        borderRadius: 'var(--radius-md)',
+        padding: 'var(--space-6)',
       },
     },
     colorScheme: {
@@ -58,6 +64,14 @@ const AppPreset = definePreset(Aura, {
           placeholderColor: '#757575',
           shadow: 'none',
         },
+      },
+    },
+  },
+  components: {
+    dialog: {
+      title: {
+        fontSize: 'var(--font-size-lg)',
+        fontWeight: '700',
       },
     },
   },

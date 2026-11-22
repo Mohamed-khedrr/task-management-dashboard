@@ -62,4 +62,14 @@ describe('TaskCardComponent', () => {
 
     expect(card.querySelector('.description')).toBeNull();
   });
+
+  it('opens the task when its title is clicked', async () => {
+    const card = await render(baseTask);
+    const opened = vi.fn();
+    fixture.componentInstance.opened.subscribe(opened);
+
+    card.querySelector<HTMLButtonElement>('.open')!.click();
+
+    expect(opened).toHaveBeenCalled();
+  });
 });

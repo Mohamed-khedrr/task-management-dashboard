@@ -69,6 +69,30 @@
     "noTasks": "لا توجد مهام",
     "count": "{{count}} مهام"
   },
+  "taskForm": {
+    "createTitle": "مهمة جديدة",
+    "editTitle": "تعديل المهمة",
+    "title": "العنوان",
+    "description": "الوصف",
+    "status": "الحالة",
+    "priority": "الأولوية",
+    "dueDate": "تاريخ الاستحقاق",
+    "assignee": "المسؤول",
+    "chooseAssignee": "اختر شخصًا",
+    "tags": "الوسوم",
+    "tagsPlaceholder": "اكتب وسمًا واضغط Enter",
+    "create": "إنشاء المهمة",
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "errors": {
+      "titleRequired": "أدخل عنوانًا.",
+      "statusRequired": "اختر الحالة.",
+      "priorityRequired": "اختر الأولوية.",
+      "dueDateRequired": "اختر تاريخ الاستحقاق.",
+      "assigneeRequired": "اختر المسؤول.",
+      "tagTooLong": "يجب ألا يزيد كل وسم عن {{max}} حرفًا."
+    }
+  },
   "errors": {
     "title": "حدث خطأ ما",
     "network": "تعذّر الوصول إلى الخادم. تحقق من اتصالك وحاول مرة أخرى.",

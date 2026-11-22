@@ -1,4 +1,6 @@
 import { MessageService } from 'primeng/api';
+import { UserService } from '../../core/services/user.service';
+import { TaskDialogService } from '../../core/services/task-dialog.service';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -28,6 +30,7 @@ describe('MainLayoutComponent', () => {
         provideRouter([{ path: '**', children: [] }]),
         { provide: LanguageService, useValue: { activeLang } },
         MessageService,
+        { provide: UserService, useValue: { users: { value: signal([]) } } },
       ],
     }).compileComponents();
 
@@ -61,5 +64,15 @@ describe('MainLayoutComponent', () => {
     await fixture.whenStable();
 
     expect(getDrawer()!.classList).toContain('p-drawer-right');
+  });
+
+  it('opens an empty task form from the sidebar "+ New Task" button', async () => {
+    const taskDialog = TestBed.inject(TaskDialogService);
+
+    element.querySelector<HTMLButtonElement>('.sidebar .new-task button')!.click();
+    await fixture.whenStable();
+
+    expect(taskDialog.isOpen()).toBe(true);
+    expect(taskDialog.task()).toBeNull();
   });
 });

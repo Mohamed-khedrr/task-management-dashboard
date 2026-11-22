@@ -1,10 +1,13 @@
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TaskColumn, TaskMove } from '../../../../core/models/task.model';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { TaskColumn, TaskMove } from '../../../../core/models/task.model';
+import { TaskDialogService } from '../../../../core/services/task-dialog.service';
+import { TaskService } from '../../../../core/services/task.service';
 import { TaskColumnComponent } from '../task-column/task-column.component';
 
+// Smart part of the board: it saves moves and opens tasks, so the dashboard doesn't relay them
 @Component({
   selector: 'app-task-board',
   imports: [TranslocoPipe, TaskColumnComponent, CdkDropListGroup, CdkScrollable],
@@ -13,7 +16,13 @@ import { TaskColumnComponent } from '../task-column/task-column.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskBoardComponent {
+  private readonly taskService = inject(TaskService);
+
+  protected readonly taskDialog = inject(TaskDialogService);
+
   readonly columns = input.required<TaskColumn[]>();
 
-  readonly taskMoved = output<TaskMove>();
+  protected moveTask(move: TaskMove) {
+    this.taskService.updateStatus(move.taskId, move.status);
+  }
 }

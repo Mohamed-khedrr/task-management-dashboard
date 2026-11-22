@@ -1,0 +1,21 @@
+<p-dialog
+  [visible]="dialog.isOpen()"
+  (visibleChange)="onVisibleChange($event)"
+  [header]="(dialog.task() ? 'taskForm.editTitle' : 'taskForm.createTitle') | transloco"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="!isSaving()"
+  [closeOnEscape]="!isSaving()"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '640px': 'calc(100vw - 2rem)' }"
+>
+  @if (dialog.isOpen()) {
+    <app-task-form
+      [task]="dialog.task()"
+      [users]="users.value()"
+      [saving]="isSaving()"
+      (saved)="save($event)"
+      (cancelled)="dialog.close()"
+    />
+  }
+</p-dialog>

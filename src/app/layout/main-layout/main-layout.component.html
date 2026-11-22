@@ -2,7 +2,7 @@
 
 <div class="layout">
   <aside class="sidebar">
-    <app-sidebar-nav />
+    <app-sidebar-nav (newTask)="taskDialog.openCreate()" />
   </aside>
 
   <main class="main">
@@ -17,8 +17,12 @@
     [header]="appInfo.nameKey | transloco"
     [ariaCloseLabel]="'layout.closeMenu' | transloco"
   >
-    <app-sidebar-nav (linkSelected)="menuOpen.set(false)" />
+    <app-sidebar-nav (linkSelected)="menuOpen.set(false)" (newTask)="taskDialog.openCreate()" />
   </p-drawer>
+}
+
+@defer (when taskDialog.isOpen()) {
+  <app-task-dialog />
 }
 
 <p-toast [position]="toastPosition()" />

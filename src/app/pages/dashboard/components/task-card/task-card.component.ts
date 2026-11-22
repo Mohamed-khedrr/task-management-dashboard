@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { formatDayCount, formatRelativeDays } from '../../../../core/utils/relative-time';
 import { getTaskTiming, isTaskOverdue } from '../../../../core/utils/task.utils';
 import { Task } from '../../../../core/models/task.model';
@@ -22,6 +22,8 @@ export class TaskCardComponent {
   private readonly today = new Date();
 
   readonly task = input.required<Task>();
+
+  readonly opened = output<void>();
 
   protected readonly overdue = computed(() => isTaskOverdue(this.task(), this.today));
   protected readonly assigneeFirstName = computed(() => this.task().assignee.name.split(' ')[0]);
