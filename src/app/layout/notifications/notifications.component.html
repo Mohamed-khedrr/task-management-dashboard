@@ -4,16 +4,10 @@
   class="bell"
   aria-haspopup="dialog"
   [attr.aria-expanded]="isOpen()"
-  [attr.aria-label]="
-    (unreadCount() ? 'notifications.openUnread' : 'notifications.open')
-      | transloco: { count: unreadCount() }
-  "
+  [attr.aria-label]="'notifications.open' | transloco"
   (click)="panel.toggle($event)"
 >
   <span aria-hidden="true">🔔</span>
-  @if (unreadCount()) {
-    <span class="badge" aria-hidden="true">{{ unreadCount() }}</span>
-  }
 </button>
 
 <p-popover
@@ -24,32 +18,29 @@
   (onHide)="onClosed(bell)"
 >
   <div class="panel">
-    <div class="panel-header">
-      <h2 id="notifications-title" class="title">{{ 'notifications.title' | transloco }}</h2>
-      <button type="button" class="mark-read" (click)="markAllAsRead()">
-        {{ 'notifications.markAllRead' | transloco }}
-      </button>
-    </div>
+    <h2 id="notifications-title" class="title">{{ 'notifications.title' | transloco }}</h2>
 
-    <ul class="list">
-      @for (item of items(); track item.id) {
-        <li class="item" [class.unread]="!item.read">
-          <span class="icon" aria-hidden="true">{{ icons[item.kind] }}</span>
-          <div class="body">
-            <p class="message">
-              {{
-                'notifications.' + item.kind
-                  | transloco: { name: item.personName, task: item.taskTitle }
-              }}
-            </p>
-            <time class="time" [attr.datetime]="item.at">{{ item.timeAgo }}</time>
-          </div>
-          @if (!item.read) {
-            <span class="dot" aria-hidden="true"></span>
-            <span class="visually-hidden">{{ 'notifications.unread' | transloco }}</span>
-          }
-        </li>
-      }
-    </ul>
+    @if (items().length > 0) {
+      <ul class="list">
+        @for (item of items(); track item.id) {
+          <li class="item">
+            <span class="icon" aria-hidden="true">{{ icons[item.kind] }}</span>
+            <div class="body">
+              <p class="task" appTruncate>{{ item.taskTitle }}</p>
+              <p class="meta">
+                {{ 'activity.' + item.kind | transloco }} · {{ item.assignee.name }} ·
+                <time [attr.datetime]="item.at">{{ item.timeAgo }}</time>
+              </p>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">{{ 'notifications.empty' | transloco }}</p>
+    }
+
+    <a routerLink="/activity" class="view-all" (click)="panel.hide()">
+      {{ 'notifications.viewAll' | transloco }}
+    </a>
   </div>
 </p-popover>

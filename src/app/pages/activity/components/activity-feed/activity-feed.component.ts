@@ -1,15 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import { Activity, ActivityKind } from '../../../../core/models/activity.model';
+import { Activity, ACTIVITY_ICONS } from '../../../../core/models/activity.model';
 import { formatTimeAgo } from '../../../../core/utils/relative-time';
 import { TruncateDirective } from '../../../../shared/directives/truncate.directive';
-
-const ACTIVITY_ICONS: Record<ActivityKind, string> = {
-  created: '🆕',
-  updated: '✏️',
-  completed: '✅',
-};
 
 @Component({
   selector: 'app-activity-feed',

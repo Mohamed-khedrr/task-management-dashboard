@@ -1,81 +1,38 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PopoverModule } from 'primeng/popover';
 import { LanguageService } from '../../core/i18n/language.service';
-import { AppNotification, NotificationKind } from '../../core/models/notification.model';
+import { ACTIVITY_ICONS } from '../../core/models/activity.model';
+import { TaskService } from '../../core/services/task.service';
+import { getRecentActivity } from '../../core/utils/activity.utils';
 import { formatTimeAgo } from '../../core/utils/relative-time';
+import { TruncateDirective } from '../../shared/directives/truncate.directive';
 
-const NOTIFICATION_ICONS: Record<NotificationKind, string> = {
-  assigned: '📌',
-  completed: '✅',
-  dueSoon: '⏰',
-  overdue: '⚠️',
-};
-
-function minutesAgo(minutes: number) {
-  return new Date(Date.now() - minutes * 60 * 1000).toISOString();
-}
-
-// Static sample data: the mock API has no notifications endpoint
-const SAMPLE_NOTIFICATIONS: AppNotification[] = [
-  {
-    id: 'notification-1',
-    kind: 'assigned',
-    personName: 'Sarah Smith',
-    taskTitle: 'Update documentation',
-    at: minutesAgo(5),
-    read: false,
-  },
-  {
-    id: 'notification-2',
-    kind: 'completed',
-    personName: 'John Doe',
-    taskTitle: 'Design new homepage layout',
-    at: minutesAgo(60),
-    read: false,
-  },
-  {
-    id: 'notification-3',
-    kind: 'dueSoon',
-    taskTitle: 'Prepare Q4 budget report',
-    at: minutesAgo(3 * 60),
-    read: true,
-  },
-  {
-    id: 'notification-4',
-    kind: 'overdue',
-    taskTitle: 'Fix responsive design issues',
-    at: minutesAgo(26 * 60),
-    read: true,
-  },
-];
+const LATEST_COUNT = 5;
 
 @Component({
   selector: 'app-notifications',
-  imports: [TranslocoPipe, PopoverModule],
+  imports: [RouterLink, TranslocoPipe, PopoverModule, TruncateDirective],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationsComponent {
   private readonly language = inject(LanguageService);
+  private readonly taskResource = inject(TaskService).tasks;
 
-  protected readonly icons = NOTIFICATION_ICONS;
-  protected readonly notifications = signal(SAMPLE_NOTIFICATIONS);
+  protected readonly icons = ACTIVITY_ICONS;
   protected readonly isOpen = signal(false);
 
-  protected readonly unreadCount = computed(
-    () => this.notifications().filter((notification) => !notification.read).length,
-  );
-
   protected readonly items = computed(() => {
+    const tasks = this.taskResource.hasValue() ? this.taskResource.value() : [];
     const lang = this.language.activeLang();
     const now = new Date();
 
-    return this.notifications().map((notification) => ({
-      ...notification,
-      timeAgo: formatTimeAgo(notification.at, now, lang),
-    }));
+    return getRecentActivity(tasks)
+      .slice(0, LATEST_COUNT)
+      .map((activity) => ({ ...activity, timeAgo: formatTimeAgo(activity.at, now, lang) }));
   });
 
   protected onClosed(bell: HTMLButtonElement) {
@@ -86,11 +43,5 @@ export class NotificationsComponent {
     if (document.activeElement === document.body) {
       bell.focus();
     }
-  }
-
-  protected markAllAsRead() {
-    this.notifications.update((list) =>
-      list.map((notification) => ({ ...notification, read: true })),
-    );
   }
 }
