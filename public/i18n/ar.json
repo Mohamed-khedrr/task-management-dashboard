@@ -71,6 +71,8 @@
       "medium": "متوسطة",
       "low": "منخفضة"
     },
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
     "timing": {
       "overdue": "متأخرة بمقدار {{duration}}",
       "due": "مستحقة {{when}}",

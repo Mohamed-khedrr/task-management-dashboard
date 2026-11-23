@@ -25,10 +25,23 @@
 
   <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
 
-  <h3 class="title" appTruncate="2">{{ task().title }}</h3>
+  <h3 class="title">{{ task().title }}</h3>
 
   @if (task().description.trim()) {
-    <p class="description" appTruncate="2">{{ task().description }}</p>
+    <p #description class="description" [class.collapsed]="!expanded()">
+      {{ task().description }}
+    </p>
+
+    @if (canExpand()) {
+      <button
+        type="button"
+        class="show-more"
+        [attr.aria-expanded]="expanded()"
+        (click)="expanded.set(!expanded())"
+      >
+        {{ (expanded() ? 'task.showLess' : 'task.showMore') | transloco }}
+      </button>
+    }
   }
 
   <div class="meta">

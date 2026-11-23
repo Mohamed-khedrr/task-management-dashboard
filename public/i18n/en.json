@@ -71,6 +71,8 @@
       "medium": "Medium",
       "low": "Low"
     },
+    "showMore": "Show more",
+    "showLess": "Show less",
     "timing": {
       "overdue": "Overdue by {{duration}}",
       "due": "Due {{when}}",
