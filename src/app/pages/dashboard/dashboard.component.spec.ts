@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
 
 import { DashboardComponent } from './dashboard.component';
+import { TaskDialogService } from '../../core/services/task-dialog.service';
 import { Task } from '../../core/models/task.model';
 import { ResourceStatus, signal } from '@angular/core';
 import { TaskService } from '../../core/services/task.service';
@@ -132,9 +133,20 @@ describe('DashboardComponent', () => {
     TestBed.inject(TaskFiltersService).assigneeId.set('nobody');
     await fixture.whenStable();
 
-    element.querySelector<HTMLButtonElement>('.no-matches button')!.click();
+    element.querySelector<HTMLButtonElement>('.empty-state button')!.click();
     await fixture.whenStable();
 
     expect(element.querySelectorAll('app-task-card').length).toBe(3);
+  });
+
+  it('invites the user to create the first task when there are none', async () => {
+    tasks.set([]);
+    await fixture.whenStable();
+
+    expect(element.querySelector('app-task-board')).toBeNull();
+
+    element.querySelector<HTMLButtonElement>('.empty-state button')!.click();
+
+    expect(TestBed.inject(TaskDialogService).isOpen()).toBe(true);
   });
 });

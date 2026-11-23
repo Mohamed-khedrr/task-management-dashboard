@@ -31,7 +31,11 @@
       "createdThisWeek": "+{{count}} هذا الأسبوع",
       "completedToday": "+{{count}} اليوم",
       "highPriority": "{{count}} عالية الأولوية",
-      "overdueSinceToday": "+{{count}} اليوم"
+      "overdueSinceToday": "+{{count}} اليوم",
+      "noNewThisWeek": "لا مهام جديدة هذا الأسبوع",
+      "noneCompletedToday": "لم يكتمل شيء اليوم",
+      "noHighPriority": "لا شيء عالي الأولوية",
+      "noNewOverdue": "لا تأخير جديد اليوم"
     },
     "error": "تعذّر تحميل المهام.",
     "retry": "إعادة المحاولة",
@@ -46,7 +50,8 @@
       "noAssignees": "لا يوجد مسؤولون مطابقون"
     },
     "noMatches": "لا توجد مهام مطابقة للتصفية.",
-    "clearFilters": "مسح التصفية"
+    "clearFilters": "مسح التصفية",
+    "noTasks": "لا توجد مهام بعد. أنشئ أول مهمة للبدء."
   },
   "analytics": {
     "title": "التحليلات",

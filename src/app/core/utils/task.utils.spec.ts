@@ -123,6 +123,13 @@ describe('filterTasks', () => {
     expect(ids(filterTasks(tasks, { ...noFilters, assigneeId: 'user-2' }))).toEqual(['c']);
   });
 
+  it('finds Arabic text however the letters and diacritics are typed', () => {
+    const arabicTasks = [makeTask({ id: 'ar', title: 'إضافة صفحة الأمان' })];
+
+    expect(ids(filterTasks(arabicTasks, { ...noFilters, search: 'اضافه' }))).toEqual(['ar']);
+    expect(ids(filterTasks(arabicTasks, { ...noFilters, search: 'الْأَمان' }))).toEqual(['ar']);
+  });
+
   it('combines filters', () => {
     expect(filterTasks(tasks, { ...noFilters, search: 'design', priority: 'low' })).toEqual([]);
   });

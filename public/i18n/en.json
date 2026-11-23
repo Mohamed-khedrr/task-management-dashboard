@@ -31,7 +31,11 @@
       "createdThisWeek": "+{{count}} this week",
       "completedToday": "+{{count}} today",
       "highPriority": "{{count}} high priority",
-      "overdueSinceToday": "+{{count}} today"
+      "overdueSinceToday": "+{{count}} today",
+      "noNewThisWeek": "No new tasks this week",
+      "noneCompletedToday": "None completed today",
+      "noHighPriority": "None high priority",
+      "noNewOverdue": "No new overdue today"
     },
     "error": "Couldn't load tasks.",
     "retry": "Try again",
@@ -46,7 +50,8 @@
       "noAssignees": "No assignees found"
     },
     "noMatches": "No tasks match your filters.",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "noTasks": "No tasks yet. Create your first task to get started."
   },
   "analytics": {
     "title": "Analytics",

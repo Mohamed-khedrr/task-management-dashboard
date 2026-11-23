@@ -4,7 +4,11 @@
     {{ card().labelKey | transloco }}
   </h2>
   <p class="value">{{ card().value }}</p>
-  <p class="change" [class]="card().tone">
-    {{ card().changeKey | transloco: { count: card().changeCount } }}
-  </p>
+  @if (hasChange()) {
+    <p class="change" [class]="card().tone">
+      {{ card().changeKey | transloco: { count: card().changeCount } }}
+    </p>
+  } @else {
+    <p class="change neutral">{{ card().noChangeKey | transloco }}</p>
+  }
 </article>

@@ -60,6 +60,8 @@ export class DashboardComponent implements OnInit {
     return this.allColumns().filter((column) => column.status === status);
   });
 
+  protected readonly hasNoTasks = computed(() => this.tasks().length === 0);
+
   protected readonly hasNoMatches = computed(
     () => this.filters.hasActiveFilters() && !this.columns().some((column) => column.tasks.length),
   );
@@ -73,6 +75,7 @@ export class DashboardComponent implements OnInit {
         labelKey: 'dashboard.stats.total',
         value: stats.total,
         changeKey: 'dashboard.stats.createdThisWeek',
+        noChangeKey: 'dashboard.stats.noNewThisWeek',
         changeCount: stats.createdThisWeek,
         tone: 'positive',
       },
@@ -81,6 +84,7 @@ export class DashboardComponent implements OnInit {
         labelKey: 'dashboard.stats.completed',
         value: stats.completed,
         changeKey: 'dashboard.stats.completedToday',
+        noChangeKey: 'dashboard.stats.noneCompletedToday',
         changeCount: stats.completedToday,
         tone: 'positive',
       },
@@ -89,6 +93,7 @@ export class DashboardComponent implements OnInit {
         labelKey: 'dashboard.stats.inProgress',
         value: stats.inProgress,
         changeKey: 'dashboard.stats.highPriority',
+        noChangeKey: 'dashboard.stats.noHighPriority',
         changeCount: stats.inProgressHighPriority,
         tone: 'neutral',
       },
@@ -97,6 +102,7 @@ export class DashboardComponent implements OnInit {
         labelKey: 'dashboard.stats.overdue',
         value: stats.overdue,
         changeKey: 'dashboard.stats.overdueSinceToday',
+        noChangeKey: 'dashboard.stats.noNewOverdue',
         changeCount: stats.overdueSinceToday,
         tone: 'negative',
       },

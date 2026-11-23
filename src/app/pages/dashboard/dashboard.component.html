@@ -38,8 +38,13 @@
         <p-skeleton height="480px" borderRadius="8px" />
       }
     </div>
+  } @else if (hasNoTasks()) {
+    <div class="empty-state">
+      <p>{{ 'dashboard.noTasks' | transloco }}</p>
+      <p-button [label]="'nav.newTask' | transloco" (onClick)="taskDialog.openCreate()" />
+    </div>
   } @else if (hasNoMatches()) {
-    <div class="no-matches">
+    <div class="empty-state">
       <p>{{ 'dashboard.noMatches' | transloco }}</p>
       <p-button
         [label]="'dashboard.clearFilters' | transloco"

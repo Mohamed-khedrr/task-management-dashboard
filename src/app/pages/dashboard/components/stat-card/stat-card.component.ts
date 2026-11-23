@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { StatCard } from '../../../../core/models/stat-card.model';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -11,4 +11,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class StatCardComponent {
   readonly card = input.required<StatCard>();
+
+  protected readonly hasChange = computed(() => this.card().changeCount > 0);
 }
