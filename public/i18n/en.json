@@ -23,6 +23,17 @@
     },
     "profile": "User profile"
   },
+  "notifications": {
+    "title": "Notifications",
+    "open": "Notifications",
+    "openUnread": "Notifications, {{count}} unread",
+    "markAllRead": "Mark all as read",
+    "unread": "Unread",
+    "assigned": "{{name}} assigned you “{{task}}”",
+    "completed": "{{name}} completed “{{task}}”",
+    "dueSoon": "“{{task}}” is due tomorrow",
+    "overdue": "“{{task}}” is overdue"
+  },
   "nav": {
     "label": "Main navigation",
     "dashboard": "Dashboard",

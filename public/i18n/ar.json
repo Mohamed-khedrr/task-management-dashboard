@@ -23,6 +23,17 @@
     },
     "profile": "الملف الشخصي"
   },
+  "notifications": {
+    "title": "الإشعارات",
+    "open": "الإشعارات",
+    "openUnread": "الإشعارات، {{count}} غير مقروءة",
+    "markAllRead": "تحديد الكل كمقروء",
+    "unread": "غير مقروء",
+    "assigned": "أسند إليك {{name}} المهمة «{{task}}»",
+    "completed": "أكمل {{name}} المهمة «{{task}}»",
+    "dueSoon": "موعد تسليم «{{task}}» غدًا",
+    "overdue": "تأخرت المهمة «{{task}}» عن موعدها"
+  },
   "nav": {
     "label": "التنقل الرئيسي",
     "dashboard": "لوحة التحكم",
