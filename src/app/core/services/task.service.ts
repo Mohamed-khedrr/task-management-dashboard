@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { tap } from 'rxjs';
 import { Task, TaskDraft, TaskStatus } from '../models/task.model';
 import { withRetry } from '../interceptors/retry-interceptor';
+import { SILENT_ERRORS } from '../interceptors/error-interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +13,11 @@ export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/tasks`;
 
+  // Silent: the pages show their own error with a Retry button, so a toast would repeat it
   readonly tasks = httpResource<Task[]>(
     () => ({
       url: this.url,
-      context: withRetry(),
+      context: withRetry().set(SILENT_ERRORS, true),
     }),
     { defaultValue: [] },
   );

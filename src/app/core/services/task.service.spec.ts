@@ -1,15 +1,22 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+  TestRequest,
+} from '@angular/common/http/testing';
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
 import { Task, TaskDraft } from '../models/task.model';
 import { TaskService } from './task.service';
+import { SILENT_ERRORS } from '../interceptors/error-interceptor';
+import { RETRY_CONTEXT } from '../interceptors/retry-interceptor';
 
 describe('TaskService', () => {
   const url = `${environment.apiUrl}/tasks`;
   let service: TaskService;
   let http: HttpTestingController;
+  let firstLoad: TestRequest;
 
   const task: Task = {
     id: 'task-1',
@@ -32,8 +39,14 @@ describe('TaskService', () => {
     http = TestBed.inject(HttpTestingController);
 
     TestBed.tick();
-    http.expectOne(url).flush([task]);
+    firstLoad = http.expectOne(url);
+    firstLoad.flush([task]);
     await TestBed.inject(ApplicationRef).whenStable();
+  });
+
+  it('loads the tasks with retries and without an error toast', () => {
+    expect(firstLoad.request.context.get(RETRY_CONTEXT)).toBe(true);
+    expect(firstLoad.request.context.get(SILENT_ERRORS)).toBe(true);
   });
 
   afterEach(() => http.verify());
