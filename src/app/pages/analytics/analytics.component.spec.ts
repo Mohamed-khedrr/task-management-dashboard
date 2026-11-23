@@ -1,4 +1,4 @@
-import { ResourceStatus, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
 import { Assignee, Task } from '../../core/models/task.model';
@@ -28,7 +28,7 @@ describe('AnalyticsComponent', () => {
   let element: HTMLElement;
 
   const tasks = signal<Task[]>([]);
-  const status = signal<ResourceStatus>('resolved');
+  const isLoading = signal(false);
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
 
@@ -47,7 +47,7 @@ describe('AnalyticsComponent', () => {
       makeTask({ status: 'done', priority: 'low' }),
       makeTask({ status: 'done', priority: 'high' }),
     ]);
-    status.set('resolved');
+    isLoading.set(false);
     error.set(undefined);
     reload.mockClear();
 
@@ -56,9 +56,12 @@ describe('AnalyticsComponent', () => {
       providers: [
         {
           provide: TaskService,
-          useValue: { tasks: { value: tasks, status, error, hasValue: () => !error(), reload } },
+          useValue: { tasks: { value: tasks, isLoading, error, hasValue: () => !error(), reload } },
         },
-        { provide: UserService, useValue: { users: { value: signal([sarah, john]) } } },
+        {
+          provide: UserService,
+          useValue: { users: { value: signal([sarah, john]), isLoading: signal(false) } },
+        },
       ],
     }).compileComponents();
 
@@ -103,10 +106,22 @@ describe('AnalyticsComponent', () => {
 
   it('shows skeletons during the first load', async () => {
     tasks.set([]);
-    status.set('loading');
+    isLoading.set(true);
     await fixture.whenStable();
 
     expect(element.querySelector('[aria-busy="true"]')).not.toBeNull();
+  });
+
+  it('waits for the reload to finish before drawing the charts', async () => {
+    isLoading.set(true);
+    await fixture.whenStable();
+
+    expect(element.querySelector('canvas')).toBeNull();
+
+    isLoading.set(false);
+    await fixture.whenStable();
+
+    expect(element.querySelectorAll('canvas').length).toBe(5);
   });
 
   it('shows an empty message when there are no tasks', async () => {

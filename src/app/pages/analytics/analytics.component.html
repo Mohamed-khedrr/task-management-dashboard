@@ -5,7 +5,7 @@
     <p-message severity="error">{{ 'dashboard.error' | transloco }}</p-message>
     <p-button [label]="'dashboard.retry' | transloco" (onClick)="retry()" />
   </div>
-} @else if (isLoading() && hasNoTasks()) {
+} @else if (isLoading()) {
   <div class="charts" aria-busy="true">
     <p-skeleton height="400px" borderRadius="8px" />
     <p-skeleton height="400px" borderRadius="8px" />

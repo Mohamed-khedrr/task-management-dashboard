@@ -67,7 +67,11 @@ export class AnalyticsComponent implements OnInit {
     Chart.defaults.borderColor = cssVar('--color-border');
   }
 
-  protected readonly isLoading = computed(() => this.taskResource.status() === 'loading');
+  // The charts wait for both lists, including the reload when the page opens. Otherwise they'd draw
+  // from the lists already in memory, then redraw and animate again when each response arrives.
+  protected readonly isLoading = computed(
+    () => this.taskResource.isLoading() || this.users.isLoading(),
+  );
   protected readonly error = this.taskResource.error;
   protected readonly isRtl = computed(() => this.language.activeLang() === 'ar');
 
