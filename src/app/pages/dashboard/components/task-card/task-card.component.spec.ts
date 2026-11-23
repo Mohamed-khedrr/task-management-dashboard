@@ -84,4 +84,47 @@ describe('TaskCardComponent', () => {
       .click();
     expect(remove).toHaveBeenCalled();
   });
+
+  describe('long descriptions', () => {
+    // jsdom has no layout, so the heights a cut-off description would have are faked
+    const fakeHeights = (fullHeight: number, visibleHeight: number) => {
+      vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(fullHeight);
+      vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(visibleHeight);
+    };
+
+    const renderLong = async () => {
+      await render({ ...baseTask, description: 'A long description' });
+      await fixture.whenStable();
+      return fixture.nativeElement as HTMLElement;
+    };
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('offers Show more only when the text is cut', async () => {
+      fakeHeights(60, 60);
+      const card = await renderLong();
+
+      expect(card.querySelector('.show-more')).toBeNull();
+    });
+
+    it('expands and collapses the description', async () => {
+      fakeHeights(120, 60);
+      const card = await renderLong();
+      const toggle = card.querySelector<HTMLButtonElement>('.show-more')!;
+
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(card.querySelector('.description')!.classList).toContain('collapsed');
+
+      toggle.click();
+      await fixture.whenStable();
+
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(card.querySelector('.description')!.classList).not.toContain('collapsed');
+
+      toggle.click();
+      await fixture.whenStable();
+
+      expect(card.querySelector('.description')!.classList).toContain('collapsed');
+    });
+  });
 });
