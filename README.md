@@ -18,7 +18,6 @@ A task board built with Angular 21 and PrimeNG. You can create, edit, delete, fi
 - [Accessibility and i18n](#accessibility-and-i18n)
 - [Testing strategy](#testing-strategy)
 - [Code quality](#code-quality)
-- [Known limitations and future improvements](#known-limitations-and-future-improvements)
 
 ## Features
 
@@ -42,6 +41,10 @@ A task board built with Angular 21 and PrimeNG. You can create, edit, delete, fi
 - Overdue vs on track (bars)
 - Tasks by priority (horizontal bars)
 - Overdue tasks per person, and each person's tasks by status (stacked bars). These scroll sideways when there are many people.
+
+**Team**
+
+- A card per team member with their avatar, name and email, and how many of their tasks are to do, in progress, done and overdue. The counts come from the live task list.
 
 **Settings**
 
@@ -133,6 +136,7 @@ src/app
 │   ├── dashboard/        # Stat cards, toolbar, board, columns, cards, task form
 │   ├── analytics/        # Chart card, stacked bar card, legend
 │   ├── settings/
+│   ├── team/             # Member cards with task counts per person
 │   └── coming-soon/      # Placeholder for routes that aren't built yet
 └── shared/               # Reusable UI helpers: truncate directive, form validators
 src/styles/               # Design tokens (colors, spacing, type) from Figma
@@ -239,14 +243,3 @@ npm test
 - Strict TypeScript, and no `any`.
 - Conventional commit messages, with each commit covering one working step and its tests.
 - JSDoc on the parts that aren't obvious: the interceptors, the optimistic update, the task sorting and statistics, the date helpers and the validators.
-
-## Known limitations and future improvements
-
-- **Recent activity feed and Team page are not built yet.** The API has no activity log, so the feed will be built from each task's `createdAt`, `updatedAt` and `completedAt`. The Tasks, Calendar and Team links open a "coming soon" page for now.
-- **Test coverage isn't measured yet.** `@vitest/coverage-v8` needs to be added to report it.
-- **The initial bundle (about 690 kB) is over the 500 kB warning budget.** Most of it is PrimeNG and its theme. Next steps would be to check which PrimeNG modules the shell imports, and to defer more of the layout.
-- **The order inside a column isn't saved.** Columns are sorted by urgency, so dragging within a column has no effect. Saving a manual order would need an `order` field in the API.
-- **There's no authentication.** The name in Settings is only stored in the browser.
-- **The cache is in memory only.** It's lost on reload, and it's cleared entirely on any change. A finer version could clear only the affected URLs.
-- **Changes from other users don't show** until the page reloads. Polling or WebSockets would fix this.
-- Planned: a GitHub Actions pipeline (lint, test, build), Docker with docker-compose for the app and the mock API, and a Lighthouse audit.
