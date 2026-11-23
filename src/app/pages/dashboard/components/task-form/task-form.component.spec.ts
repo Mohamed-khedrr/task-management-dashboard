@@ -147,6 +147,26 @@ describe('TaskFormComponent', () => {
     expect(saved[0].tags).toEqual(['Docs']);
   });
 
+  it('adds a tag on Enter without submitting the form', async () => {
+    await setup({ task });
+    const tagsInput = field('#task-tags');
+    tagsInput.value = 'Backend';
+    tagsInput.dispatchEvent(new Event('input'));
+
+    const enter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      code: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+    tagsInput.dispatchEvent(enter);
+    await fixture.whenStable();
+
+    expect(enter.defaultPrevented).toBe(true);
+    expect(form().controls.tags.value).toEqual(['Docs', 'Backend']);
+    expect(saved).toEqual([]);
+  });
+
   it('does not save again while a save is in progress', async () => {
     await setup({ task, saving: true });
 

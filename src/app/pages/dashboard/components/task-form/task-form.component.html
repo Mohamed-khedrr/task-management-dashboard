@@ -121,7 +121,9 @@
 
   <div class="field">
     <label for="task-tags">{{ 'taskForm.tags' | transloco }}</label>
-    <!-- Multiple mode without typeahead is PrimeNG's tags input: Enter or a comma adds a tag -->
+    <!-- Multiple mode without typeahead is PrimeNG's tags input: Enter or a comma adds a tag.
+         PrimeNG only blocks Enter's default when its suggestions list is open, which it never is
+         here, so Enter would also submit the whole form. -->
     <p-autocomplete
       size="small"
       inputId="task-tags"
@@ -133,6 +135,7 @@
       fluid
       [placeholder]="'taskForm.tagsPlaceholder' | transloco"
       [invalid]="showError(form.controls.tags)"
+      (keydown.enter)="$event.preventDefault()"
     />
     @if (showError(form.controls.tags)) {
       <small class="error">
