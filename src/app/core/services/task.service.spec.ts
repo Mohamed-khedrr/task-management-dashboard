@@ -162,4 +162,41 @@ describe('TaskService', () => {
       request.flush(request.request.body);
     });
   });
+
+  describe('after the task list failed to load', () => {
+    const draft: TaskDraft = {
+      title: 'Plan the sprint',
+      description: '',
+      status: 'todo',
+      priority: 'high',
+      dueDate: '2099-02-01',
+      assignee: task.assignee,
+      tags: [],
+    };
+
+    beforeEach(async () => {
+      service.tasks.reload();
+      TestBed.tick();
+      http.expectOne(url).flush('down', { status: 500, statusText: 'Server Error' });
+      await TestBed.inject(ApplicationRef).whenStable();
+    });
+
+    it('reports a successful create as a success and loads the list again', async () => {
+      const onSaved = vi.fn();
+      const onError = vi.fn();
+      service.createTask(draft).subscribe({ next: onSaved, error: onError });
+
+      const request = http.expectOne({ method: 'POST', url });
+      request.flush({ ...request.request.body, id: 'task-2' });
+
+      expect(onSaved).toHaveBeenCalledOnce();
+      expect(onError).not.toHaveBeenCalled();
+
+      TestBed.tick();
+      http.expectOne({ method: 'GET', url }).flush([task, { ...task, id: 'task-2' }]);
+      await TestBed.inject(ApplicationRef).whenStable();
+
+      expect(service.tasks.value().map((t) => t.id)).toEqual(['task-1', 'task-2']);
+    });
+  });
 });

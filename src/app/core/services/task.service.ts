@@ -63,7 +63,20 @@ export class TaskService {
 
     return this.http
       .post<Task>(this.url, newTask)
-      .pipe(tap((created) => this.tasks.update((list) => [created, ...list])));
+      .pipe(tap((created) => this.addCreatedTask(created)));
+  }
+
+  /**
+   * The sidebar's New Task button stays usable when the list failed to load. The list has
+   * no value then and updating it would throw, turning a successful create into an error
+   * (and a duplicate on retry), so the list is loaded again instead.
+   */
+  private addCreatedTask(created: Task) {
+    if (this.tasks.hasValue()) {
+      this.tasks.update((list) => [created, ...list]);
+    } else {
+      this.tasks.reload();
+    }
   }
 
   saveTask(task: Task, changes: TaskDraft) {
