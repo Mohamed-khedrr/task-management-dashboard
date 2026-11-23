@@ -103,17 +103,16 @@ Docker Compose builds the app and starts it together with the mock API, so Node.
 docker compose up --build
 ```
 
-The app is served by nginx on http://localhost:4200 and json-server runs on http://localhost:3030, the same addresses as above, so `apiUrl` doesn't change. The [Dockerfile](Dockerfile) has one stage for the app (built with Node, served by nginx, with every route falling back to `index.html`) and one for json-server, which runs the same `mock:api` script. Task changes are kept until the containers are removed.
+The app is served by nginx on http://localhost:4200. The [Dockerfile](Dockerfile) has one stage for the app (built with Node, served by nginx, with every route falling back to `index.html`) and one for json-server, which runs the same `mock:api` script. json-server has no port of its own: [nginx.conf](nginx.conf) forwards `/api/...` to it inside Docker, so the browser only talks to the app's address and there are no cross-origin requests. The same setup works on a host such as Coolify with the Docker Compose build pack: give only the `web` service a domain, on port 80. Task changes are kept until the containers are removed.
 
 ## Environment configuration
 
-The API address is in [src/environments/environment.ts](src/environments/environment.ts):
+The API address is set per build:
 
-```ts
-export const environment = {
-  apiUrl: 'http://localhost:3030',
-};
-```
+| File                                                                    | Used by                                                                         | `apiUrl`                   |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| [environment.ts](src/environments/environment.ts)                       | `npm start` and the tests                                                       | `http://localhost:3030`    |
+| [environment.production.ts](src/environments/environment.production.ts) | `npm run build` and Docker (swapped in by `fileReplacements` in `angular.json`) | `/api`, forwarded by nginx |
 
 Change `apiUrl` to point the app at another backend. json-server runs on port 3030 with a 1 second delay (see `mock:api` in `package.json`), so the loading states can be seen.
 

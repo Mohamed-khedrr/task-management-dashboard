@@ -8,9 +8,8 @@ services:
     depends_on:
       - api
 
+  # Reached only through the web service's nginx at /api, so it needs no port on the host
   api:
     build:
       context: .
       target: api
-    ports:
-      - '3030:3030'
