@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  linkedSignal,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
@@ -24,8 +17,8 @@ const PAGE_SIZE = 30;
   styleUrl: './activity.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ActivityComponent implements OnInit {
-  private readonly taskResource = inject(TaskService).tasks;
+export class ActivityComponent {
+  private readonly taskResource = inject(TaskService).createTasksResource();
   private readonly search = inject(SearchService);
 
   protected readonly isLoading = computed(() => this.taskResource.isLoading());
@@ -61,10 +54,6 @@ export class ActivityComponent implements OnInit {
   protected readonly nextPageSize = computed(() =>
     Math.min(PAGE_SIZE, this.allActivities().length - this.visibleCount()),
   );
-
-  ngOnInit(): void {
-    this.taskResource.reload();
-  }
 
   protected showMore() {
     this.visibleCount.update((count) => count + PAGE_SIZE);

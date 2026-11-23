@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -12,6 +12,7 @@ import { UserService } from '../../core/services/user.service';
 import { TaskDialogService } from '../../core/services/task-dialog.service';
 import { TaskToolbarComponent } from './components/task-toolbar/task-toolbar.component';
 import { StatCard } from '../../core/models/stat-card.model';
+import { Task, TaskMove } from '../../core/models/task.model';
 import { TaskBoardComponent } from './components/task-board/task-board.component';
 
 @Component({
@@ -29,9 +30,9 @@ import { TaskBoardComponent } from './components/task-board/task-board.component
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private readonly taskService = inject(TaskService);
-  private readonly taskResource = this.taskService.tasks;
+  private readonly taskResource = this.taskService.createTasksResource();
   private readonly today = new Date();
 
   protected readonly filters = inject(TaskFiltersService);
@@ -109,8 +110,26 @@ export class DashboardComponent implements OnInit {
     ];
   });
 
-  ngOnInit(): void {
-    this.taskResource.reload();
+  /**
+   * Moves the card at once, then saves and keeps the saved task, which has the server's dates.
+   * If saving fails the list is loaded again from the server instead of rolled back by hand,
+   * so quick repeated moves can't end up out of sync.
+   */
+  protected moveTask({ taskId, status }: TaskMove) {
+    const task = this.tasks().find((t) => t.id === taskId);
+    if (!task) {
+      return;
+    }
+
+    this.taskResource.update((list) => list.map((t) => (t.id === taskId ? { ...t, status } : t)));
+    this.taskService.updateStatus(task, status).subscribe({
+      next: (saved) => this.replaceTask(saved),
+      error: () => this.taskResource.reload(),
+    });
+  }
+
+  private replaceTask(saved: Task) {
+    this.taskResource.update((list) => list.map((t) => (t.id === saved.id ? saved : t)));
   }
 
   protected retry() {

@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { MessageModule } from 'primeng/message';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { TaskDraft } from '../../core/models/task.model';
 import { TaskDialogService } from '../../core/services/task-dialog.service';
 import { TaskService } from '../../core/services/task.service';
@@ -9,7 +12,7 @@ import { TaskFormComponent } from '../../pages/dashboard/components/task-form/ta
 
 @Component({
   selector: 'app-task-dialog',
-  imports: [Dialog, TaskFormComponent, TranslocoPipe],
+  imports: [Dialog, ButtonModule, MessageModule, ProgressSpinner, TaskFormComponent, TranslocoPipe],
   templateUrl: './task-dialog.component.html',
   styleUrl: './task-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +22,9 @@ export class TaskDialogComponent {
 
   protected readonly dialog = inject(TaskDialogService);
   protected readonly users = inject(UserService).users;
+
+  // Edit loads the latest version of the task from the server, not the copy on the board
+  protected readonly task = this.taskService.createTaskResource(this.dialog.editRequest);
 
   protected readonly isSaving = signal(false);
 
@@ -33,7 +39,7 @@ export class TaskDialogComponent {
       return;
     }
 
-    const task = this.dialog.task();
+    const task = this.task.value();
     const request = task
       ? this.taskService.saveTask(task, draft)
       : this.taskService.createTask(draft);

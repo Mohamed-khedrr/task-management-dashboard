@@ -1,3 +1,6 @@
+import { By } from '@angular/platform-browser';
+import { of, throwError } from 'rxjs';
+import { TaskBoardComponent } from './components/task-board/task-board.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
 
@@ -32,6 +35,7 @@ describe('DashboardComponent', () => {
   const status = signal<ResourceStatus>('resolved');
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
+  const updateStatus = vi.fn();
 
   beforeEach(async () => {
     tasks.set([makeTask('todo'), makeTask('done'), makeTask('done')]);
@@ -39,6 +43,8 @@ describe('DashboardComponent', () => {
     status.set('resolved');
     error.set(undefined);
     reload.mockClear();
+    updateStatus.mockReset();
+    updateStatus.mockReturnValue(of({}));
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, getTranslocoModule()],
@@ -46,7 +52,15 @@ describe('DashboardComponent', () => {
         {
           provide: TaskService,
           useValue: {
-            tasks: { value: tasks, status, error, hasValue: () => !error(), reload },
+            createTasksResource: () => ({
+              value: tasks,
+              status,
+              error,
+              hasValue: () => !error(),
+              reload,
+              update: (change: (list: Task[]) => Task[]) => tasks.update(change),
+            }),
+            updateStatus,
           },
         },
         { provide: UserService, useValue: { users: { value: signal([]) } } },
@@ -101,7 +115,36 @@ describe('DashboardComponent', () => {
     expect(cardsPerColumn).toEqual([1, 0, 2]);
   });
 
-  it('refreshes the tasks when the page opens', () => {
+  it('keeps the task the server saved after a move', async () => {
+    const todo = tasks().find((t) => t.status === 'todo')!;
+    const saved = { ...todo, status: 'done' as const, completedAt: '2026-01-02T00:00:00' };
+    updateStatus.mockReturnValue(of(saved));
+    const board = fixture.debugElement.query(By.directive(TaskBoardComponent));
+
+    board.componentInstance.taskMoved.emit({ taskId: todo.id, status: 'done' });
+    await fixture.whenStable();
+
+    expect(tasks().find((t) => t.id === todo.id)).toEqual(saved);
+  });
+
+  it('moves a card at once and saves the new status', async () => {
+    const board = fixture.debugElement.query(By.directive(TaskBoardComponent));
+    const todo = tasks().find((t) => t.status === 'todo')!;
+
+    board.componentInstance.taskMoved.emit({ taskId: todo.id, status: 'in_progress' });
+    await fixture.whenStable();
+
+    expect(statValues()[2]).toBe('1');
+    expect(updateStatus).toHaveBeenCalledWith(todo, 'in_progress');
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  it('loads the list again when saving a move fails', async () => {
+    updateStatus.mockReturnValue(throwError(() => new Error('down')));
+    const board = fixture.debugElement.query(By.directive(TaskBoardComponent));
+
+    board.componentInstance.taskMoved.emit({ taskId: tasks()[0].id, status: 'done' });
+
     expect(reload).toHaveBeenCalledOnce();
   });
 

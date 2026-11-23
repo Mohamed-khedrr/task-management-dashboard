@@ -73,6 +73,6 @@ describe('MainLayoutComponent', () => {
     await fixture.whenStable();
 
     expect(taskDialog.isOpen()).toBe(true);
-    expect(taskDialog.task()).toBeNull();
+    expect(taskDialog.editRequest()).toBeNull();
   });
 });

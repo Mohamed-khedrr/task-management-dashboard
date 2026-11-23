@@ -119,7 +119,9 @@
       "dueDateRequired": "Choose a due date.",
       "assigneeRequired": "Choose an assignee.",
       "tagTooLong": "Keep each tag to {{max}} characters or fewer."
-    }
+    },
+    "loading": "Loading the task",
+    "loadError": "Couldn't load this task."
   },
   "taskActions": {
     "label": "Actions for {{title}}",

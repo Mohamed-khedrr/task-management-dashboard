@@ -1,20 +1,21 @@
 import { Injectable, signal } from '@angular/core';
-import { Task } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskDialogService {
   readonly isOpen = signal(false);
-  readonly task = signal<Task | null>(null);
+
+  // A new object on every open, so the dialog loads the task again even when it's the same one
+  readonly editRequest = signal<{ taskId: string } | null>(null);
 
   openCreate() {
-    this.task.set(null);
+    this.editRequest.set(null);
     this.isOpen.set(true);
   }
 
-  openEdit(task: Task) {
-    this.task.set(task);
+  openEdit(taskId: string) {
+    this.editRequest.set({ taskId });
     this.isOpen.set(true);
   }
 

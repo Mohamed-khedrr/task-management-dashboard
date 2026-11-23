@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { Task } from '../models/task.model';
 import { TaskDialogService } from './task-dialog.service';
 
 describe('TaskDialogService', () => {
@@ -10,16 +9,23 @@ describe('TaskDialogService', () => {
     service = TestBed.inject(TaskDialogService);
   });
 
-  it('opens with the task to edit, then empty for a new task', () => {
-    const task = { id: 'task-1' } as Task;
-
-    service.openEdit(task);
+  it('opens for the task to edit, then empty for a new task', () => {
+    service.openEdit('task-1');
     expect(service.isOpen()).toBe(true);
-    expect(service.task()).toBe(task);
+    expect(service.editRequest()?.taskId).toBe('task-1');
 
     service.close();
     service.openCreate();
     expect(service.isOpen()).toBe(true);
-    expect(service.task()).toBeNull();
+    expect(service.editRequest()).toBeNull();
+  });
+
+  it('asks for the task again when the same one is opened twice', () => {
+    service.openEdit('task-1');
+    const first = service.editRequest();
+
+    service.openEdit('task-1');
+
+    expect(service.editRequest()).not.toBe(first);
   });
 });

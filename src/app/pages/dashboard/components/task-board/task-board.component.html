@@ -9,8 +9,8 @@
       [status]="column.status"
       [tasks]="column.tasks"
       [deletingIds]="deletingIds()"
-      (taskMoved)="moveTask($event)"
-      (taskEdit)="taskDialog.openEdit($event)"
+      (taskMoved)="taskMoved.emit($event)"
+      (taskEdit)="taskDialog.openEdit($event.id)"
       (taskDelete)="confirmDelete($event)"
     />
   }

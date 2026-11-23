@@ -41,7 +41,15 @@ describe('ActivityComponent', () => {
       providers: [
         {
           provide: TaskService,
-          useValue: { tasks: { value: tasks, isLoading, error, hasValue: () => !error(), reload } },
+          useValue: {
+            createTasksResource: () => ({
+              value: tasks,
+              isLoading,
+              error,
+              hasValue: () => !error(),
+              reload,
+            }),
+          },
         },
       ],
     }).compileComponents();
@@ -49,10 +57,6 @@ describe('ActivityComponent', () => {
     fixture = TestBed.createComponent(ActivityComponent);
     element = fixture.nativeElement;
     await fixture.whenStable();
-  });
-
-  it('refreshes the tasks when the page opens', () => {
-    expect(reload).toHaveBeenCalledOnce();
   });
 
   it('lists the changes from all tasks', () => {
@@ -88,7 +92,7 @@ describe('ActivityComponent', () => {
 
     element.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
 
-    expect(reload).toHaveBeenCalledTimes(2);
+    expect(reload).toHaveBeenCalledOnce();
   });
 
   it('shows 30 changes at a time and reveals the rest on demand', async () => {

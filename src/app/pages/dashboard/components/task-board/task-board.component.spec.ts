@@ -11,7 +11,6 @@ import { TaskBoardComponent } from './task-board.component';
 
 describe('TaskBoardComponent', () => {
   let fixture: ComponentFixture<TaskBoardComponent>;
-  const updateStatus = vi.fn();
   const deleteTask = vi.fn();
 
   const task: Task = {
@@ -30,13 +29,12 @@ describe('TaskBoardComponent', () => {
   const column = () => fixture.debugElement.query(By.directive(TaskColumnComponent));
 
   beforeEach(async () => {
-    updateStatus.mockClear();
     deleteTask.mockReset();
     deleteTask.mockReturnValue(of(undefined));
 
     await TestBed.configureTestingModule({
       imports: [TaskBoardComponent, getTranslocoModule()],
-      providers: [{ provide: TaskService, useValue: { updateStatus, deleteTask } }],
+      providers: [{ provide: TaskService, useValue: { deleteTask } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TaskBoardComponent);
@@ -44,10 +42,13 @@ describe('TaskBoardComponent', () => {
     await fixture.whenStable();
   });
 
-  it('saves the new status when a card is moved to another column', () => {
+  it('passes a card move on to the dashboard, which owns the list', () => {
+    const onMoved = vi.fn();
+    fixture.componentInstance.taskMoved.subscribe(onMoved);
+
     column().componentInstance.taskMoved.emit({ taskId: 'task-1', status: 'done' });
 
-    expect(updateStatus).toHaveBeenCalledWith('task-1', 'done');
+    expect(onMoved).toHaveBeenCalledWith({ taskId: 'task-1', status: 'done' });
   });
 
   it('opens the task form when Edit is chosen', () => {
@@ -56,7 +57,7 @@ describe('TaskBoardComponent', () => {
     column().componentInstance.taskEdit.emit(task);
 
     expect(taskDialog.isOpen()).toBe(true);
-    expect(taskDialog.task()).toBe(task);
+    expect(taskDialog.editRequest()?.taskId).toBe('task-1');
   });
 
   it('deletes a task only when the confirmation is accepted', () => {

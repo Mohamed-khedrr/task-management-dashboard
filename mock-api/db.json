@@ -176,7 +176,7 @@
       "id": "task-017",
       "title": "Update payment gateway integration",
       "description": "Migrate to new payment provider API and update billing logic",
-      "status": "in_progress",
+      "status": "done",
       "priority": "high",
       "dueDate": "2026-11-19",
       "isOverdue": true,
@@ -188,7 +188,8 @@
       },
       "tags": ["Backend", "Critical"],
       "createdAt": "2026-11-06T21:37:10.197Z",
-      "updatedAt": "2026-11-20T21:37:10.197Z"
+      "updatedAt": "2026-11-23T05:59:10.427Z",
+      "completedAt": "2026-11-23T05:59:10.427Z"
     },
     {
       "id": "task-009",
@@ -264,12 +265,11 @@
     },
     {
       "id": "task-013",
-      "title": "Security audit",
+      "title": "Security auditt",
       "description": "Conduct comprehensive security review of the application",
-      "status": "done",
+      "status": "in_progress",
       "priority": "high",
-      "dueDate": "2026-11-15",
-      "completedAt": "2026-11-16T21:37:10.197Z",
+      "dueDate": "2026-11-25",
       "assignee": {
         "id": "user-001",
         "name": "John Doe",
@@ -278,7 +278,7 @@
       },
       "tags": ["Security"],
       "createdAt": "2026-11-07T21:37:10.197Z",
-      "updatedAt": "2026-11-16T21:37:10.197Z"
+      "updatedAt": "2026-11-23T06:02:42.778Z"
     },
     {
       "id": "task-014",

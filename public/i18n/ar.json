@@ -119,7 +119,9 @@
       "dueDateRequired": "اختر تاريخ الاستحقاق.",
       "assigneeRequired": "اختر المسؤول.",
       "tagTooLong": "يجب ألا يزيد كل وسم عن {{max}} حرفًا."
-    }
+    },
+    "loading": "جارٍ تحميل المهمة",
+    "loadError": "تعذّر تحميل هذه المهمة."
   },
   "taskActions": {
     "label": "إجراءات {{title}}",

@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
@@ -31,12 +31,22 @@ describe('TaskDialogComponent', () => {
 
   const createTask = vi.fn();
   const saveTask = vi.fn();
+  const reloadTask = vi.fn();
+  const loadState = signal<'loaded' | 'loading' | 'error'>('loaded');
+
+  // Stands in for the edit resource: it has the task once an edit was requested and loaded
+  const createTaskResource = (editRequest: Signal<{ taskId: string } | null>) => ({
+    value: () => (editRequest() && loadState() === 'loaded' ? task : undefined),
+    hasValue: () => !!editRequest() && loadState() === 'loaded',
+    error: () => (loadState() === 'error' ? new Error('down') : undefined),
+    reload: reloadTask,
+  });
 
   const form = () => fixture.debugElement.query(By.directive(TaskFormComponent));
 
   const open = async (taskToEdit: Task | null) => {
     if (taskToEdit) {
-      dialog.openEdit(taskToEdit);
+      dialog.openEdit(taskToEdit.id);
     } else {
       dialog.openCreate();
     }
@@ -50,6 +60,8 @@ describe('TaskDialogComponent', () => {
 
   beforeEach(async () => {
     request = new Subject();
+    loadState.set('loaded');
+    reloadTask.mockClear();
     for (const spy of [createTask, saveTask]) {
       spy.mockReset();
       spy.mockReturnValue(request);
@@ -58,7 +70,7 @@ describe('TaskDialogComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TaskDialogComponent, getTranslocoModule()],
       providers: [
-        { provide: TaskService, useValue: { createTask, saveTask } },
+        { provide: TaskService, useValue: { createTask, saveTask, createTaskResource } },
         { provide: UserService, useValue: { users: { value: signal([]) } } },
       ],
     }).compileComponents();
@@ -111,5 +123,25 @@ describe('TaskDialogComponent', () => {
 
     expect(dialog.isOpen()).toBe(true);
     expect(form().componentInstance.saving()).toBe(false);
+  });
+
+  it('shows a loader instead of the form while the task loads', async () => {
+    loadState.set('loading');
+    await open(task);
+
+    expect(form()).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-busy="true"]')).not.toBeNull();
+  });
+
+  it('offers to load the task again when loading fails', async () => {
+    loadState.set('error');
+    await open(task);
+
+    expect(form()).toBeNull();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[role="alert"] button')!
+      .click();
+
+    expect(reloadTask).toHaveBeenCalledOnce();
   });
 });

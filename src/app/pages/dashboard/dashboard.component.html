@@ -53,6 +53,6 @@
       />
     </div>
   } @else {
-    <app-task-board class="board" [columns]="columns()" />
+    <app-task-board class="board" [columns]="columns()" (taskMoved)="moveTask($event)" />
   }
 }

@@ -1,22 +1,22 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpResourceRef, provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import {
-  HttpTestingController,
-  provideHttpClientTesting,
-  TestRequest,
-} from '@angular/common/http/testing';
-import { ApplicationRef } from '@angular/core';
+  ApplicationRef,
+  createEnvironmentInjector,
+  EnvironmentInjector,
+  signal,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import { Task, TaskDraft } from '../models/task.model';
-import { TaskService } from './task.service';
 import { SILENT_ERRORS } from '../interceptors/error-interceptor';
 import { RETRY_CONTEXT } from '../interceptors/retry-interceptor';
+import { Task, TaskDraft } from '../models/task.model';
+import { TaskService } from './task.service';
 
 describe('TaskService', () => {
   const url = `${environment.apiUrl}/tasks`;
   let service: TaskService;
   let http: HttpTestingController;
-  let firstLoad: TestRequest;
 
   const task: Task = {
     id: 'task-1',
@@ -31,185 +31,177 @@ describe('TaskService', () => {
     updatedAt: '2026-01-01T00:00:00',
   };
 
-  beforeEach(async () => {
+  const draft: TaskDraft = {
+    title: 'Plan the sprint',
+    description: '',
+    status: 'todo',
+    priority: 'high',
+    dueDate: '2099-02-01',
+    assignee: task.assignee,
+    tags: ['Planning'],
+  };
+
+  const settle = () => TestBed.inject(ApplicationRef).whenStable();
+
+  // A page's list, created in its own injector so the test can close the page
+  const openPage = async (tasks: Task[] = [task]) => {
+    const page = createEnvironmentInjector([], TestBed.inject(EnvironmentInjector));
+    const list = page.runInContext(() => service.createTasksResource());
+    TestBed.tick();
+    const request = http.expectOne({ method: 'GET', url });
+    request.flush(tasks);
+    await settle();
+    return { page, list, request };
+  };
+
+  const expectListReload = async (list: HttpResourceRef<Task[]>, tasks: Task[]) => {
+    TestBed.tick();
+    http.expectOne({ method: 'GET', url }).flush(tasks);
+    await settle();
+    expect(list.value()).toEqual(tasks);
+  };
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(TaskService);
     http = TestBed.inject(HttpTestingController);
-
-    TestBed.tick();
-    firstLoad = http.expectOne(url);
-    firstLoad.flush([task]);
-    await TestBed.inject(ApplicationRef).whenStable();
-  });
-
-  it('loads the tasks with retries and without an error toast', () => {
-    expect(firstLoad.request.context.get(RETRY_CONTEXT)).toBe(true);
-    expect(firstLoad.request.context.get(SILENT_ERRORS)).toBe(true);
   });
 
   afterEach(() => http.verify());
 
-  it('replaces the task right away and saves the full task', () => {
-    const edited: Task = { ...task, title: 'Write the final report', priority: 'high' };
+  describe('page task lists', () => {
+    it('load with retries and without an error toast', async () => {
+      const { list, request } = await openPage();
 
-    service.updateTask(edited);
-
-    expect(service.tasks.value()).toEqual([edited]);
-
-    const request = http.expectOne(`${url}/task-1`);
-    expect(request.request.method).toBe('PUT');
-    expect(request.request.body).toEqual(edited);
-    request.flush(edited);
-  });
-
-  it('moves a task to a new status, keeping its other fields', () => {
-    service.updateStatus('task-1', 'in_progress');
-
-    const moved = service.tasks.value()[0];
-    expect(moved.status).toBe('in_progress');
-    expect(moved.title).toBe(task.title);
-
-    const request = http.expectOne(`${url}/task-1`);
-    expect(request.request.body).toEqual(moved);
-    request.flush(moved);
-  });
-
-  it('sets the completion date when a task is moved to done', () => {
-    service.updateStatus('task-1', 'done');
-
-    expect(service.tasks.value()[0].completedAt).toBeDefined();
-    http.expectOne(`${url}/task-1`).flush({});
-  });
-
-  it('clears the completion date when a task leaves done', () => {
-    service.updateStatus('task-1', 'done');
-    http.expectOne(`${url}/task-1`).flush({});
-
-    service.updateStatus('task-1', 'todo');
-
-    expect(service.tasks.value()[0].completedAt).toBeUndefined();
-    http.expectOne(`${url}/task-1`).flush({});
-  });
-
-  it('puts the task back when saving fails', () => {
-    service.updateStatus('task-1', 'done');
-
-    http
-      .expectOne(`${url}/task-1`)
-      .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
-
-    expect(service.tasks.value()[0].status).toBe('todo');
-  });
-
-  it('removes a task only after the server deletes it', () => {
-    service.deleteTask('task-1').subscribe();
-
-    expect(service.tasks.value()).toEqual([task]);
-
-    const request = http.expectOne(`${url}/task-1`);
-    expect(request.request.method).toBe('DELETE');
-    request.flush({});
-
-    expect(service.tasks.value()).toEqual([]);
-  });
-
-  it('keeps the task when deleting fails', () => {
-    service.deleteTask('task-1').subscribe({ error: vi.fn() });
-
-    http.expectOne(`${url}/task-1`).flush('Not found', { status: 404, statusText: 'Not Found' });
-
-    expect(service.tasks.value()).toEqual([task]);
-  });
-
-  describe('from the task form', () => {
-    const draft: TaskDraft = {
-      title: 'Plan the sprint',
-      description: '',
-      status: 'todo',
-      priority: 'high',
-      dueDate: '2099-02-01',
-      assignee: task.assignee,
-      tags: ['Planning'],
-    };
-
-    it('adds a created task only after the server replies', () => {
-      service.createTask(draft).subscribe();
-
-      expect(service.tasks.value()).toHaveLength(1);
-
-      const request = http.expectOne(url);
-      expect(request.request.method).toBe('POST');
-      request.flush({ ...request.request.body, id: 'task-2' });
-
-      expect(service.tasks.value().map((t) => t.id)).toEqual(['task-2', 'task-1']);
+      expect(request.request.context.get(RETRY_CONTEXT)).toBe(true);
+      expect(request.request.context.get(SILENT_ERRORS)).toBe(true);
+      expect(list.value()).toEqual([task]);
     });
 
-    it('leaves the list unchanged when creating fails', () => {
-      service.createTask(draft).subscribe({ error: vi.fn() });
+    it('load again after a successful change, keeping the old list on screen meanwhile', async () => {
+      const { list } = await openPage();
 
-      http.expectOne(url).flush('Server error', { status: 500, statusText: 'Server Error' });
+      service.deleteTask('task-1').subscribe();
+      http.expectOne({ method: 'DELETE', url: `${url}/task-1` }).flush(null);
+      TestBed.tick();
 
-      expect(service.tasks.value()).toEqual([task]);
+      expect(list.value()).toEqual([task]);
+      await expectListReload(list, []);
     });
 
-    it('replaces the task with the saved one', () => {
-      service.saveTask(task, draft).subscribe();
+    it('stay as they are when a change fails', async () => {
+      const { list } = await openPage();
 
-      const request = http.expectOne(`${url}/task-1`);
-      expect(request.request.method).toBe('PUT');
-      expect(request.request.body.title).toBe('Plan the sprint');
-      expect(service.tasks.value()[0].title).toBe(task.title);
+      service.deleteTask('task-1').subscribe({ error: vi.fn() });
+      http.expectOne(`${url}/task-1`).flush('down', { status: 500, statusText: 'Server Error' });
+      TestBed.tick();
 
-      request.flush(request.request.body);
-
-      expect(service.tasks.value()[0].title).toBe('Plan the sprint');
+      http.expectNone({ method: 'GET', url });
+      expect(list.value()).toEqual([task]);
     });
 
-    it('sets the completion date when the form moves a task to done', () => {
-      service.saveTask(task, { ...draft, status: 'done' }).subscribe();
+    it('stop reloading once their page is closed', async () => {
+      const { page } = await openPage();
+      page.destroy();
 
-      const request = http.expectOne(`${url}/task-1`);
-      expect(request.request.body.completedAt).toBeDefined();
-      request.flush(request.request.body);
+      service.deleteTask('task-1').subscribe();
+      http.expectOne(`${url}/task-1`).flush(null);
+      TestBed.tick();
+
+      http.expectNone({ method: 'GET', url });
     });
-  });
 
-  describe('after the task list failed to load', () => {
-    const draft: TaskDraft = {
-      title: 'Plan the sprint',
-      description: '',
-      status: 'todo',
-      priority: 'high',
-      dueDate: '2099-02-01',
-      assignee: task.assignee,
-      tags: [],
-    };
-
-    beforeEach(async () => {
-      service.tasks.reload();
+    it('recover after a failed load when a task is created', async () => {
+      const page = createEnvironmentInjector([], TestBed.inject(EnvironmentInjector));
+      const list = page.runInContext(() => service.createTasksResource());
       TestBed.tick();
       http.expectOne(url).flush('down', { status: 500, statusText: 'Server Error' });
-      await TestBed.inject(ApplicationRef).whenStable();
-    });
+      await settle();
 
-    it('reports a successful create as a success and loads the list again', async () => {
       const onSaved = vi.fn();
-      const onError = vi.fn();
-      service.createTask(draft).subscribe({ next: onSaved, error: onError });
-
-      const request = http.expectOne({ method: 'POST', url });
-      request.flush({ ...request.request.body, id: 'task-2' });
+      service.createTask(draft).subscribe({ next: onSaved });
+      const created = http.expectOne({ method: 'POST', url });
+      created.flush({ ...created.request.body, id: 'task-2' });
 
       expect(onSaved).toHaveBeenCalledOnce();
-      expect(onError).not.toHaveBeenCalled();
+      await expectListReload(list, [task]);
+    });
+  });
 
+  describe('changes', () => {
+    it('creates a task with its dates set', () => {
+      service.createTask({ ...draft, status: 'done' }).subscribe();
+
+      const request = http.expectOne({ method: 'POST', url });
+      expect(request.request.body.title).toBe('Plan the sprint');
+      expect(request.request.body.createdAt).toBeDefined();
+      expect(request.request.body.completedAt).toBeDefined();
+      request.flush({});
+    });
+
+    it('saves the form changes onto the task', () => {
+      service.saveTask(task, draft).subscribe();
+
+      const request = http.expectOne({ method: 'PUT', url: `${url}/task-1` });
+      expect(request.request.body).toMatchObject({ id: 'task-1', title: 'Plan the sprint' });
+      request.flush(request.request.body);
+    });
+
+    it('saves a moved card without reloading the open lists', async () => {
+      await openPage();
+
+      service.updateStatus(task, 'done').subscribe();
+      const request = http.expectOne({ method: 'PUT', url: `${url}/task-1` });
+      request.flush(request.request.body);
       TestBed.tick();
-      http.expectOne({ method: 'GET', url }).flush([task, { ...task, id: 'task-2' }]);
-      await TestBed.inject(ApplicationRef).whenStable();
 
-      expect(service.tasks.value().map((t) => t.id)).toEqual(['task-1', 'task-2']);
+      http.expectNone({ method: 'GET', url });
+    });
+
+    it('moves a task to a new status, keeping its other fields', () => {
+      service.updateStatus(task, 'in_progress').subscribe();
+
+      const request = http.expectOne({ method: 'PUT', url: `${url}/task-1` });
+      const { updatedAt, ...unchanged } = task;
+      expect(request.request.body).toMatchObject({ ...unchanged, status: 'in_progress' });
+      expect(request.request.body.updatedAt).not.toBe(updatedAt);
+      expect(request.request.context.get(RETRY_CONTEXT)).toBe(true);
+      request.flush(request.request.body);
+    });
+
+    it('sets the completion date when a task becomes done and clears it when it leaves', () => {
+      service.updateStatus(task, 'done').subscribe();
+      const done = http.expectOne(`${url}/task-1`);
+      expect(done.request.body.completedAt).toBeDefined();
+      done.flush(done.request.body);
+
+      service.updateStatus(done.request.body, 'todo').subscribe();
+      const reopened = http.expectOne(`${url}/task-1`);
+      expect(reopened.request.body.completedAt).toBeUndefined();
+      reopened.flush(reopened.request.body);
+    });
+  });
+
+  describe('the task being edited', () => {
+    it('loads one task, and loads it again when it is opened again', async () => {
+      const editRequest = signal<{ taskId: string } | null>(null);
+      const edited = TestBed.runInInjectionContext(() => service.createTaskResource(editRequest));
+      TestBed.tick();
+      http.expectNone(`${url}/task-1`);
+
+      editRequest.set({ taskId: 'task-1' });
+      TestBed.tick();
+      http.expectOne(`${url}/task-1`).flush(task);
+      await settle();
+      expect(edited.value()).toEqual(task);
+
+      editRequest.set({ taskId: 'task-1' });
+      TestBed.tick();
+      http.expectOne(`${url}/task-1`).flush({ ...task, title: 'Changed elsewhere' });
+      await settle();
+      expect(edited.value()?.title).toBe('Changed elsewhere');
     });
   });
 });

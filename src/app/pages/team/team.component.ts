@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
@@ -20,9 +20,9 @@ import { MemberCardComponent } from './components/member-card/member-card.compon
   styleUrl: './team.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeamComponent implements OnInit {
+export class TeamComponent {
   private readonly userResource = inject(UserService).users;
-  private readonly taskResource = inject(TaskService).tasks;
+  private readonly taskResource = inject(TaskService).createTasksResource();
   private readonly search = inject(SearchService);
 
   private readonly today = new Date();
@@ -64,10 +64,6 @@ export class TeamComponent implements OnInit {
         member.user.email.toLowerCase().includes(query),
     );
   });
-
-  ngOnInit(): void {
-    this.taskResource.reload();
-  }
 
   protected retry() {
     this.userResource.reload();

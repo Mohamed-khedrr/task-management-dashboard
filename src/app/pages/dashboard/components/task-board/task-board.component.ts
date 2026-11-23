@@ -1,6 +1,6 @@
 import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -27,11 +27,10 @@ export class TaskBoardComponent {
 
   readonly columns = input.required<TaskColumn[]>();
 
-  protected readonly deletingIds = signal<string[]>([]);
+  // The dashboard owns the list, so it moves the card in it before saving
+  readonly taskMoved = output<TaskMove>();
 
-  protected moveTask(move: TaskMove) {
-    this.taskService.updateStatus(move.taskId, move.status);
-  }
+  protected readonly deletingIds = signal<string[]>([]);
 
   protected confirmDelete(task: Task) {
     this.confirmation.confirm({
@@ -47,11 +46,11 @@ export class TaskBoardComponent {
     });
   }
 
-  // The card shows a loader until the server confirms; the error interceptor shows any failure
+  // The card keeps its loader until the refreshed list no longer has it; the error interceptor shows any failure
   private delete(taskId: string) {
     this.deletingIds.update((ids) => [...ids, taskId]);
     const stopLoading = () => this.deletingIds.update((ids) => ids.filter((id) => id !== taskId));
 
-    this.taskService.deleteTask(taskId).subscribe({ next: stopLoading, error: stopLoading });
+    this.taskService.deleteTask(taskId).subscribe({ error: stopLoading });
   }
 }

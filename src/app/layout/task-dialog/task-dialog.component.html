@@ -1,7 +1,9 @@
+@let isEditing = !!dialog.editRequest();
+
 <p-dialog
   [visible]="dialog.isOpen()"
   (visibleChange)="onVisibleChange($event)"
-  [header]="(dialog.task() ? 'taskForm.editTitle' : 'taskForm.createTitle') | transloco"
+  [header]="(isEditing ? 'taskForm.editTitle' : 'taskForm.createTitle') | transloco"
   [modal]="true"
   [draggable]="false"
   [closable]="!isSaving()"
@@ -10,12 +12,27 @@
   [breakpoints]="{ '640px': 'calc(100vw - 2rem)' }"
 >
   @if (dialog.isOpen()) {
-    <app-task-form
-      [task]="dialog.task()"
-      [users]="users.value()"
-      [saving]="isSaving()"
-      (saved)="save($event)"
-      (cancelled)="dialog.close()"
-    />
+    @if (isEditing && task.error()) {
+      <div class="state" role="alert">
+        <p-message severity="error">{{ 'taskForm.loadError' | transloco }}</p-message>
+        <p-button [label]="'dashboard.retry' | transloco" (onClick)="task.reload()" />
+      </div>
+    } @else if (isEditing && !task.hasValue()) {
+      <div class="state" aria-busy="true">
+        <p-progress-spinner
+          strokeWidth="4"
+          [ariaLabel]="'taskForm.loading' | transloco"
+          [style]="{ width: '40px', height: '40px' }"
+        />
+      </div>
+    } @else {
+      <app-task-form
+        [task]="(isEditing && task.value()) || null"
+        [users]="users.value()"
+        [saving]="isSaving()"
+        (saved)="save($event)"
+        (cancelled)="dialog.close()"
+      />
+    }
   }
 </p-dialog>

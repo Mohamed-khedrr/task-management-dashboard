@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Chart } from 'chart.js';
 import { ButtonModule } from 'primeng/button';
@@ -37,8 +37,8 @@ function cssVar(name: string) {
   styleUrl: './analytics.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnalyticsComponent implements OnInit {
-  private readonly taskResource = inject(TaskService).tasks;
+export class AnalyticsComponent {
+  private readonly taskResource = inject(TaskService).createTasksResource();
   private readonly users = inject(UserService).users;
   private readonly transloco = inject(TranslocoService);
   private readonly language = inject(LanguageService);
@@ -143,11 +143,6 @@ export class AnalyticsComponent implements OnInit {
       color: this.overdueColor,
     },
   ]);
-
-  // Same as the dashboard: show fresh data when the page opens
-  ngOnInit() {
-    this.taskResource.reload();
-  }
 
   protected retry() {
     this.taskResource.reload();

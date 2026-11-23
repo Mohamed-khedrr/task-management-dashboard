@@ -53,17 +53,13 @@ describe('TeamComponent', () => {
       imports: [TeamComponent, getTranslocoModule()],
       providers: [
         { provide: UserService, useValue: { users } },
-        { provide: TaskService, useValue: { tasks } },
+        { provide: TaskService, useValue: { createTasksResource: () => tasks } },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TeamComponent);
     element = fixture.nativeElement;
     await fixture.whenStable();
-  });
-
-  it('refreshes the tasks when the page opens', () => {
-    expect(tasks.reload).toHaveBeenCalledOnce();
   });
 
   it('shows a card per person with their tasks per status and overdue', () => {
@@ -103,6 +99,6 @@ describe('TeamComponent', () => {
     element.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
 
     expect(users.reload).toHaveBeenCalledOnce();
-    expect(tasks.reload).toHaveBeenCalledTimes(2);
+    expect(tasks.reload).toHaveBeenCalledOnce();
   });
 });

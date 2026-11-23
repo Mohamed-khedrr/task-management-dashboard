@@ -1,10 +1,15 @@
-import { HttpClient, httpResource } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
+import { DestroyRef, inject, Injectable, Signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { tap } from 'rxjs';
 import { Task, TaskDraft, TaskStatus } from '../models/task.model';
 import { withRetry } from '../interceptors/retry-interceptor';
 import { SILENT_ERRORS } from '../interceptors/error-interceptor';
+
+// Loads are retried and silent: the screens that load show their own error with a Retry button
+function loadContext() {
+  return withRetry().set(SILENT_ERRORS, true);
+}
 
 @Injectable({
   providedIn: 'root',
@@ -13,47 +18,39 @@ export class TaskService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/tasks`;
 
-  // Silent: the pages show their own error with a Retry button, so a toast would repeat it
-  readonly tasks = httpResource<Task[]>(
-    () => ({
-      url: this.url,
-      context: withRetry().set(SILENT_ERRORS, true),
-    }),
-    { defaultValue: [] },
-  );
+  // The task lists of the pages open right now, so a change made anywhere can refresh them
+  private readonly openLists = new Set<HttpResourceRef<Task[]>>();
 
   /**
-   * Optimistic update: the board changes right away and goes back to the previous
-   * task if the server rejects the change. Used for drag and drop, where waiting
-   * for the server would make the card jump back.
+   * Creates the task list for a page; call it in a field initializer.
+   * The list lives as long as the page: it loads when the page opens (from the cache
+   * interceptor while that's fresh) and reloads after every change made in the app.
    */
-  updateTask(updatedTask: Task) {
-    const prevTask = this.tasks.value()?.find((t) => t.id === updatedTask.id);
+  createTasksResource() {
+    const tasks = httpResource<Task[]>(() => ({ url: this.url, context: loadContext() }), {
+      defaultValue: [],
+    });
 
-    if (!prevTask) return;
-    this.replaceTask(updatedTask);
-
-    this.http
-      .put<Task>(`${this.url}/${updatedTask.id}`, updatedTask, {
-        context: withRetry(),
-      })
-      .subscribe({
-        error: () => this.replaceTask(prevTask),
-      });
+    this.openLists.add(tasks);
+    inject(DestroyRef).onDestroy(() => this.openLists.delete(tasks));
+    return tasks;
   }
 
-  private replaceTask(task: Task): void {
-    this.tasks.update((list) => (list ?? []).map((t) => (t.id === task.id ? task : t)));
+  /**
+   * Loads the one task being edited; call it in a field initializer.
+   * `editRequest` is a new object on every open, so the task loads again each time,
+   * even when it's the same one. Null loads nothing.
+   */
+  createTaskResource(editRequest: Signal<{ taskId: string } | null>) {
+    return httpResource<Task>(() => {
+      const request = editRequest();
+      if (!request) {
+        return undefined;
+      }
+      return { url: `${this.url}/${request.taskId}`, context: loadContext() };
+    });
   }
 
-  updateStatus(taskId: string, status: TaskStatus) {
-    const task = this.tasks.value().find((t) => t.id === taskId);
-    if (!task) return;
-
-    this.updateTask(this.applyChanges(task, { status }));
-  }
-
-  /** Adds the task to the list only after the server returns it with its id. */
   createTask(draft: TaskDraft) {
     const now = new Date().toISOString();
     const newTask: Omit<Task, 'id'> = {
@@ -63,22 +60,7 @@ export class TaskService {
       completedAt: draft.status === 'done' ? now : undefined,
     };
 
-    return this.http
-      .post<Task>(this.url, newTask)
-      .pipe(tap((created) => this.addCreatedTask(created)));
-  }
-
-  /**
-   * The sidebar's New Task button stays usable when the list failed to load. The list has
-   * no value then and updating it would throw, turning a successful create into an error
-   * (and a duplicate on retry), so the list is loaded again instead.
-   */
-  private addCreatedTask(created: Task) {
-    if (this.tasks.hasValue()) {
-      this.tasks.update((list) => [created, ...list]);
-    } else {
-      this.tasks.reload();
-    }
+    return this.http.post<Task>(this.url, newTask).pipe(tap(() => this.refreshOpenLists()));
   }
 
   saveTask(task: Task, changes: TaskDraft) {
@@ -86,13 +68,30 @@ export class TaskService {
       .put<Task>(`${this.url}/${task.id}`, this.applyChanges(task, changes), {
         context: withRetry(),
       })
-      .pipe(tap((saved) => this.replaceTask(saved)));
+      .pipe(tap(() => this.refreshOpenLists()));
+  }
+
+  /**
+   * Saves a card moved on the board. Unlike the other changes it doesn't reload the open
+   * lists: only the dashboard can move cards, and it has already moved the card itself.
+   */
+  updateStatus(task: Task, status: TaskStatus) {
+    return this.http.put<Task>(`${this.url}/${task.id}`, this.applyChanges(task, { status }), {
+      context: withRetry(),
+    });
   }
 
   deleteTask(taskId: string) {
     return this.http
       .delete<void>(`${this.url}/${taskId}`, { context: withRetry() })
-      .pipe(tap(() => this.tasks.update((list) => list.filter((t) => t.id !== taskId))));
+      .pipe(tap(() => this.refreshOpenLists()));
+  }
+
+  // reload() keeps the current list on screen while the new one loads
+  private refreshOpenLists() {
+    for (const list of this.openLists) {
+      list.reload();
+    }
   }
 
   /**

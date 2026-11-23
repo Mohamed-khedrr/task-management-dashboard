@@ -56,7 +56,15 @@ describe('AnalyticsComponent', () => {
       providers: [
         {
           provide: TaskService,
-          useValue: { tasks: { value: tasks, status, error, hasValue: () => !error(), reload } },
+          useValue: {
+            createTasksResource: () => ({
+              value: tasks,
+              status,
+              error,
+              hasValue: () => !error(),
+              reload,
+            }),
+          },
         },
         { provide: UserService, useValue: { users: { value: signal([sarah, john]) } } },
       ],
@@ -65,10 +73,6 @@ describe('AnalyticsComponent', () => {
     fixture = TestBed.createComponent(AnalyticsComponent);
     element = fixture.nativeElement;
     await fixture.whenStable();
-  });
-
-  it('refreshes the tasks when the page opens', () => {
-    expect(reload).toHaveBeenCalledOnce();
   });
 
   it('counts the tasks per status and per priority', () => {
@@ -123,6 +127,6 @@ describe('AnalyticsComponent', () => {
 
     element.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
 
-    expect(reload).toHaveBeenCalledTimes(2);
+    expect(reload).toHaveBeenCalledOnce();
   });
 });
