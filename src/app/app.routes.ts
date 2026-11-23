@@ -22,7 +22,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/analytics/analytics.component').then((m) => m.AnalyticsComponent),
       },
-      { path: 'team', loadComponent: loadComingSoon, data: { titleKey: 'nav.team' } },
+      {
+        path: 'team',
+        loadComponent: () => import('./pages/team/team.component').then((m) => m.TeamComponent),
+      },
       {
         path: 'settings',
         loadComponent: () =>

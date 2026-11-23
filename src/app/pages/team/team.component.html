@@ -1,0 +1,24 @@
+<h1 class="page-title">{{ 'team.title' | transloco }}</h1>
+
+@if (error()) {
+  <div class="state" role="alert">
+    <p-message severity="error">{{ 'dashboard.error' | transloco }}</p-message>
+    <p-button [label]="'dashboard.retry' | transloco" (onClick)="retry()" />
+  </div>
+} @else if (isLoading() && members().length === 0) {
+  <div class="members" aria-busy="true">
+    @for (skeleton of skeletons; track skeleton) {
+      <p-skeleton height="180px" borderRadius="8px" />
+    }
+  </div>
+} @else if (members().length === 0) {
+  <p class="state">{{ 'team.noMembers' | transloco }}</p>
+} @else {
+  <ul class="members">
+    @for (member of members(); track member.user.id) {
+      <li>
+        <app-member-card [member]="member" />
+      </li>
+    }
+  </ul>
+}

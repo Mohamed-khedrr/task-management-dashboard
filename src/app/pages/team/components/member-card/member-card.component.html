@@ -1,0 +1,22 @@
+<article class="card">
+  <div class="person">
+    <span class="avatar" aria-hidden="true">{{ member().user.avatar }}</span>
+    <div class="details">
+      <h2 class="name">{{ member().user.name }}</h2>
+      <a class="email" [href]="'mailto:' + member().user.email">{{ member().user.email }}</a>
+    </div>
+  </div>
+
+  <dl class="counts">
+    @for (status of statuses; track status) {
+      <div class="count">
+        <dt>{{ 'task.status.' + status | transloco }}</dt>
+        <dd>{{ member().counts[status] }}</dd>
+      </div>
+    }
+    <div class="count" [class.overdue]="member().overdue > 0">
+      <dt>{{ 'team.overdue' | transloco }}</dt>
+      <dd>{{ member().overdue }}</dd>
+    </div>
+  </dl>
+</article>

@@ -127,6 +127,11 @@
       "nameRequired": "Enter your name."
     }
   },
+  "team": {
+    "title": "Team",
+    "noMembers": "There are no team members yet.",
+    "overdue": "Overdue"
+  },
   "errors": {
     "title": "Something went wrong",
     "network": "Can't reach the server. Check your connection and try again.",
