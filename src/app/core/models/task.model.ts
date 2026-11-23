@@ -30,6 +30,8 @@ export interface Task {
   tags: string[];
   createdAt: string;
   updatedAt: string;
+  /** Position in its column, set by drag and drop. The API data has none; see `getTaskOrder`. */
+  order?: number;
 }
 
 // What the form edits; the service fills in the id and the dates
@@ -64,6 +66,7 @@ export interface TaskTiming {
 export interface TaskMove {
   taskId: string;
   status: TaskStatus;
+  order: number;
 }
 
 export type StatusFilter = TaskStatus | 'all';

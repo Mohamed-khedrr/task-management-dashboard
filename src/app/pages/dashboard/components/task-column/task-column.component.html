@@ -2,7 +2,6 @@
   class="column"
   [attr.aria-labelledby]="'column-' + status()"
   cdkDropList
-  cdkDropListSortingDisabled
   [cdkDropListData]="status()"
   (cdkDropListDropped)="onDrop($event)"
 >

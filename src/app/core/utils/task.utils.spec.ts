@@ -1,5 +1,5 @@
 import { Task } from '../models/task.model';
-import { filterTasks, getTaskTiming, groupByStatus, isTaskOverdue, sortTasks } from './task.utils';
+import { filterTasks, getOrderAt, getTaskTiming, groupByStatus, isTaskOverdue } from './task.utils';
 
 const today = new Date(2026, 10, 21);
 
@@ -55,38 +55,12 @@ describe('getTaskTiming', () => {
   });
 });
 
-describe('sortTasks', () => {
-  it('puts overdue first, then higher priority, then the earlier due date', () => {
-    const tasks = [
-      makeTask({ id: 'low', priority: 'low', dueDate: '2026-11-22' }),
-      makeTask({ id: 'high-later', priority: 'high', dueDate: '2026-11-30' }),
-      makeTask({ id: 'high-sooner', priority: 'high', dueDate: '2026-11-23' }),
-      makeTask({ id: 'overdue', priority: 'low', dueDate: '2026-11-10' }),
-    ];
-
-    expect(sortTasks(tasks, today).map((task) => task.id)).toEqual([
-      'overdue',
-      'high-sooner',
-      'high-later',
-      'low',
-    ]);
-  });
-
-  it('does not change the original array', () => {
-    const tasks = [makeTask({ id: 'b', priority: 'low' }), makeTask({ id: 'a', priority: 'high' })];
-
-    sortTasks(tasks, today);
-
-    expect(tasks.map((task) => task.id)).toEqual(['b', 'a']);
-  });
-});
-
 describe('groupByStatus', () => {
   it('returns the three columns in board order, including empty ones', () => {
-    const columns = groupByStatus(
-      [makeTask({ id: 'a', status: 'done' }), makeTask({ id: 'b', status: 'todo' })],
-      today,
-    );
+    const columns = groupByStatus([
+      makeTask({ id: 'a', status: 'done' }),
+      makeTask({ id: 'b', status: 'todo' }),
+    ]);
 
     expect(columns.map((column) => column.status)).toEqual(['todo', 'in_progress', 'done']);
     expect(columns.map((column) => column.tasks.map((task) => task.id))).toEqual([
@@ -94,6 +68,33 @@ describe('groupByStatus', () => {
       [],
       ['a'],
     ]);
+  });
+
+  it('orders each column by its saved order, and unmoved tasks by creation time', () => {
+    const columns = groupByStatus([
+      makeTask({ id: 'newer', createdAt: '2026-11-10T10:00:00' }),
+      makeTask({ id: 'older', createdAt: '2026-11-01T10:00:00' }),
+      makeTask({ id: 'moved-to-top', createdAt: '2026-11-20T10:00:00', order: 0 }),
+    ]);
+
+    expect(columns[0].tasks.map((task) => task.id)).toEqual(['moved-to-top', 'older', 'newer']);
+  });
+});
+
+describe('getOrderAt', () => {
+  const column = [makeTask({ id: 'a', order: 10 }), makeTask({ id: 'b', order: 20 })];
+
+  it('places a task between the cards above and below it', () => {
+    expect(getOrderAt(column, 1)).toBe(15);
+  });
+
+  it('places a task above the first card or below the last one', () => {
+    expect(getOrderAt(column, 0)).toBe(9);
+    expect(getOrderAt(column, 2)).toBe(21);
+  });
+
+  it('starts an empty column at 0', () => {
+    expect(getOrderAt([], 0)).toBe(0);
   });
 });
 

@@ -25,30 +25,51 @@ describe('TaskColumnComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  const task = { id: 'task-1' } as Task;
+  const first = { id: 'task-1', order: 10 } as Task;
+  const second = { id: 'task-2', order: 20 } as Task;
+  const todo = { data: 'todo' as TaskStatus };
+  const done = { data: 'done' as TaskStatus };
 
-  const drop = (from: { data: TaskStatus }, to: { data: TaskStatus }) =>
-    ({ previousContainer: from, container: to, item: { data: task } }) as unknown as CdkDragDrop<
-      TaskStatus,
-      TaskStatus,
-      Task
-    >;
+  function drop(task: Task, from: object, to: object, previousIndex: number, currentIndex: number) {
+    return {
+      previousContainer: from,
+      container: to,
+      item: { data: task },
+      previousIndex,
+      currentIndex,
+    } as unknown as CdkDragDrop<TaskStatus, TaskStatus, Task>;
+  }
 
-  it('emits the new status when a card is dropped from another column', () => {
+  function listenForMoves() {
     const onMoved = vi.fn();
     component.taskMoved.subscribe(onMoved);
+    return onMoved;
+  }
 
-    component['onDrop'](drop({ data: 'todo' }, { data: 'done' }));
+  it('emits the new status and position when a card comes from another column', () => {
+    fixture.componentRef.setInput('status', 'done');
+    fixture.componentRef.setInput('tasks', [second]);
+    const onMoved = listenForMoves();
 
-    expect(onMoved).toHaveBeenCalledWith({ taskId: 'task-1', status: 'done' });
+    component.onDrop(drop(first, todo, done, 0, 0));
+
+    expect(onMoved).toHaveBeenCalledWith({ taskId: 'task-1', status: 'done', order: 19 });
   });
 
-  it('ignores a drop inside the same column', () => {
-    const onMoved = vi.fn();
-    component.taskMoved.subscribe(onMoved);
-    const sameColumn = { data: 'todo' as TaskStatus };
+  it('emits a new position when a card is moved inside its column', () => {
+    fixture.componentRef.setInput('tasks', [first, second]);
+    const onMoved = listenForMoves();
 
-    component['onDrop'](drop(sameColumn, sameColumn));
+    component.onDrop(drop(first, todo, todo, 0, 1));
+
+    expect(onMoved).toHaveBeenCalledWith({ taskId: 'task-1', status: 'todo', order: 21 });
+  });
+
+  it('ignores a card dropped back where it was', () => {
+    fixture.componentRef.setInput('tasks', [first, second]);
+    const onMoved = listenForMoves();
+
+    component.onDrop(drop(first, todo, todo, 0, 0));
 
     expect(onMoved).not.toHaveBeenCalled();
   });

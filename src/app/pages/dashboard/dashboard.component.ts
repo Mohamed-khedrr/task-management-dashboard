@@ -49,8 +49,8 @@ export class DashboardComponent implements OnInit {
     filterTasks(this.tasks(), this.filters.criteria()),
   );
 
-  // Kept separate from the status pick so switching tabs doesn't re-sort every column
-  private readonly allColumns = computed(() => groupByStatus(this.visibleTasks(), this.today));
+  // Kept separate from the status pick so switching tabs doesn't regroup every column
+  private readonly allColumns = computed(() => groupByStatus(this.visibleTasks()));
 
   protected readonly columns = computed(() => {
     const status = this.filters.status();

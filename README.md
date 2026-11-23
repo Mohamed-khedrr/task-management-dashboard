@@ -18,14 +18,15 @@ A task board built with Angular 21 and PrimeNG. You can create, edit, delete, fi
 - [Accessibility and i18n](#accessibility-and-i18n)
 - [Testing strategy](#testing-strategy)
 - [Code quality](#code-quality)
+- [Known limitations and future improvements](#known-limitations-and-future-improvements)
 
 ## Features
 
 **Dashboard**
 
 - Four stat cards: total, completed, in progress and overdue tasks. Each card has a change line under it, such as "3 created this week" or "1 completed today".
-- A board with To Do, In Progress and Done columns. In each column, overdue tasks come first, then tasks by priority, then by due date.
-- Drag and drop between columns to change a task's status. The change shows right away and is rolled back if the server rejects it.
+- A board with To Do, In Progress and Done columns. Tasks keep the order you give them; ones you haven't moved are listed oldest first, and new tasks go to the bottom.
+- Drag and drop to reorder tasks in a column or move them to another column to change their status. The dropped task gets an `order` number between the cards above and below it, so only that task is saved. The change shows right away and is rolled back if the server rejects it.
 - A toolbar with status tabs, priority and assignee filters, and a search over titles and descriptions. The search waits 300 ms after you stop typing.
 - Long titles, descriptions and assignee names are cut with an ellipsis and show in full in a tooltip.
 
@@ -131,7 +132,7 @@ src/app
 │   ├── models/           # All interfaces and types
 │   ├── services/         # Shared services: tasks, users, filters, dialog, profile, request cache
 │   ├── theme/            # PrimeNG preset mapped to the design tokens
-│   └── utils/            # Pure functions: dates, task sorting/filtering, statistics
+│   └── utils/            # Pure functions: dates, task ordering/filtering, statistics
 ├── layout/               # Shell: header, sidebar, drawer, task dialog, toast
 ├── pages/                # One lazy-loaded folder per route
 │   ├── dashboard/        # Stat cards, toolbar, board, columns, cards, task form
@@ -149,7 +150,7 @@ Some rules the structure follows:
 
 - Shared services are in `core/services`. A service used by only one page goes in that page's folder.
 - All models stay in `core/models`, even when only one page uses them, so types are always in one place.
-- Logic that doesn't need Angular (sorting, filtering, statistics, dates) is in plain functions in `core/utils`. These functions are easy to test and to reuse between the dashboard and analytics.
+- Logic that doesn't need Angular (ordering, filtering, statistics, dates) is in plain functions in `core/utils`. These functions are easy to test and to reuse between the dashboard and analytics.
 
 ## Architecture decisions
 
@@ -174,7 +175,7 @@ There's no store library. Signals cover everything:
 
 - **Server state.** `TaskService.tasks` and `UserService.users` are `httpResource`s. They give you `value()`, `isLoading()`, `error()` and `reload()`, and are updated locally after each change, so there's no extra request.
 - **UI state shared across components.** `TaskFiltersService` (search, status, priority, assignee), `TaskDialogService` (open, task being edited) and `ProfileService` (name and initials) hold signals.
-- **Derived state.** `computed()` builds the filtered tasks, the columns, the stats and the chart data. Grouping into columns is separate from the status tab, so switching tabs doesn't re-sort every column.
+- **Derived state.** `computed()` builds the filtered tasks, the columns, the stats and the chart data. Grouping into columns is separate from the status tab, so switching tabs doesn't regroup every column.
 - **Search debounce.** The search signal goes through RxJS (`toObservable` → `debounce` → `toSignal`). Typing waits 300 ms; clearing the search applies at once.
 
 Updates use two strategies:
@@ -246,4 +247,22 @@ Coverage is checked against an 80% minimum for statements, branches, functions a
 - Husky with lint-staged: ESLint and Prettier run on the staged files before each commit, and the tests run before each push.
 - Strict TypeScript, and no `any`.
 - Conventional commit messages, with each commit covering one working step and its tests.
-- JSDoc on the parts that aren't obvious: the interceptors, the optimistic update, the task sorting and statistics, the date helpers and the validators.
+- JSDoc on the parts that aren't obvious: the interceptors, the optimistic update, the task ordering and statistics, the date helpers and the validators.
+
+## Known limitations and future improvements
+
+**Limitations**
+
+- **The mock API must be running.** The app reads from json-server on port 3030 (`npm run mock:api`), so it needs a second terminal and can't run on its own as a static site. Without it, every page shows its error state.
+- **The activity feed is derived.** The backend has no change log, so the Activity page builds its entries from each task's created, updated and completed dates. It shows that a task changed, not what changed or who changed it.
+- **Ordering uses numbers between neighbours.** A dropped task gets an `order` halfway between the cards above and below it, so only that task is saved. After very many drops in exactly the same spot the numbers would get too close together; a real backend would renumber the column from time to time. With a filter on, the number is picked from the visible cards only.
+- **Changing the status in the edit dialog keeps the task's order**, so it lands in the new column by that number rather than at the top or bottom.
+- **The initial bundle is over budget.** The production build's initial bundle is about 693 kB (about 166 kB compressed), above the 500 kB warning budget in `angular.json`. The build still passes, since the error limit is 1 MB.
+
+**Future improvements**
+
+- Record task changes on the server and show real history in the activity feed.
+- Renumber a column on the server when its order numbers get too close together.
+- Shrink the initial bundle by loading more of PrimeNG and the translations on demand, then bring the budget back under 500 kB.
+- Add a Dockerfile or docker-compose setup that starts the app and the mock API together.
+- Run lint, tests and the build in CI on every push.

@@ -2,7 +2,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { tap } from 'rxjs';
-import { Task, TaskDraft, TaskStatus } from '../models/task.model';
+import { Task, TaskDraft, TaskMove } from '../models/task.model';
 import { withRetry } from '../interceptors/retry-interceptor';
 import { SILENT_ERRORS } from '../interceptors/error-interceptor';
 
@@ -23,34 +23,34 @@ export class TaskService {
   );
 
   /**
-   * Optimistic update: the board changes right away and goes back to the previous
-   * task if the server rejects the change. Used for drag and drop, where waiting
-   * for the server would make the card jump back.
+   * Saves a drag and drop. Optimistic: the board changes right away, so the card
+   * doesn't jump back while waiting, and the task goes back to how it was if the
+   * server rejects the change. A move inside the same column only changes the
+   * order, so it doesn't count as an edit and keeps `updatedAt`.
    */
-  updateTask(updatedTask: Task) {
-    const prevTask = this.tasks.value()?.find((t) => t.id === updatedTask.id);
+  moveTask(move: TaskMove) {
+    const task = this.tasks.value().find((t) => t.id === move.taskId);
+    if (!task) {
+      return;
+    }
 
-    if (!prevTask) return;
-    this.replaceTask(updatedTask);
+    let movedTask: Task;
+    if (task.status === move.status) {
+      movedTask = { ...task, order: move.order };
+    } else {
+      movedTask = { ...this.applyChanges(task, { status: move.status }), order: move.order };
+    }
+    this.replaceTask(movedTask);
 
     this.http
-      .put<Task>(`${this.url}/${updatedTask.id}`, updatedTask, {
-        context: withRetry(),
-      })
-      .subscribe({
-        error: () => this.replaceTask(prevTask),
-      });
+      .put<Task>(`${this.url}/${task.id}`, movedTask, { context: withRetry() })
+      .subscribe({ error: () => this.replaceTask(task) });
   }
 
-  private replaceTask(task: Task): void {
-    this.tasks.update((list) => (list ?? []).map((t) => (t.id === task.id ? task : t)));
-  }
-
-  updateStatus(taskId: string, status: TaskStatus) {
-    const task = this.tasks.value().find((t) => t.id === taskId);
-    if (!task) return;
-
-    this.updateTask(this.applyChanges(task, { status }));
+  private replaceTask(updatedTask: Task) {
+    this.tasks.update((list) =>
+      list.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+    );
   }
 
   /** Adds the task to the list only after the server returns it with its id. */

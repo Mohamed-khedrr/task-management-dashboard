@@ -1,6 +1,5 @@
 import {
   Task,
-  TASK_PRIORITIES,
   TASK_STATUSES,
   TaskColumn,
   TaskFilters,
@@ -41,30 +40,44 @@ export function getTaskTiming(task: Task, today: Date): TaskTiming {
 }
 
 /**
- * Orders a column so the most urgent work is on top: overdue tasks first,
- * then by priority (high to low), then by the earliest due date.
- * Returns a new array.
+ * A task's position in its column. Tasks that were never moved have no `order`,
+ * so they fall back to their creation time: oldest first, and new tasks at the bottom.
  */
-export function sortTasks(tasks: Task[], today: Date) {
-  const todayIso = toIsoDate(today);
+export function getTaskOrder(task: Task) {
+  return task.order ?? Date.parse(task.createdAt);
+}
 
-  return [...tasks].sort((a, b) => {
-    const aOverdue = isOverdueOn(a, todayIso);
-    const bOverdue = isOverdueOn(b, todayIso);
-    if (aOverdue !== bOverdue) {
-      return aOverdue ? -1 : 1;
-    }
+/**
+ * The `order` for a task dropped at `index`, picked so it sorts between the cards
+ * above and below it. Only the dropped task changes, so only it is saved.
+ *
+ * | Dropped                 | New order |
+ * | ----------------------- | --------- |
+ * | between 10 and 20       | 15        |
+ * | at the top, above 10    | 9         |
+ * | at the bottom, below 20 | 21        |
+ * | in an empty column      | 0         |
+ *
+ * @param columnTasks the column's tasks, without the task being moved
+ */
+export function getOrderAt(columnTasks: Task[], index: number) {
+  const above = columnTasks[index - 1];
+  const below = columnTasks[index];
 
-    if (a.priority !== b.priority) {
-      return TASK_PRIORITIES.indexOf(a.priority) - TASK_PRIORITIES.indexOf(b.priority);
-    }
-
-    return a.dueDate.localeCompare(b.dueDate);
-  });
+  if (!above && !below) {
+    return 0;
+  }
+  if (!above) {
+    return getTaskOrder(below) - 1;
+  }
+  if (!below) {
+    return getTaskOrder(above) + 1;
+  }
+  return (getTaskOrder(above) + getTaskOrder(below)) / 2;
 }
 
 /** Splits tasks into the three board columns, always in board order and including empty ones. */
-export function groupByStatus(tasks: Task[], today: Date): TaskColumn[] {
+export function groupByStatus(tasks: Task[]): TaskColumn[] {
   const tasksByStatus: Record<TaskStatus, Task[]> = { todo: [], in_progress: [], done: [] };
 
   for (const task of tasks) {
@@ -73,7 +86,7 @@ export function groupByStatus(tasks: Task[], today: Date): TaskColumn[] {
 
   return TASK_STATUSES.map((status) => ({
     status,
-    tasks: sortTasks(tasksByStatus[status], today),
+    tasks: tasksByStatus[status].sort((a, b) => getTaskOrder(a) - getTaskOrder(b)),
   }));
 }
 

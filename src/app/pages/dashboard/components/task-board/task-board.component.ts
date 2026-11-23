@@ -30,7 +30,7 @@ export class TaskBoardComponent {
   protected readonly deletingIds = signal<string[]>([]);
 
   protected moveTask(move: TaskMove) {
-    this.taskService.updateStatus(move.taskId, move.status);
+    this.taskService.moveTask(move);
   }
 
   protected confirmDelete(task: Task) {

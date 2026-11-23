@@ -3,6 +3,8 @@ import { Task, TaskMove, TaskStatus } from '../../../../core/models/task.model';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { TaskCardComponent } from '../task-card/task-card.component';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { getOrderAt } from '../../../../core/utils/task.utils';
+
 @Component({
   selector: 'app-task-column',
   imports: [TranslocoPipe, TaskCardComponent, CdkDropList, CdkDrag],
@@ -19,11 +21,18 @@ export class TaskColumnComponent {
   readonly taskEdit = output<Task>();
   readonly taskDelete = output<Task>();
 
-  onDrop(e: CdkDragDrop<TaskStatus, TaskStatus, Task>) {
-    if (e.previousContainer === e.container) return;
+  onDrop(drop: CdkDragDrop<TaskStatus, TaskStatus, Task>) {
+    const movedTask = drop.item.data;
+    const sameColumn = drop.previousContainer === drop.container;
+    if (sameColumn && drop.previousIndex === drop.currentIndex) {
+      return;
+    }
+
+    const otherTasks = this.tasks().filter((task) => task.id !== movedTask.id);
     this.taskMoved.emit({
-      taskId: e.item.data.id,
-      status: e.container.data,
+      taskId: movedTask.id,
+      status: drop.container.data,
+      order: getOrderAt(otherTasks, drop.currentIndex),
     });
   }
 }

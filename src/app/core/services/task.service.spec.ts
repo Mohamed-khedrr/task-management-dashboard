@@ -51,56 +51,58 @@ describe('TaskService', () => {
 
   afterEach(() => http.verify());
 
-  it('replaces the task right away and saves the full task', () => {
-    const edited: Task = { ...task, title: 'Write the final report', priority: 'high' };
+  describe('moving tasks', () => {
+    const taskUrl = `${url}/task-1`;
 
-    service.updateTask(edited);
+    it('moves a task to a new status and position right away, keeping its other fields', () => {
+      service.moveTask({ taskId: 'task-1', status: 'in_progress', order: 5 });
 
-    expect(service.tasks.value()).toEqual([edited]);
+      const moved = service.tasks.value()[0];
+      expect(moved.status).toBe('in_progress');
+      expect(moved.order).toBe(5);
+      expect(moved.title).toBe(task.title);
 
-    const request = http.expectOne(`${url}/task-1`);
-    expect(request.request.method).toBe('PUT');
-    expect(request.request.body).toEqual(edited);
-    request.flush(edited);
-  });
+      const request = http.expectOne(taskUrl);
+      expect(request.request.method).toBe('PUT');
+      expect(request.request.body).toEqual(moved);
+      request.flush(moved);
+    });
 
-  it('moves a task to a new status, keeping its other fields', () => {
-    service.updateStatus('task-1', 'in_progress');
+    it('reorders a task in its column without marking it as edited', () => {
+      service.moveTask({ taskId: 'task-1', status: 'todo', order: 5 });
 
-    const moved = service.tasks.value()[0];
-    expect(moved.status).toBe('in_progress');
-    expect(moved.title).toBe(task.title);
+      const moved = service.tasks.value()[0];
+      expect(moved.order).toBe(5);
+      expect(moved.updatedAt).toBe(task.updatedAt);
+      http.expectOne(taskUrl).flush(moved);
+    });
 
-    const request = http.expectOne(`${url}/task-1`);
-    expect(request.request.body).toEqual(moved);
-    request.flush(moved);
-  });
+    it('sets the completion date when a task is moved to done', () => {
+      service.moveTask({ taskId: 'task-1', status: 'done', order: 0 });
 
-  it('sets the completion date when a task is moved to done', () => {
-    service.updateStatus('task-1', 'done');
+      expect(service.tasks.value()[0].completedAt).toBeDefined();
+      http.expectOne(taskUrl).flush({});
+    });
 
-    expect(service.tasks.value()[0].completedAt).toBeDefined();
-    http.expectOne(`${url}/task-1`).flush({});
-  });
+    it('clears the completion date when a task leaves done', () => {
+      service.moveTask({ taskId: 'task-1', status: 'done', order: 0 });
+      http.expectOne(taskUrl).flush({});
 
-  it('clears the completion date when a task leaves done', () => {
-    service.updateStatus('task-1', 'done');
-    http.expectOne(`${url}/task-1`).flush({});
+      service.moveTask({ taskId: 'task-1', status: 'todo', order: 0 });
 
-    service.updateStatus('task-1', 'todo');
+      expect(service.tasks.value()[0].completedAt).toBeUndefined();
+      http.expectOne(taskUrl).flush({});
+    });
 
-    expect(service.tasks.value()[0].completedAt).toBeUndefined();
-    http.expectOne(`${url}/task-1`).flush({});
-  });
+    it('puts the task back when saving fails', () => {
+      service.moveTask({ taskId: 'task-1', status: 'done', order: 5 });
 
-  it('puts the task back when saving fails', () => {
-    service.updateStatus('task-1', 'done');
+      http
+        .expectOne(taskUrl)
+        .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
 
-    http
-      .expectOne(`${url}/task-1`)
-      .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
-
-    expect(service.tasks.value()[0].status).toBe('todo');
+      expect(service.tasks.value()).toEqual([task]);
+    });
   });
 
   it('removes a task only after the server deletes it', () => {
