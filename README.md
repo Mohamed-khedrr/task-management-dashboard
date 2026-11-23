@@ -94,6 +94,16 @@ The data uses dates relative to today. To refresh the dates, run:
 npm run mock:data
 ```
 
+### With Docker
+
+Docker Compose builds the app and starts it together with the mock API, so Node.js isn't needed on the machine:
+
+```bash
+docker compose up --build
+```
+
+The app is served by nginx on http://localhost:4200 and json-server runs on http://localhost:3030, the same addresses as above, so `apiUrl` doesn't change. The [Dockerfile](Dockerfile) has one stage for the app (built with Node, served by nginx, with every route falling back to `index.html`) and one for json-server, which runs the same `mock:api` script. Task changes are kept until the containers are removed.
+
 ## Environment configuration
 
 The API address is in [src/environments/environment.ts](src/environments/environment.ts):
@@ -253,7 +263,7 @@ Coverage is checked against an 80% minimum for statements, branches, functions a
 
 **Limitations**
 
-- **The mock API must be running.** The app reads from json-server on port 3030 (`npm run mock:api`), so it needs a second terminal and can't run on its own as a static site. Without it, every page shows its error state.
+- **The mock API must be running.** The app reads from json-server on port 3030 (`npm run mock:api`), so it needs a second terminal (or `docker compose up`) and can't run on its own as a static site. Without it, every page shows its error state.
 - **The activity feed is derived.** The backend has no change log, so the Activity page builds its entries from each task's created, updated and completed dates. It shows that a task changed, not what changed or who changed it.
 - **Ordering uses numbers between neighbours.** A dropped task gets an `order` halfway between the cards above and below it, so only that task is saved. After very many drops in exactly the same spot the numbers would get too close together; a real backend would renumber the column from time to time. With a filter on, the number is picked from the visible cards only.
 - **Changing the status in the edit dialog keeps the task's order**, so it lands in the new column by that number rather than at the top or bottom.
@@ -264,5 +274,4 @@ Coverage is checked against an 80% minimum for statements, branches, functions a
 - Record task changes on the server and show real history in the activity feed.
 - Renumber a column on the server when its order numbers get too close together.
 - Shrink the initial bundle by loading more of PrimeNG and the translations on demand, then bring the budget back under 500 kB.
-- Add a Dockerfile or docker-compose setup that starts the app and the mock API together.
 - Run lint, tests and the build in CI on every push.

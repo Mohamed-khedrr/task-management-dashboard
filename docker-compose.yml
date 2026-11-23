@@ -1,0 +1,16 @@
+services:
+  web:
+    build:
+      context: .
+      target: web
+    ports:
+      - '4200:80'
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      target: api
+    ports:
+      - '3030:3030'
