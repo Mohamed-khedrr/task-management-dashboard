@@ -31,6 +31,8 @@ describe('AnalyticsComponent', () => {
   const isLoading = signal(false);
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
+  const userError = signal<unknown>(undefined);
+  const reloadUsers = vi.fn();
 
   const legendCounts = (card: number) =>
     Array.from(
@@ -50,6 +52,8 @@ describe('AnalyticsComponent', () => {
     isLoading.set(false);
     error.set(undefined);
     reload.mockClear();
+    userError.set(undefined);
+    reloadUsers.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [AnalyticsComponent, getTranslocoModule()],
@@ -60,7 +64,14 @@ describe('AnalyticsComponent', () => {
         },
         {
           provide: UserService,
-          useValue: { users: { value: signal([sarah, john]), isLoading: signal(false) } },
+          useValue: {
+            users: {
+              value: signal([sarah, john]),
+              isLoading: signal(false),
+              error: userError,
+              reload: reloadUsers,
+            },
+          },
         },
       ],
     }).compileComponents();
@@ -139,5 +150,15 @@ describe('AnalyticsComponent', () => {
     element.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
 
     expect(reload).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows the error when the users fail to load, and reloads both on retry', async () => {
+    userError.set(new Error('Server error'));
+    await fixture.whenStable();
+
+    element.querySelector<HTMLButtonElement>('[role="alert"] button')!.click();
+
+    expect(reload).toHaveBeenCalledTimes(2);
+    expect(reloadUsers).toHaveBeenCalledOnce();
   });
 });

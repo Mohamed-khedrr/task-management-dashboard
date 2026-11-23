@@ -32,6 +32,8 @@ describe('DashboardComponent', () => {
   const status = signal<ResourceStatus>('resolved');
   const error = signal<unknown>(undefined);
   const reload = vi.fn();
+  const userError = signal<unknown>(undefined);
+  const reloadUsers = vi.fn();
 
   beforeEach(async () => {
     tasks.set([makeTask('todo'), makeTask('done'), makeTask('done')]);
@@ -39,6 +41,8 @@ describe('DashboardComponent', () => {
     status.set('resolved');
     error.set(undefined);
     reload.mockClear();
+    userError.set(undefined);
+    reloadUsers.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, getTranslocoModule()],
@@ -49,7 +53,10 @@ describe('DashboardComponent', () => {
             tasks: { value: tasks, status, error, hasValue: () => !error(), reload },
           },
         },
-        { provide: UserService, useValue: { users: { value: signal([]) } } },
+        {
+          provide: UserService,
+          useValue: { users: { value: signal([]), error: userError, reload: reloadUsers } },
+        },
       ],
     }).compileComponents();
 
@@ -91,6 +98,19 @@ describe('DashboardComponent', () => {
     element.querySelector<HTMLButtonElement>('.error button')!.click();
 
     expect(reload).toHaveBeenCalledOnce();
+  });
+
+  it('shows the error when the users fail to load, and reloads both on retry', async () => {
+    userError.set(new Error('offline'));
+    await fixture.whenStable();
+
+    expect(element.querySelector('.error')).not.toBeNull();
+
+    reload.mockClear();
+    element.querySelector<HTMLButtonElement>('.error button')!.click();
+
+    expect(reload).toHaveBeenCalledOnce();
+    expect(reloadUsers).toHaveBeenCalledOnce();
   });
 
   it('places each task in the column of its status', () => {

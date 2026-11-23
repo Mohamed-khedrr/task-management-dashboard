@@ -72,7 +72,8 @@ export class AnalyticsComponent implements OnInit {
   protected readonly isLoading = computed(
     () => this.taskResource.isLoading() || this.users.isLoading(),
   );
-  protected readonly error = this.taskResource.error;
+  // The person charts need the users, so a failed user load is shown like a failed task load
+  protected readonly error = computed(() => this.taskResource.error() ?? this.users.error());
   protected readonly isRtl = computed(() => this.language.activeLang() === 'ar');
 
   private readonly tasks = computed(() =>
@@ -155,6 +156,7 @@ export class AnalyticsComponent implements OnInit {
 
   protected retry() {
     this.taskResource.reload();
+    this.users.reload();
   }
 
   // Reading activeLang makes the labels update when the language changes

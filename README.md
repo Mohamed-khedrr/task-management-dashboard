@@ -27,14 +27,14 @@ The demo runs the Docker Compose setup below, with the same json-server mock API
 
 ## Features
 
-- **Dashboard:** four stat cards (total, completed, in progress, overdue), each with a change line such as "3 created this week". A board with To Do, In Progress and Done columns, and a toolbar with status tabs, priority and assignee filters and a search over titles and descriptions.
+- **Dashboard:** four stat cards (total, completed, in progress, overdue), each with a change line such as "+3 this week". A board with To Do, In Progress and Done columns, and a toolbar with status tabs, priority and assignee filters and a search over titles and descriptions.
 - **Drag and drop:** move a task to another column to change its status, or within a column to reorder it. The order is saved and survives a reload.
 - **Tasks:** create and edit in a dialog (title, description, status, priority, due date, assignee, tags), and delete from the card's "⋮" menu after a confirmation.
 - **Analytics:** tasks by status, by priority, overdue vs on track, overdue per person, and each person's tasks by status.
-- **Team:** a card per member with their task counts per status and overdue, and an "Add member" dialog.
+- **Team:** a card per member with their task counts per status and overdue, and a "+ Add member" dialog.
 - **Activity:** recent task changes, also shown as the latest five in the header's notifications bell.
 - **Settings:** your name (shown as initials in the header) and the language, both remembered.
-- **Throughout:** a responsive layout with a drawer on small screens, skeletons while loading, error states with Retry, empty states, and translated error toasts.
+- **Throughout:** a responsive layout with a drawer on small screens, skeletons while loading, error states with a "Try again" button, empty states, and translated error toasts.
 
 ## Edge cases and details handled
 
@@ -45,19 +45,19 @@ The demo runs the Docker Compose setup below, with the same json-server mock API
 
 **Long and missing content**
 
-- Long assignee names in the toolbar's assignee filter are cut with an ellipsis and show in full in a tooltip. The tooltip only appears when the name is actually cut.
-- Task titles in the Activity list and the notifications panel use the same rule, through one `appTruncate` directive. On the board, full titles are shown.
+- Long assignee names in the toolbar's assignee filter are cut with an ellipsis and show in full in a tooltip, using PrimeNG's `showOnEllipsis`, so the tooltip only appears when the name is actually cut.
+- Task titles in the Activity list and the notifications panel use the same behavior through the `appTruncate` directive, which wraps that tooltip. On the board, full titles are shown.
 - Long task descriptions collapse to a few lines with a "Show more" / "Show less" toggle that tells screen readers whether it's expanded.
 - The assignee filter and the form's assignee field are searchable. The filter can be cleared, shows "No assignees found" when nothing matches, and resets its search when it closes.
-- When nothing changed this week, the stat cards say "No new tasks this week" instead of "+0".
+- When there's nothing to report, each stat card says so instead of showing "+0": for example "No new tasks this week" or "None completed today".
 
 **Empty and error states**
 
-- **No tasks yet:** a message with a "New Task" button.
+- **No tasks yet:** a message with a "+ New Task" button.
 - **Filters that match nothing:** a message with "Clear filters".
 - **Team and Activity:** their own empty and no-match messages.
-- **A list that fails to load:** an inline error with a Retry button and no toast, so the error isn't shown twice. Failed saves, moves and deletes show a translated toast that says what went wrong (offline, not found, server error, and so on).
-- **Creating a task when the list never loaded:** the "New Task" button in the sidebar still works. The new task isn't reported as a failure, and the list is loaded again instead of being updated.
+- **A list that fails to load:** an inline error with a "Try again" button and no toast, so the error isn't shown twice. This covers the user list too: Dashboard, Analytics and Team show the error if either list fails, and "Try again" reloads both. Failed saves, moves and deletes show a translated toast that says what went wrong (offline, not found, server error, and so on).
+- **Creating a task when the list never loaded:** the "+ New Task" button in the sidebar still works. The new task isn't reported as a failure, and the list is loaded again instead of being updated.
 
 **Requests and timing**
 
@@ -85,17 +85,17 @@ The demo runs the Docker Compose setup below, with the same json-server mock API
 
 ## Tech stack
 
-| Area          | Choice                                     | Why                                                                                                   |
-| ------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| Framework     | Angular 21 (standalone, signals, zoneless) | Required. Signals and `httpResource` cover the app's state without a store library.                   |
-| UI library    | PrimeNG 21 (Aura preset)                   | Ready-made dialog, select, menu, toast, drawer, popover and skeleton, themed with the Figma tokens.   |
-| Charts        | Chart.js through PrimeNG `p-chart`         | Small, well known and already wrapped by PrimeNG. It's loaded only on the analytics page.             |
-| Drag and drop | Angular CDK                                | Accessible, works with RTL, and needs no extra dependency.                                            |
-| i18n          | Transloco                                  | Switches language at runtime without a rebuild. Angular's built-in i18n needs one build per language. |
-| Mock API      | json-server                                | A real REST API with a delay, so loading and error states behave as they would in production.         |
-| Tests         | Vitest (Angular's default runner), jsdom   | Fast, and runs through `ng test`.                                                                     |
-| Tooling       | ESLint, Prettier, Husky, GitHub Actions    | Lint and format on commit, tests on push, and lint, tests with coverage and the build on every push.  |
-| Deployment    | Docker Compose (nginx + json-server)       | One command runs the app and the API together, locally or on a server.                                |
+| Area          | Choice                                     | Why                                                                                                                            |
+| ------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Framework     | Angular 21 (standalone, signals, zoneless) | Required. Signals and `httpResource` cover the app's state without a store library.                                            |
+| UI library    | PrimeNG 21 (Aura preset)                   | Ready-made dialog, select, menu, toast, drawer, popover and skeleton, themed with the Figma tokens.                            |
+| Charts        | Chart.js through PrimeNG `p-chart`         | Small, well known and already wrapped by PrimeNG. It's loaded only on the analytics page.                                      |
+| Drag and drop | Angular CDK                                | Accessible, works with RTL, and needs no extra dependency.                                                                     |
+| i18n          | Transloco                                  | Switches language at runtime without a rebuild. Angular's built-in i18n needs one build per language.                          |
+| Mock API      | json-server                                | A real REST API with a delay, so loading and error states behave as they would in production.                                  |
+| Tests         | Vitest (Angular's default runner), jsdom   | Fast, and runs through `ng test`.                                                                                              |
+| Tooling       | ESLint, Prettier, Husky, GitHub Actions    | Lint and format on commit, tests on push, and lint, tests with coverage and the build on pushes and pull requests to `master`. |
+| Deployment    | Docker Compose (nginx + json-server)       | One command runs the app and the API together, locally or on a server.                                                         |
 
 ## Getting started
 
@@ -211,7 +211,7 @@ Data is cached at two levels, and each covers a different case.
 
 How the two work together:
 
-- **Each page calls `reload()` when it opens,** so the data is never older than the cache allows.
+- **Each page reloads the task list when it opens,** so it's never older than the cache allows. The user list loads once when the app starts, and "Try again" reloads it after a failure.
 - **Usually, that reload doesn't reach the server.** Within 5 minutes and with no change since, the interceptor answers from memory.
 - **After a change, the next reload is fresh.** The service has already updated its list, and the cleared cache makes sure the next read comes from the server.
 - **While a reload runs, the page keeps the data it has.** Skeletons only show on the very first load. Analytics is the exception: it waits for the reload, so the charts draw and animate once with the final data instead of twice.
@@ -238,7 +238,7 @@ Why this way:
 
 - **The rules live in one place.** Services and components don't each need their own `catchError` or `retry`, and every failure looks the same to the user.
 - **The order matters.** The error interceptor sits outside the retry interceptor, so it only sees an error once every retry has failed. A request that recovers on its second try shows no toast at all.
-- **Per-request control through context tokens.** `withRetry()` turns retries on, and `SILENT_ERRORS` turns the toast off. The task and user list loads use `SILENT_ERRORS`, because those pages show their own error message with a Retry button, and a toast would say the same thing twice. Saves, moves and deletes keep the toast.
+- **Per-request control through context tokens.** `withRetry()` turns retries on, and `SILENT_ERRORS` turns the toast off. The task and user list loads use `SILENT_ERRORS`, because those pages show their own error message with a "Try again" button, and a toast would say the same thing twice. Saves, moves and deletes keep the toast.
 
 ### Components
 
@@ -251,7 +251,7 @@ Why this way:
 - `TaskDialogComponent` creates and saves tasks; `TeamComponent` adds members.
 - Presentational: `TaskColumnComponent`, `TaskCardComponent`, `TaskFormComponent`, `MemberFormComponent`, `StatCardComponent`, `TaskToolbarComponent`, and the chart cards.
 
-**One dialog for the whole app.** The "New Task" button is in the sidebar and the edit action is on the cards, so the dialog lives in the layout. `TaskDialogService` holds whether it's open and which task it shows. The dialog is in an `@defer` block, so its code loads the first time it opens.
+**One dialog for the whole app.** The "+ New Task" button is in the sidebar and the edit action is on the cards, so the dialog lives in the layout. `TaskDialogService` holds whether it's open and which task it shows. The dialog is in an `@defer` block, so its code loads the first time it opens.
 
 **Drag and drop saves one task.** A dropped task gets an `order` number halfway between the cards above and below it, so only that task is sent to the server. Renumbering the whole column would need one request per task, because json-server has no bulk update.
 
@@ -277,8 +277,8 @@ The task, Add member and settings forms are typed reactive forms (`NonNullableFo
   - `requiredText` rejects text that is only spaces, which `Validators.required` lets through.
   - `maxItemLength` limits the length of each tag, not the number of tags.
   - `notTaken` rejects an email someone on the team already has. It reads the list on every check, so it follows members added meanwhile.
-- **Dynamic controls.** The same task form creates and edits. It fills in from the task being edited and starts fresh each time the dialog opens. Tags are a dynamic list, added with Enter or a comma.
-- **Errors.** Each field shows its own message under it once it has been touched or the form has been submitted. Invalid inputs get `aria-invalid` and point to their message with `aria-describedby`.
+- **Dynamic controls.** The same task form creates and edits. It fills in from the task being edited and starts fresh each time the dialog opens. Tags are a single list control (PrimeNG's AutoComplete in multiple mode): a tag is added with Enter, a comma, or when the field loses focus.
+- **Errors.** Each field shows its own message under it once it has been touched or the form has been submitted. Invalid text and date inputs get `aria-invalid` and point to their message with `aria-describedby`; the dropdowns and the tags field show their message as text under the field.
 
 ## Performance
 
@@ -328,11 +328,11 @@ Coverage is checked against an 80% minimum for statements, branches, functions a
 
 - **The activity feed is derived.** The backend has no change log, so the Activity page and the notifications bell build their entries from each task's created, updated and completed dates. They show that a task changed, not what changed or who changed it.
 - **Order numbers can run out of room.** After very many drops in exactly the same spot, the numbers between two cards get too close together.
-- **The initial bundle is over budget.** The first load is about 728 kB (about 175 kB compressed), above the 500 kB warning budget in `angular.json`. The build still passes, since the error limit is 1 MB.
+- **The first load is about 728 kB** (about 175 kB compressed), mostly Angular itself and the PrimeNG code the layout needs on every page. The warning budget in `angular.json` is 750 kB instead of the default 500 kB, so growth past today's size still warns.
 - **Demo data isn't permanent.** json-server keeps changes in its file only until the server restarts.
 
 **Future improvements**
 
 - Record task changes on the server and show real history in the activity feed and notifications.
 - Renumber a column on the server when its order numbers get too close together.
-- Shrink the first load by including only the PrimeNG theme parts the app uses, and loading the translations on demand.
+- Shrink the first load by including only the PrimeNG theme parts the app uses, and bring the budget back toward 500 kB.

@@ -39,7 +39,8 @@ export class DashboardComponent implements OnInit {
   protected readonly users = inject(UserService).users;
 
   protected readonly isLoading = computed(() => this.taskResource.status() === 'loading');
-  protected readonly error = this.taskResource.error;
+  // The assignee filter needs the users, so a failed user load is shown like a failed task load
+  protected readonly error = computed(() => this.taskResource.error() ?? this.users.error());
 
   private readonly tasks = computed(() =>
     this.taskResource.hasValue() ? this.taskResource.value() : [],
@@ -115,5 +116,6 @@ export class DashboardComponent implements OnInit {
 
   protected retry() {
     this.taskResource.reload();
+    this.users.reload();
   }
 }
