@@ -14,13 +14,15 @@
 
   // Text
   --color-text: #212121;
-  --color-text-muted: #757575;
+  // Muted and status colors are a shade darker than Figma so text keeps a 4.5:1 contrast
+  // (WCAG AA) on every background it's used on, including the tinted ones below
+  --color-text-muted: #616161;
 
   // Status
-  --color-success: #388e3c;
-  --color-danger: #d32f2f;
+  --color-success: #2e7d32;
+  --color-danger: #c62828;
   --color-danger-bg: #ffebee;
-  --color-warning: #f57c00;
+  --color-warning: #a84300;
   --color-warning-bg: #fff3e0;
   --color-in-progress: #ff6f00; // Figma "Blaze Orange", task card hover
 

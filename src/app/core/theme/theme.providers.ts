@@ -52,7 +52,7 @@ const AppPreset = definePreset(Aura, {
         },
         text: {
           color: '#212121',
-          mutedColor: '#757575',
+          mutedColor: '#616161',
         },
         content: {
           borderColor: '#e0e0e0',
@@ -61,7 +61,7 @@ const AppPreset = definePreset(Aura, {
           color: '#212121',
           borderColor: '#e0e0e0',
           hoverBorderColor: '#757575',
-          placeholderColor: '#757575',
+          placeholderColor: '#616161',
           shadow: 'none',
         },
       },
