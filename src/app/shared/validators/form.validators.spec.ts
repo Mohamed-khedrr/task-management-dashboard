@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { maxItemLength, requiredText } from './form.validators';
+import { maxItemLength, notTaken, requiredText } from './form.validators';
 
 describe('form validators', () => {
   describe('requiredText', () => {
@@ -24,6 +24,18 @@ describe('form validators', () => {
 
     it('rejects a list with an item over the limit', () => {
       expect(maxItemLength(5)(list('Docs', 'Backend'))).toEqual({ itemTooLong: { max: 5 } });
+    });
+  });
+
+  describe('notTaken', () => {
+    const validator = notTaken(() => ['sarah@company.com']);
+
+    it('rejects a taken value, ignoring case and surrounding spaces', () => {
+      expect(validator(new FormControl(' Sarah@Company.com '))).toEqual({ taken: true });
+    });
+
+    it('accepts a new value', () => {
+      expect(validator(new FormControl('emily@company.com'))).toBeNull();
     });
   });
 });

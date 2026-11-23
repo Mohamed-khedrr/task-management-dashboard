@@ -1,0 +1,64 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="field">
+    <label for="member-name">{{ 'team.form.name' | transloco }}</label>
+    <input
+      pInputText
+      pSize="small"
+      id="member-name"
+      autocomplete="off"
+      formControlName="name"
+      [invalid]="showError(form.controls.name)"
+      [attr.aria-invalid]="showError(form.controls.name)"
+      [attr.aria-describedby]="showError(form.controls.name) ? 'member-name-error' : null"
+    />
+    @if (showError(form.controls.name)) {
+      <small id="member-name-error" class="error">
+        {{ 'team.form.errors.nameRequired' | transloco }}
+      </small>
+    }
+  </div>
+
+  <div class="field">
+    <label for="member-email">{{ 'team.form.email' | transloco }}</label>
+    <input
+      pInputText
+      pSize="small"
+      type="email"
+      id="member-email"
+      autocomplete="off"
+      formControlName="email"
+      [invalid]="showError(form.controls.email)"
+      [attr.aria-invalid]="showError(form.controls.email)"
+      [attr.aria-describedby]="showError(form.controls.email) ? 'member-email-error' : null"
+    />
+    @if (showError(form.controls.email)) {
+      <small id="member-email-error" class="error">
+        @if (form.controls.email.hasError('required')) {
+          {{ 'team.form.errors.emailRequired' | transloco }}
+        } @else if (form.controls.email.hasError('email')) {
+          {{ 'team.form.errors.emailInvalid' | transloco }}
+        } @else {
+          {{ 'team.form.errors.emailTaken' | transloco }}
+        }
+      </small>
+    }
+  </div>
+
+  <div class="actions">
+    <p-button
+      size="small"
+      severity="secondary"
+      text
+      [label]="'team.form.cancel' | transloco"
+      [disabled]="saving()"
+      (onClick)="cancelled.emit()"
+    />
+    <p-button
+      size="small"
+      type="submit"
+      [label]="'team.form.add' | transloco"
+      [loading]="saving()"
+      [disabled]="saving()"
+    />
+  </div>
+</form>

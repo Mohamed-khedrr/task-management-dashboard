@@ -1,4 +1,7 @@
-<h1 class="page-title">{{ 'team.title' | transloco }}</h1>
+<div class="page-header">
+  <h1 class="page-title">{{ 'team.title' | transloco }}</h1>
+  <p-button size="small" [label]="'team.addMember' | transloco" (onClick)="isAddOpen.set(true)" />
+</div>
 
 @if (error()) {
   <div class="state" role="alert">
@@ -24,3 +27,24 @@
     }
   </ul>
 }
+
+<p-dialog
+  [visible]="isAddOpen()"
+  (visibleChange)="closeAdd()"
+  [header]="'team.addTitle' | transloco"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="!isSaving()"
+  [closeOnEscape]="!isSaving()"
+  [style]="{ width: '28rem' }"
+  [breakpoints]="{ '640px': 'calc(100vw - 2rem)' }"
+>
+  @if (isAddOpen()) {
+    <app-member-form
+      [takenEmails]="takenEmails()"
+      [saving]="isSaving()"
+      (saved)="addMember($event)"
+      (cancelled)="closeAdd()"
+    />
+  }
+</p-dialog>

@@ -33,4 +33,23 @@ describe('UserService', () => {
 
     expect(service.users.value()).toHaveLength(1);
   });
+
+  it('creates a member with initials from their name and adds them to the list', async () => {
+    TestBed.tick();
+    http.expectOne(`${environment.apiUrl}/users`).flush([]);
+    await TestBed.inject(ApplicationRef).whenStable();
+
+    service.createUser({ name: 'Emily Rose Davis', email: 'emily@x.com' }).subscribe();
+
+    const request = http.expectOne(`${environment.apiUrl}/users`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      name: 'Emily Rose Davis',
+      email: 'emily@x.com',
+      avatar: 'ED',
+    });
+    request.flush({ ...request.request.body, id: 'user-9' });
+
+    expect(service.users.value().map((user) => user.id)).toEqual(['user-9']);
+  });
 });

@@ -2,8 +2,17 @@
   display: block;
 }
 
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+}
+
 .page-title {
-  margin: 0 0 var(--space-6);
+  margin: 0;
   font-size: var(--font-size-xl);
 }
 

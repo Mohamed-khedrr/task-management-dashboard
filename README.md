@@ -46,6 +46,7 @@ A task board built with Angular 21 and PrimeNG. You can create, edit, delete, fi
 **Team**
 
 - A card per team member with their avatar, name and email, and how many of their tasks are to do, in progress, done and overdue. The counts come from the live task list.
+- Add a member from a dialog with their name and email. The email has to be valid and not used by someone already on the team, and the avatar initials come from the name. New members can be assigned tasks straight away.
 
 **Settings**
 

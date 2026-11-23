@@ -1,5 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MessageService } from 'primeng/api';
+import { of, throwError } from 'rxjs';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
 import { Assignee, Task } from '../../core/models/task.model';
 import { TaskService } from '../../core/services/task.service';
@@ -35,6 +37,7 @@ describe('TeamComponent', () => {
   let element: HTMLElement;
   let users: ReturnType<typeof createResource<Assignee[]>>;
   let tasks: ReturnType<typeof createResource<Task[]>>;
+  const createUser = vi.fn();
 
   const cardCounts = () =>
     Array.from(element.querySelectorAll('app-member-card'), (card) =>
@@ -43,6 +46,7 @@ describe('TeamComponent', () => {
 
   beforeEach(async () => {
     users = createResource([sarah, john]);
+    createUser.mockReset();
     tasks = createResource([
       makeTask({ status: 'todo' }),
       makeTask({ status: 'done' }),
@@ -52,7 +56,8 @@ describe('TeamComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TeamComponent, getTranslocoModule()],
       providers: [
-        { provide: UserService, useValue: { users } },
+        MessageService,
+        { provide: UserService, useValue: { users, createUser } },
         { provide: TaskService, useValue: { tasks } },
       ],
     }).compileComponents();
@@ -104,5 +109,33 @@ describe('TeamComponent', () => {
 
     expect(users.reload).toHaveBeenCalledOnce();
     expect(tasks.reload).toHaveBeenCalledTimes(2);
+  });
+
+  describe('adding a member', () => {
+    const draft = { name: 'Emily Davis', email: 'emily@x.com' };
+
+    it('saves the member, closes the form and confirms it', async () => {
+      const addMessage = vi.spyOn(TestBed.inject(MessageService), 'add');
+      createUser.mockReturnValue(of({ ...draft, id: 'user-3', avatar: 'ED' }));
+      fixture.componentInstance['isAddOpen'].set(true);
+
+      fixture.componentInstance['addMember'](draft);
+      await fixture.whenStable();
+
+      expect(createUser).toHaveBeenCalledWith(draft);
+      expect(fixture.componentInstance['isAddOpen']()).toBe(false);
+      expect(addMessage).toHaveBeenCalledWith(expect.objectContaining({ severity: 'success' }));
+    });
+
+    it('keeps the form open to try again when saving fails', async () => {
+      createUser.mockReturnValue(throwError(() => new Error('Server error')));
+      fixture.componentInstance['isAddOpen'].set(true);
+
+      fixture.componentInstance['addMember'](draft);
+      await fixture.whenStable();
+
+      expect(fixture.componentInstance['isAddOpen']()).toBe(true);
+      expect(fixture.componentInstance['isSaving']()).toBe(false);
+    });
   });
 });

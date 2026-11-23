@@ -163,7 +163,22 @@
     "title": "Team",
     "noMembers": "There are no team members yet.",
     "overdue": "Overdue",
-    "noMatches": "No team members match your search."
+    "noMatches": "No team members match your search.",
+    "addMember": "+ Add member",
+    "addTitle": "Add team member",
+    "memberAdded": "{{name}} was added to the team.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "cancel": "Cancel",
+      "add": "Add member",
+      "errors": {
+        "nameRequired": "Enter a name.",
+        "emailRequired": "Enter an email.",
+        "emailInvalid": "Enter a valid email, like name@company.com.",
+        "emailTaken": "Someone on the team already has this email."
+      }
+    }
   },
   "errors": {
     "title": "Something went wrong",
