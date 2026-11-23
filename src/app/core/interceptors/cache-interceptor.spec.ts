@@ -71,4 +71,30 @@ describe('cacheInterceptor', () => {
     http.get('/tasks').subscribe();
     backend.expectOne('/tasks').flush([]);
   });
+
+  it("doesn't cache a list that was read before a change finished", () => {
+    http.get('/tasks').subscribe();
+    const staleRead = backend.expectOne('/tasks');
+
+    http.put('/tasks/1', {}).subscribe();
+    const save = backend.expectOne('/tasks/1');
+
+    staleRead.flush(['old list']);
+    save.flush({});
+
+    http.get('/tasks').subscribe();
+    backend.expectOne('/tasks').flush(['new list']);
+  });
+
+  it("doesn't cache a list read while a change was still in flight", () => {
+    http.put('/tasks/1', {}).subscribe();
+    const save = backend.expectOne('/tasks/1');
+
+    http.get('/tasks').subscribe();
+    backend.expectOne('/tasks').flush(['maybe old list']);
+    save.flush({});
+
+    http.get('/tasks').subscribe();
+    backend.expectOne('/tasks').flush(['new list']);
+  });
 });
