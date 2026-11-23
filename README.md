@@ -136,9 +136,9 @@ src/app
 ├── pages/                # One lazy-loaded folder per route
 │   ├── dashboard/        # Stat cards, toolbar, board, columns, cards, task form
 │   ├── analytics/        # Chart card, stacked bar card, legend
+│   ├── activity/         # Recent task changes built from the task dates
 │   ├── settings/
-│   ├── team/             # Member cards with task counts per person
-│   └── coming-soon/      # Placeholder for routes that aren't built yet
+│   └── team/             # Member cards with task counts per person
 └── shared/               # Reusable UI helpers: truncate directive, form validators
 src/styles/               # Design tokens (colors, spacing, type) from Figma
 public/i18n/              # en.json, ar.json
