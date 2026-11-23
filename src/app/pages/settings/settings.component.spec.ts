@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
+import ar from '../../../../public/i18n/ar.json';
 import { createMemoryStorage } from '../../../testing/memory-storage';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
 import { LanguageService } from '../../core/i18n/language.service';
@@ -64,6 +65,17 @@ describe('SettingsComponent', () => {
 
     expect(profile.name()).toBe('Mohamed Khedr');
     expect(setLanguage).toHaveBeenCalledWith('ar');
+  });
+
+  it('confirms the save in the language just picked', async () => {
+    const addMessage = vi.spyOn(TestBed.inject(MessageService), 'add');
+    chooseLanguage('ar');
+
+    await submit();
+
+    expect(addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success', summary: ar.settings.saved }),
+    );
   });
 
   it('does not save an empty name', async () => {

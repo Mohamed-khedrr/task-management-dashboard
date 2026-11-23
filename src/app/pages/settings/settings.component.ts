@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { take } from 'rxjs';
 import { LanguageService } from '../../core/i18n/language.service';
 import { AppLanguage, LANGUAGE_OPTIONS } from '../../core/models/language.model';
 import { ProfileService } from '../../core/services/profile.service';
@@ -46,9 +47,10 @@ export class SettingsComponent {
     this.profile.setName(name);
     this.language.setLanguage(language);
 
-    this.messages.add({
-      severity: 'success',
-      summary: this.transloco.translate('settings.saved', {}, language),
-    });
+    // A newly picked language may still be downloading, and translate() would return the key itself
+    this.transloco
+      .selectTranslate('settings.saved', {}, language)
+      .pipe(take(1))
+      .subscribe((summary) => this.messages.add({ severity: 'success', summary }));
   }
 }
