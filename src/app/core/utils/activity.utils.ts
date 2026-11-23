@@ -5,9 +5,9 @@ import { Task } from '../models/task.model';
  * Builds the activity feed from the task dates, since the API has no activity log:
  * `createdAt` gives "created", `completedAt` gives "completed", and an `updatedAt`
  * that differs from both gives "updated". Deleted tasks leave no trace.
- * Returns the newest first, up to `limit`.
+ * Returns the newest first.
  */
-export function getRecentActivity(tasks: Task[], limit: number): Activity[] {
+export function getRecentActivity(tasks: Task[]): Activity[] {
   const activities: Activity[] = [];
 
   for (const task of tasks) {
@@ -31,6 +31,5 @@ export function getRecentActivity(tasks: Task[], limit: number): Activity[] {
 
   return activities
     .filter((activity) => !Number.isNaN(Date.parse(activity.at)))
-    .sort((a, b) => Date.parse(b.at) - Date.parse(a.at))
-    .slice(0, limit);
+    .sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
 }

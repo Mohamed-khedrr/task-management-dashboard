@@ -17,8 +17,8 @@ function makeTask(overrides: Partial<Task> = {}): Task {
   };
 }
 
-const kinds = (tasks: Task[], limit = 10) =>
-  getRecentActivity(tasks, limit).map((activity) => `${activity.taskTitle}:${activity.kind}`);
+const kinds = (tasks: Task[]) =>
+  getRecentActivity(tasks).map((activity) => `${activity.taskTitle}:${activity.kind}`);
 
 describe('getRecentActivity', () => {
   it('shows only "created" for a task that was never changed', () => {
@@ -41,7 +41,7 @@ describe('getRecentActivity', () => {
     expect(kinds([task])).toEqual(['Write report:completed', 'Write report:created']);
   });
 
-  it('lists changes from all tasks newest first, up to the limit', () => {
+  it('lists changes from all tasks newest first', () => {
     const tasks = [
       makeTask({
         id: 'a',
@@ -63,7 +63,7 @@ describe('getRecentActivity', () => {
       }),
     ];
 
-    expect(kinds(tasks, 2)).toEqual(['B:created', 'C:created']);
+    expect(kinds(tasks)).toEqual(['B:created', 'C:created', 'A:created']);
   });
 
   it('skips entries with an invalid date', () => {
@@ -78,7 +78,7 @@ describe('getRecentActivity', () => {
       updatedAt: '2026-11-03T10:00:00',
       completedAt: '2026-11-05T10:00:00',
     });
-    const ids = getRecentActivity([task], 10).map((activity) => activity.id);
+    const ids = getRecentActivity([task]).map((activity) => activity.id);
 
     expect(new Set(ids).size).toBe(3);
   });

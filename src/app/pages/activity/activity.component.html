@@ -5,10 +5,21 @@
     <p-message severity="error">{{ 'dashboard.error' | transloco }}</p-message>
     <p-button [label]="'dashboard.retry' | transloco" (onClick)="retry()" />
   </div>
-} @else if (isLoading() && activities().length === 0) {
+} @else if (isLoading() && hasNoTasks()) {
   <p-skeleton height="480px" borderRadius="8px" aria-busy="true" />
-} @else if (activities().length === 0) {
+} @else if (hasNoTasks()) {
   <p class="state">{{ 'activity.empty' | transloco }}</p>
+} @else if (activities().length === 0) {
+  <p class="state">{{ 'activity.noMatches' | transloco }}</p>
 } @else {
   <app-activity-feed [activities]="activities()" />
+
+  @if (nextPageSize() > 0) {
+    <p-button
+      class="show-more"
+      severity="secondary"
+      [label]="'activity.showMore' | transloco: { count: nextPageSize() }"
+      (onClick)="showMore()"
+    />
+  }
 }

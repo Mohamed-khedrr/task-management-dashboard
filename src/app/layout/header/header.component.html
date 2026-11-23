@@ -13,15 +13,17 @@
     <span class="brand-title">{{ appInfo.nameKey | transloco }}</span>
   </a>
   <div class="search">
-    <input
-      pInputText
-      type="search"
-      class="search-input"
-      [value]="filters.search()"
-      (input)="onSearch($event)"
-      [attr.aria-label]="'header.search' | transloco"
-      [placeholder]="'header.searchPlaceholder' | transloco"
-    />
+    @if (search.scope(); as scope) {
+      <input
+        pInputText
+        type="search"
+        class="search-input"
+        [value]="search.text()"
+        (input)="onSearch($event)"
+        [attr.aria-label]="'header.search.' + scope + '.label' | transloco"
+        [placeholder]="'header.search.' + scope + '.placeholder' | transloco"
+      />
+    }
   </div>
 
   <div class="actions">

@@ -13,9 +13,11 @@
   </div>
 } @else if (members().length === 0) {
   <p class="state">{{ 'team.noMembers' | transloco }}</p>
+} @else if (visibleMembers().length === 0) {
+  <p class="state">{{ 'team.noMatches' | transloco }}</p>
 } @else {
   <ul class="members">
-    @for (member of members(); track member.user.id) {
+    @for (member of visibleMembers(); track member.user.id) {
       <li>
         <app-member-card [member]="member" />
       </li>

@@ -90,4 +90,17 @@ describe('ActivityComponent', () => {
 
     expect(reload).toHaveBeenCalledTimes(2);
   });
+
+  it('shows 30 changes at a time and reveals the rest on demand', async () => {
+    tasks.set(Array.from({ length: 40 }, (_, index) => makeTask({ id: `task-${index}` })));
+    await fixture.whenStable();
+
+    expect(entryCount()).toBe(30);
+
+    element.querySelector<HTMLButtonElement>('.show-more button')!.click();
+    await fixture.whenStable();
+
+    expect(entryCount()).toBe(40);
+    expect(element.querySelector('.show-more')).toBeNull();
+  });
 });

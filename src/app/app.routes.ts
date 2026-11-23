@@ -11,6 +11,7 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+        data: { search: 'tasks' },
       },
       {
         path: 'analytics',
@@ -21,10 +22,12 @@ export const routes: Routes = [
         path: 'activity',
         loadComponent: () =>
           import('./pages/activity/activity.component').then((m) => m.ActivityComponent),
+        data: { search: 'activity' },
       },
       {
         path: 'team',
         loadComponent: () => import('./pages/team/team.component').then((m) => m.TeamComponent),
+        data: { search: 'team' },
       },
       {
         path: 'settings',

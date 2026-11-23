@@ -7,8 +7,20 @@
     "closeMenu": "Close menu"
   },
   "header": {
-    "search": "Search tasks",
-    "searchPlaceholder": "🔍 Search tasks...",
+    "search": {
+      "tasks": {
+        "label": "Search tasks",
+        "placeholder": "🔍 Search tasks..."
+      },
+      "team": {
+        "label": "Search team members",
+        "placeholder": "🔍 Search by name or email..."
+      },
+      "activity": {
+        "label": "Search activity",
+        "placeholder": "🔍 Search by task or person..."
+      }
+    },
     "profile": "User profile"
   },
   "nav": {
@@ -137,12 +149,15 @@
     "created": "Created",
     "updated": "Updated",
     "completed": "Completed",
-    "empty": "No recent activity yet."
+    "empty": "No recent activity yet.",
+    "noMatches": "No activity matches your search.",
+    "showMore": "Show {{count}} more"
   },
   "team": {
     "title": "Team",
     "noMembers": "There are no team members yet.",
-    "overdue": "Overdue"
+    "overdue": "Overdue",
+    "noMatches": "No team members match your search."
   },
   "errors": {
     "title": "Something went wrong",

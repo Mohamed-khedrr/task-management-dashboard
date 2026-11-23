@@ -1,43 +1,33 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { debounce, of, timer } from 'rxjs';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { StatusFilter, TaskFilters, TaskPriority } from '../models/task.model';
-
-const SEARCH_DEBOUNCE_MS = 300;
+import { SearchService } from './search.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskFiltersService {
-  readonly search = signal('');
+  private readonly search = inject(SearchService);
+
   readonly status = signal<StatusFilter>('all');
   readonly priority = signal<TaskPriority | null>(null);
   readonly assigneeId = signal<string | null>(null);
 
-  // Typing waits for a pause before filtering; clearing the search applies at once
-  private readonly debouncedSearch = toSignal(
-    toObservable(computed(() => this.search().trim())).pipe(
-      debounce((value) => (value ? timer(SEARCH_DEBOUNCE_MS) : of(value))),
-    ),
-    { initialValue: '' },
-  );
-
   readonly criteria = computed<TaskFilters>(() => ({
-    search: this.debouncedSearch(),
+    search: this.search.query(),
     priority: this.priority(),
     assigneeId: this.assigneeId(),
   }));
 
   readonly hasActiveFilters = computed(
     () =>
-      this.search().trim() !== '' ||
+      this.search.isActive() ||
       this.status() !== 'all' ||
       this.priority() !== null ||
       this.assigneeId() !== null,
   );
 
   reset() {
-    this.search.set('');
+    this.search.clear();
     this.status.set('all');
     this.priority.set(null);
     this.assigneeId.set(null);

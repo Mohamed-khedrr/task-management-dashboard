@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { getTranslocoModule } from '../../../testing/transloco-testing';
-import { TaskFiltersService } from '../../core/services/task-filters.service';
+import { SearchService } from '../../core/services/search.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { HeaderComponent } from './header.component';
 
@@ -29,15 +29,19 @@ describe('HeaderComponent', () => {
     expect(onMenuToggle).toHaveBeenCalledOnce();
   });
 
-  it('updates the search filter as the user types', () => {
-    const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>(
-      '.search-input',
-    )!;
+  it('shows the search only on pages that have one, and passes on what the user types', async () => {
+    const search = TestBed.inject(SearchService);
+    const input = () =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('.search-input');
 
-    input.value = 'report';
-    input.dispatchEvent(new Event('input'));
+    expect(input()).toBeNull();
 
-    expect(TestBed.inject(TaskFiltersService).search()).toBe('report');
+    search.scope.set('team');
+    await fixture.whenStable();
+    input()!.value = 'sarah';
+    input()!.dispatchEvent(new Event('input'));
+
+    expect(search.text()).toBe('sarah');
   });
 
   it('shows the initials of the saved name in the avatar', async () => {

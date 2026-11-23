@@ -8,7 +8,6 @@ import {
   TaskTiming,
 } from '../models/task.model';
 import { daysBetween, toIsoDate } from './date.utils';
-import { normalizeSearchText } from './text.utils';
 
 /**
  * A task is overdue when it isn't done and its due date is before today.
@@ -80,11 +79,11 @@ export function groupByStatus(tasks: Task[], today: Date): TaskColumn[] {
 
 /**
  * Applies the toolbar filters. The search matches the title or description,
- * ignoring case, spacing, accents and Arabic letter forms (see {@link normalizeSearchText}). Status isn't filtered here: the board
+ * ignoring case and surrounding spaces. Status isn't filtered here: the board
  * hides whole columns instead.
  */
 export function filterTasks(tasks: Task[], filters: TaskFilters) {
-  const search = normalizeSearchText(filters.search);
+  const search = filters.search.trim().toLowerCase();
 
   return tasks.filter((task) => {
     if (filters.priority && task.priority !== filters.priority) {
@@ -97,8 +96,7 @@ export function filterTasks(tasks: Task[], filters: TaskFilters) {
       return true;
     }
     return (
-      normalizeSearchText(task.title).includes(search) ||
-      normalizeSearchText(task.description).includes(search)
+      task.title.toLowerCase().includes(search) || task.description.toLowerCase().includes(search)
     );
   });
 }

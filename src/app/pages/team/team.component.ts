@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TeamMember } from '../../core/models/team.model';
+import { SearchService } from '../../core/services/search.service';
 import { TaskService } from '../../core/services/task.service';
 import { UserService } from '../../core/services/user.service';
 import {
@@ -22,6 +23,7 @@ import { MemberCardComponent } from './components/member-card/member-card.compon
 export class TeamComponent implements OnInit {
   private readonly userResource = inject(UserService).users;
   private readonly taskResource = inject(TaskService).tasks;
+  private readonly search = inject(SearchService);
 
   private readonly today = new Date();
 
@@ -49,6 +51,18 @@ export class TeamComponent implements OnInit {
       counts: counts.get(user.id) ?? { todo: 0, in_progress: 0, done: 0 },
       overdue: overdue.get(user.id) ?? 0,
     }));
+  });
+
+  protected readonly visibleMembers = computed(() => {
+    const query = this.search.query().toLowerCase();
+    if (!query) {
+      return this.members();
+    }
+    return this.members().filter(
+      (member) =>
+        member.user.name.toLowerCase().includes(query) ||
+        member.user.email.toLowerCase().includes(query),
+    );
   });
 
   ngOnInit(): void {
