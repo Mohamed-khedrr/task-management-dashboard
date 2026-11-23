@@ -1,0 +1,14 @@
+<h1 class="page-title">{{ 'activity.title' | transloco }}</h1>
+
+@if (error()) {
+  <div class="state" role="alert">
+    <p-message severity="error">{{ 'dashboard.error' | transloco }}</p-message>
+    <p-button [label]="'dashboard.retry' | transloco" (onClick)="retry()" />
+  </div>
+} @else if (isLoading() && activities().length === 0) {
+  <p-skeleton height="480px" borderRadius="8px" aria-busy="true" />
+} @else if (activities().length === 0) {
+  <p class="state">{{ 'activity.empty' | transloco }}</p>
+} @else {
+  <app-activity-feed [activities]="activities()" />
+}

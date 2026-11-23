@@ -21,10 +21,10 @@ describe('SidebarNavComponent', () => {
   });
 
   it('highlights only the link of the current page', async () => {
-    await TestBed.inject(Router).navigateByUrl('/tasks');
+    await TestBed.inject(Router).navigateByUrl('/analytics');
     await fixture.whenStable();
 
-    expect(getLink('/tasks').classList).toContain('nav-link--active');
+    expect(getLink('/analytics').classList).toContain('nav-link--active');
     expect(getLink('/dashboard').classList).not.toContain('nav-link--active');
   });
 
@@ -32,7 +32,7 @@ describe('SidebarNavComponent', () => {
     const onLinkSelected = vi.fn();
     fixture.componentInstance.linkSelected.subscribe(onLinkSelected);
 
-    getLink('/tasks').click();
+    getLink('/analytics').click();
 
     expect(onLinkSelected).toHaveBeenCalledOnce();
   });

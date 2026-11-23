@@ -17,9 +17,8 @@ export class SidebarNavComponent {
 
   readonly navLinks: readonly NavItem[] = [
     { path: '/dashboard', labelKey: 'nav.dashboard', icon: '📊' },
-    { path: '/tasks', labelKey: 'nav.tasks', icon: '✅' },
-    { path: '/calendar', labelKey: 'nav.calendar', icon: '📅' },
     { path: '/analytics', labelKey: 'nav.analytics', icon: '📈' },
+    { path: '/activity', labelKey: 'nav.activity', icon: '🕒' },
     { path: '/team', labelKey: 'nav.team', icon: '👥' },
     { path: '/settings', labelKey: 'nav.settings', icon: '⚙️' },
   ];

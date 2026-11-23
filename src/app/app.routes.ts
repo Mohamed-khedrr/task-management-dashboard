@@ -1,9 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 
-const loadComingSoon = () =>
-  import('./pages/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent);
-
 export const routes: Routes = [
   {
     path: '',
@@ -15,12 +12,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
-      { path: 'tasks', loadComponent: loadComingSoon, data: { titleKey: 'nav.tasks' } },
-      { path: 'calendar', loadComponent: loadComingSoon, data: { titleKey: 'nav.calendar' } },
       {
         path: 'analytics',
         loadComponent: () =>
           import('./pages/analytics/analytics.component').then((m) => m.AnalyticsComponent),
+      },
+      {
+        path: 'activity',
+        loadComponent: () =>
+          import('./pages/activity/activity.component').then((m) => m.ActivityComponent),
       },
       {
         path: 'team',

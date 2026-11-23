@@ -14,9 +14,8 @@
   "nav": {
     "label": "Main navigation",
     "dashboard": "Dashboard",
-    "tasks": "Tasks",
-    "calendar": "Calendar",
     "analytics": "Analytics",
+    "activity": "Activity",
     "team": "Team",
     "settings": "Settings",
     "newTask": "+ New Task"
@@ -126,6 +125,13 @@
     "errors": {
       "nameRequired": "Enter your name."
     }
+  },
+  "activity": {
+    "title": "Activity",
+    "created": "Created",
+    "updated": "Updated",
+    "completed": "Completed",
+    "empty": "No recent activity yet."
   },
   "team": {
     "title": "Team",

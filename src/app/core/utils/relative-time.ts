@@ -37,3 +37,24 @@ export function formatDayCount(days: number, lang: string) {
 
   return new Intl.NumberFormat(lang, { style: 'unit', unit, unitDisplay: 'long' }).format(value);
 }
+
+const MINUTE_IN_MS = 60 * 1000;
+const HOUR_IN_MS = 60 * MINUTE_IN_MS;
+const DAY_IN_MS = 24 * HOUR_IN_MS;
+
+/** Localized time since a moment: "now", "5 minutes ago", "3 hours ago", "yesterday". */
+export function formatTimeAgo(at: string, now: Date, lang: string) {
+  const elapsed = Math.max(0, now.getTime() - Date.parse(at));
+  const format = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+
+  if (elapsed < MINUTE_IN_MS) {
+    return format.format(0, 'second');
+  }
+  if (elapsed < HOUR_IN_MS) {
+    return format.format(-Math.floor(elapsed / MINUTE_IN_MS), 'minute');
+  }
+  if (elapsed < DAY_IN_MS) {
+    return format.format(-Math.floor(elapsed / HOUR_IN_MS), 'hour');
+  }
+  return formatRelativeDays(-Math.floor(elapsed / DAY_IN_MS), lang);
+}

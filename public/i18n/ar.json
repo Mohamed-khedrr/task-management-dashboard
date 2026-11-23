@@ -14,9 +14,8 @@
   "nav": {
     "label": "التنقل الرئيسي",
     "dashboard": "لوحة التحكم",
-    "tasks": "المهام",
-    "calendar": "التقويم",
     "analytics": "التحليلات",
+    "activity": "النشاط",
     "team": "الفريق",
     "settings": "الإعدادات",
     "newTask": "+ مهمة جديدة"
@@ -126,6 +125,13 @@
     "errors": {
       "nameRequired": "أدخل اسمك."
     }
+  },
+  "activity": {
+    "title": "النشاط",
+    "created": "أُنشئت",
+    "updated": "حُدّثت",
+    "completed": "اكتملت",
+    "empty": "لا يوجد نشاط حديث بعد."
   },
   "team": {
     "title": "الفريق",

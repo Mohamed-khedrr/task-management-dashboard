@@ -50,7 +50,7 @@ describe('MainLayoutComponent', () => {
   it('closes the mobile menu after a page is chosen', async () => {
     await openMenu();
 
-    getDrawer()!.querySelector<HTMLAnchorElement>('a[href="/tasks"]')!.click();
+    getDrawer()!.querySelector<HTMLAnchorElement>('a[href="/analytics"]')!.click();
     await fixture.whenStable();
 
     expect(fixture.componentInstance['menuOpen']()).toBe(false);

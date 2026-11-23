@@ -1,0 +1,15 @@
+<ol class="list">
+  @for (item of items(); track item.id) {
+    <li class="item">
+      <span class="icon" aria-hidden="true">{{ icons[item.kind] }}</span>
+      <div class="text">
+        <p class="task" appTruncate>{{ item.taskTitle }}</p>
+        <p class="meta">
+          {{ 'activity.' + item.kind | transloco }} ·
+          <span class="assignee">{{ item.assignee.name }}</span> ·
+          <time [attr.datetime]="item.at">{{ item.timeAgo }}</time>
+        </p>
+      </div>
+    </li>
+  }
+</ol>
