@@ -8,6 +8,8 @@ A task board built with Angular 21 and PrimeNG. You can create, edit, delete, fi
 
 The demo runs the Docker Compose setup below, with the same json-server mock API. Anyone can change the data, and it goes back to the original tasks when the server restarts.
 
+**Video walkthrough:** [Google Drive](https://drive.google.com/drive/folders/1VvTud56F9iFNZ3DxH9ayernUwKjYHVV-)
+
 ## Contents
 
 - [Features](#features)
