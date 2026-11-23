@@ -7,13 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- media="print" keeps the font from blocking the first paint; it applies once loaded -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
     />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+      .splash {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f5f7fa;
+        color: #212121;
+        font:
+          700 1.2rem system-ui,
+          sans-serif;
+      }
+    </style>
   </head>
   <body>
-    <app-root></app-root>
+    <!-- Shown until Angular starts and replaces it, so the page doesn't stay blank -->
+    <app-root><p class="splash">📋 Task Manager</p></app-root>
   </body>
 </html>
