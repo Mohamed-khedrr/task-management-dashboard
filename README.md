@@ -107,15 +107,16 @@ Change `apiUrl` to point the app at another backend. json-server runs on port 30
 
 ## Scripts
 
-| Command             | What it does                                            |
-| ------------------- | ------------------------------------------------------- |
-| `npm start`         | Runs the dev server on port 4200                        |
-| `npm run build`     | Builds for production into `dist/`                      |
-| `npm run watch`     | Rebuilds in development mode on every change            |
-| `npm test`          | Runs the unit tests with Vitest                         |
-| `npm run lint`      | Lints the TypeScript and the templates                  |
-| `npm run mock:api`  | Starts json-server on port 3030 with `mock-api/db.json` |
-| `npm run mock:data` | Regenerates the mock data with dates relative to today  |
+| Command                 | What it does                                              |
+| ----------------------- | --------------------------------------------------------- |
+| `npm start`             | Runs the dev server on port 4200                          |
+| `npm run build`         | Builds for production into `dist/`                        |
+| `npm run watch`         | Rebuilds in development mode on every change              |
+| `npm test`              | Runs the unit tests with Vitest                           |
+| `npm run test:coverage` | Runs the tests once with a coverage report in `coverage/` |
+| `npm run lint`          | Lints the TypeScript and the templates                    |
+| `npm run mock:api`      | Starts json-server on port 3030 with `mock-api/db.json`   |
+| `npm run mock:data`     | Regenerates the mock data with dates relative to today    |
 
 Git hooks: `pre-commit` runs ESLint and Prettier on the staged files, and `pre-push` runs the tests.
 
@@ -232,8 +233,11 @@ Tests use Vitest through `ng test`, and sit next to the code as `*.spec.ts` file
 - Browser APIs that jsdom lacks are stubbed: `localStorage` with an in-memory version in [src/testing/memory-storage.ts](src/testing/memory-storage.ts), and the canvas context in the chart tests.
 
 ```bash
-npm test
+npm test                 # watch mode
+npm run test:coverage    # one run with a coverage report
 ```
+
+Coverage is checked against an 80% minimum for statements, branches, functions and lines (set in `angular.json`), so the coverage run fails if it drops below that. It's currently about 95% of statements and 94% of branches.
 
 ## Code quality
 
